@@ -24,7 +24,8 @@
     "test:revision": "node scripts/revision-flow.cjs",
     "test:placements": "tsx scripts/revision-fixtures.ts && node scripts/revision-placements.cjs",
     "deploy": "npm run build && npx wrangler pages deploy dist --project-name yesil-donusum",
-    "test:sorting": "node scripts/sorting-qa.cjs"
+    "test:sorting": "node scripts/sorting-qa.cjs",
+    "test:sections": "node scripts/section-qa.cjs"
   },
   "dependencies": {
     "phaser": "3.90.0"

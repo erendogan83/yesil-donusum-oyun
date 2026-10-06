@@ -439,13 +439,12 @@ function footer() {
   let label = "DEVAM ET",
     action = "end",
     hint = "Bu dönem için hazırsınız.";
-  let secondary = btn("Bölümü bitir", "end", "ghost quiet-end");
+  let secondary = "";
   if (view === "market") {
     const origin = s.originScene || marketContext?.room || "kitchen";
     label = "GERİ DÖN";
     action = `take:${origin}`;
     hint = "Bir seçeneğe dokunup inceleyebilirsin.";
-    secondary = "";
   } else if (view === "room") {
     const p = readyProduct(),
       r = roomById(s.room as RoomId),
@@ -463,27 +462,29 @@ function footer() {
       action = `solve:${r.id}:${z.id}`;
       hint = "";
       const op = nextOpportunity(s, r.id);
-      if (s.decisionVersion === 1 && op && !op.core)
-        secondary = btn("Şimdilik geç", `optional-skip:${op.id}`, "ghost");
+      secondary =
+        s.decisionVersion === 1 && op && !op.core
+          ? btn("Şimdilik geç", `optional-skip:${op.id}`, "ghost")
+          : btn("Haritaya dön", "map", "ghost quiet-end");
     } else {
+      // This room is finished: leaving it needs no confirmation.
+      label = "BÖLÜMÜ BİTİR";
       action = "continue-room";
-      hint = nextRoom(s)
-        ? "Buradaki adım tamam. Bir sonrakine bakalım."
-        : "Buradaki adım tamam. Bu bölümün temel adımları bitti.";
+      hint = "Buradaki adım tamam.";
     }
   } else {
     const next = nextRoom(s);
     if (next) {
       action = `room:${next.id}`;
       hint = `${next.name} ile devam edebilirsin.`;
+      secondary = btn("Dönemi bitir", "end", "ghost quiet-end");
     } else {
-      label = "BÖLÜMÜ BİTİR";
+      label = "DÖNEMİ BİTİR";
       hint = optionalLeft(s)
         ? "Temel adımlar tamam. İstersen isteğe bağlı fırsatlara da bakabilirsin."
-        : "Bu bölümün tüm adımları tamam.";
+        : "Bu dönemin tüm adımları tamam.";
     }
   }
-  if (action === "end") secondary = "";
   return `<nav class="nav-footer contextual-footer" aria-label="Sonraki adım"><div class="contextual-action">${hint ? `<p>${esc(hint)}</p>` : ""}<div class="actions">${btn(label, action, "primary")}${secondary}</div></div></nav>`;
 }
 function inventory() {
@@ -1264,19 +1265,19 @@ async function action(action: string) {
       journal();
       break;
     case "end":
-      // Nothing left to do: no reason to ask, just finish the section.
+      // Nothing required is left: finish the period without asking.
       if (!nextRoom(db.active!)) {
         await finishRound();
         break;
       }
       showModal(
-        `<h2 id="dialog-title">${db.active!.round}. bölümü bitirelim mi?</h2><p>Bölüm tüm yerleşkeyi kapsar. Bu odadaki adımlar tamam olsa da şurada henüz yapılmamış temel adımlar var: <b>${pendingRooms(
+        `<h2 id="dialog-title">${db.active!.round}. dönemi bitirelim mi?</h2><p>Şu alanlarda henüz yapılmamış temel adımlar var: <b>${pendingRooms(
           db.active!,
         )
           .map((r) => esc(r.name))
           .join(
             ", ",
-          )}</b>. Bitirirsen bunlar sonraki bölüme kalır.</p><div class="actions">${btn("DEVAM EDELİM", "close", "primary")}${btn("BÖLÜMÜ BİTİR", "end-confirm", "ghost")}</div>`,
+          )}</b>. Bitirirsen bunlar sonraki döneme kalır.</p><div class="actions">${btn("DEVAM EDELİM", "close", "primary")}${btn("DÖNEMİ BİTİR", "end-confirm", "ghost")}</div>`,
       );
       break;
     case "end-confirm":

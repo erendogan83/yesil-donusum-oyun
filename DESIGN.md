@@ -140,7 +140,7 @@ The period recap uses existing product thumbnails, not a new video or dashboard.
 
 Mevcut renkler, fontlar ve sahne koordinatları korunur. HUD yalnız mevcut para,
 skor ve dönemi gösterir; skor aynı model fonksiyonudur. footer() tek ana eylem ve
-en fazla bir ikincil düğme üretir. Bölümü bitir aktif iş varken ikincildir.
+en fazla bir ikincil düğme üretir. Haritaya dön (oda), Dönemi bitir (harita) aktif iş varken ikincildir.
 activeOpportunity() aynı anda tek zone seçer; bekleyen ürün ve okunmamış kart
 önceliklidir. Bir seçim iyi/kötü/nötr olmasına bakılmadan öğrenme sonrası ilerler.
 Phaser ve HTML aynı aktif zone'u kullanır. Görev paneli en fazla iki kısa maddelidir.

@@ -67,7 +67,8 @@ fs.mkdirSync(out, { recursive: true });
       if (current.room !== o.roomId) {
         if (current.room !== "map") {
           await click("help");
-          await click("map");
+          await page.locator('#dialog [data-action="map"]').click();
+          await busy();
         }
         await click(`room:${o.roomId}`);
       }
@@ -182,7 +183,8 @@ fs.mkdirSync(out, { recursive: true });
     if (!(await page.locator("[data-action=end]").count())) {
       // A room with an optional offer shows "Şimdilik geç"; leave through the map.
       await click("help");
-      await click("map");
+      await page.locator('#dialog [data-action="map"]').click();
+      await busy();
     }
     await click("end");
     // The confirmation only appears while steps are still unfinished.

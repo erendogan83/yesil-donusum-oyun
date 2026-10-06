@@ -14,6 +14,11 @@ const out = "qa/main-revision";
   const page = await context.newPage(),
     errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  const busy = () =>
+    page.waitForFunction(
+      () =>
+        document.querySelector("#stage").getAttribute("aria-busy") !== "true",
+    );
   const click = async (a) => {
     await page.locator(`[data-action="${a}"]`).first().tap();
     await page.waitForFunction(
@@ -87,7 +92,8 @@ const out = "qa/main-revision";
   await click("close");
   await page.setViewportSize({ width: 1366, height: 768 });
   await click("help");
-  await click("map");
+  await page.locator('#dialog [data-action="map"]').click();
+  await busy();
   for (let i = 0; i < 4; i++) {
     if (i === 3) await click("sales-start");
     await click("end");
