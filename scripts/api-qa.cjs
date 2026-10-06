@@ -1,6 +1,10 @@
 // Leaderboard API checks against `wrangler pages dev dist --d1=DB --binding ADMIN_TOKEN=secret123`.
 const assert = require("node:assert/strict");
 const base = process.env.API_URL || "http://127.0.0.1:8788";
+// These checks wipe every stored result: never run them against a live site.
+if (!new URL(base).hostname.match(/^(127.0.0.1|localhost)$/))
+  throw Error("Refusing to wipe results on a non-local server: " + base);
+
 const token = process.env.ADMIN_TOKEN || "secret123";
 const orgs = require("../public/organizations.json");
 const post = (body) =>
