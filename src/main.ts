@@ -590,12 +590,16 @@ function footer() {
       hint = `${next.name} ile devam edebilirsin.`;
       secondary = btn("Dönemi bitir", "end", "ghost quiet-end");
     } else {
+      secondary = "";
       label = "DÖNEMİ BİTİR";
       hint = optionalLeft(s)
         ? "Temel adımlar tamam. İstersen isteğe bağlı fırsatlara da bakabilirsin."
         : "Bu dönemin tüm adımları tamam.";
     }
   }
+  // On the map the player can also end the whole game and save the score.
+  if (view === "map" && s.decisionVersion === 1)
+    secondary += btn("Oyunu bitir ve kaydet", "finish-now", "ghost quiet-end");
   return `<nav class="nav-footer contextual-footer" aria-label="Sonraki adım"><div class="contextual-action">${hint ? `<p>${esc(hint)}</p>` : ""}<div class="actions">${btn(label, action, "primary")}${secondary}</div></div></nav>`;
 }
 function inventory() {

@@ -127,11 +127,17 @@ export async function knownOrganization(
 
 /** Bearer token check; false when ADMIN_TOKEN is not configured. */
 export function isAdmin(request: Request, env: Env) {
-  const expected = env.ADMIN_TOKEN;
-  const given = (request.headers.get("Authorization") ?? "").replace(
-    /^Bearer\s+/i,
-    "",
-  );
+  const expected = env.ADMIN_TOKEN?.trim();
+  const raw = (request.headers.get("Authorization") ?? "")
+    .replace(/^Bearer\s+/i, "")
+    .trim();
+  let given = raw;
+  try {
+    // The client percent-encodes the token so non-Latin-1 characters survive.
+    given = decodeURIComponent(raw);
+  } catch {
+    /* Not encoded: compare as sent. */
+  }
   if (!expected || !given) return false;
   let diff = expected.length ^ given.length;
   for (let i = 0; i < expected.length; i++)

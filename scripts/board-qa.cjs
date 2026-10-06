@@ -9,7 +9,7 @@ if (!new URL(base).hostname.match(/^(127.0.0.1|localhost)$/))
 
 const token = process.env.ADMIN_TOKEN || "secret123";
 const orgs = require("../public/organizations.json");
-const auth = { Authorization: `Bearer ${token}` };
+const auth = { Authorization: `Bearer ${encodeURIComponent(token)}` };
 const post = (r) =>
   fetch(`${base}/api/results`, {
     method: "POST",

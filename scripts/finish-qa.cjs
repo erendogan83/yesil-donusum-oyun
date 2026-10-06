@@ -3,6 +3,9 @@
 const { chromium } = require("playwright");
 const assert = require("node:assert/strict");
 const base = process.env.API_URL || "http://127.0.0.1:8788";
+if (!new URL(base).hostname.match(/^(127.0.0.1|localhost)$/))
+  throw Error("Refusing to wipe results on a non-local server: " + base);
+const token = process.env.ADMIN_TOKEN || "secret123";
 (async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   const context = await browser.newContext({
@@ -21,6 +24,11 @@ const base = process.env.API_URL || "http://127.0.0.1:8788";
     await page.locator(`[data-action="${a}"]`).first().click();
     await busy();
   };
+  // The map footer has the same button; inside the help dialog use the dialog's own.
+  const dialogClick = async (a) => {
+    await page.locator(`#dialog [data-action="${a}"]`).click();
+    await busy();
+  };
   const api = (path) =>
     page.evaluate(async (p) => (await fetch(p)).json(), path);
   const status = () => page.locator(".submit-status").innerText();
@@ -33,6 +41,11 @@ const base = process.env.API_URL || "http://127.0.0.1:8788";
     await click("tutorial-done");
   };
 
+  // Start from an empty local board.
+  await fetch(`${base}/api/results?mode=all`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${encodeURIComponent(token)}` },
+  });
   await page.goto(base);
   await start("Bitir QA 1");
   // The basin now offers two vessels.
@@ -55,7 +68,7 @@ const base = process.env.API_URL || "http://127.0.0.1:8788";
 
   // Finish now: confirm, save, status line.
   await click("help");
-  await click("finish-now");
+  await dialogClick("finish-now");
   assert((await page.locator("#dialog").innerText()).includes("geri alınamaz"));
   await click("finish-now-confirm");
   await page.locator(".final-result").waitFor();
@@ -75,7 +88,7 @@ const base = process.env.API_URL || "http://127.0.0.1:8788";
   await start("Bitir QA 2");
   await context.setOffline(true);
   await click("help");
-  await click("finish-now");
+  await dialogClick("finish-now");
   await click("finish-now-confirm");
   await page.locator(".final-result").waitFor();
   await page.waitForFunction(() =>

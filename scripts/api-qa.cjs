@@ -27,7 +27,7 @@ const result = (id, over = {}) => ({
   completedAt: new Date().toISOString(),
   ...over,
 });
-const auth = { Authorization: `Bearer ${token}` };
+const auth = { Authorization: `Bearer ${encodeURIComponent(token)}` };
 (async () => {
   // Clean slate (also proves bulk delete works and needs the token).
   assert.equal(

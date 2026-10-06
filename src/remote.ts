@@ -125,7 +125,10 @@ export const storeToken = (token: string) => {
     /* Token only lives for this tab; ignore storage errors. */
   }
 };
-const bearer = (token: string) => ({ Authorization: `Bearer ${token}` });
+// HTTP headers only carry Latin-1: encode, the server decodes (see functions/api/_lib.ts).
+const bearer = (token: string) => ({
+  Authorization: `Bearer ${encodeURIComponent(token.trim())}`,
+});
 
 /** null: unreachable, string: server message when rejected, true: valid. */
 export async function adminCheck(token: string): Promise<true | string | null> {
