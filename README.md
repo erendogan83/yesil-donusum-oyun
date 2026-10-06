@@ -41,8 +41,8 @@ Dönem ödülü mevcut kuralla korunur: yeni gider azalmasının %50'si, en çok
 
 ## Kayıtlar ve kurumlar
 
-`public/organizations.json` mevcut 26 kurumun tam adlarını içerir. İki katılımcı adı zorunludur.
-Serbest deneme sonuçları liderlik tablosunun Serbest sekmesinde görünür. Resmî sonuç kurumu kilitler; aynı kurum tekrar resmî sonuç yazamaz.
+`public/organizations.json` mevcut 26 kurumun tam adlarını içerir. Kooperatif ve birinci katılımcı adı zorunludur; ikinci katılımcı isteğe bağlıdır (tek kişi de oynayabilir).
+Serbest deneme sonuçları liderlik tablosunun Serbest sekmesinde görünür. Bir kooperatifin birden fazla takımı/oyuncusu resmî oynayabilir; liderlik tablosu kooperatif başına toplam puanı gösterir.
 Otomatik kayıt anahtarı `yesil-donusum-v1`, veritabanı biçimi v2 olarak korunur.
 
 Eski oyunlar eski karar/ekonomi kurallarıyla devam eder; eski sonuçlar yeniden puanlanmaz.
@@ -95,12 +95,12 @@ Yerelde denemek için: `npm run build && npm run dev:cf` (`http://127.0.0.1:8788
 
 - **Kim görür:** Tüm cihazların sonuçları aynı tabloda toplanır; tablo 15 sn'de bir kendini yeniler.
   _Resmî_ ve _Serbest_ sekmeleri vardır. Sınırsız sayıda takım/kurum olabilir; kurum listesi `public/organizations.json`.
-- **Kurum başına bir resmî sonuç:** Aynı kurum ikinci kez resmî bitirirse sunucu sonucu otomatik olarak _Serbest_ yapar.
-  Listede olmayan bir kurum adı da serbest sayılır.
+- **Kooperatif toplamı:** Aynı kooperatifin tüm oyuncularının puanları toplanır; tabloda kooperatif adı, oyun sayısı ve oyuncular yazar.
+  Resmî oyun için kurum listede olmalıdır; listede olmayan ad otomatik olarak _Serbest_ sayılır. Bir kooperatifin kaç takımı olduğu sınırlı değildir.
 - **Bağlantı yoksa:** Biten oyun cihazda bekler ve bağlantı gelince otomatik gönderilir. Sunucu yoksa (yerel
   `node serve.mjs`) tablo bu cihazdaki resmî sonuçları gösterir.
 - **Yönetim (`/#admin`):** Anahtarla giriş yapınca tek tek sonuç silme, serbest denemeleri toplu silme, tüm kayıtları
-  silme (etkinlik öncesi sıfırlama) ve tüm cihazlardan CSV indirme açılır. Anahtar yalnız o sekmede tutulur.
+  silme (etkinlik öncesi sıfırlama) ve CSV indirme (tüm sonuçlar / kooperatif toplamları) açılır. Anahtar yalnız o sekmede tutulur.
 - **Güvenlik sınırı:** Oyun tarayıcıda çalıştığı için sunucu puanın gerçekten oynanarak kazanıldığını doğrulayamaz;
   yalnızca biçim ve sınırları (0–2000 puan vb.) denetler. Silme/sıfırlama ise anahtarsız mümkün değildir.
 

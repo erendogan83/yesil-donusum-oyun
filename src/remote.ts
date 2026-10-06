@@ -152,3 +152,65 @@ export async function adminBulkDelete(mode: "practice" | "all", token: string) {
   if (res?.status === 200) return Number(res.data?.deleted ?? 0);
   throw Error(String(res?.data?.error ?? "Sunucuya ulaşılamadı."));
 }
+
+export interface CoopRow {
+  org: string;
+  games: number;
+  score: number;
+  players: string[];
+}
+/** Adds up every result of the same cooperative (case-insensitive name). */
+export function byCooperative(
+  rows: {
+    organization: string;
+    first: string;
+    second: string;
+    score: number;
+  }[],
+): CoopRow[] {
+  const map = new Map<string, CoopRow>();
+  for (const row of rows) {
+    const key = row.organization.trim().toLocaleLowerCase("tr");
+    const entry = map.get(key) ?? {
+      org: row.organization.trim(),
+      games: 0,
+      score: 0,
+      players: [],
+    };
+    entry.games++;
+    entry.score += row.score;
+    for (const name of [row.first, row.second].map((n) => n.trim()))
+      if (name && !entry.players.includes(name)) entry.players.push(name);
+    map.set(key, entry);
+  }
+  return [...map.values()].sort(
+    (a, b) => b.score - a.score || a.org.localeCompare(b.org, "tr"),
+  );
+}
+
+/** CSV of cooperative totals, official first, then free play. */
+export function totalsCsv(list: RemoteResult[]): string {
+  const cell = (v: string | number) =>
+    '"' +
+    String(v)
+      .replace(/^[=+@\-\t\r]/, "'$&")
+      .replaceAll('"', '""') +
+    '"';
+  const rows: (string | number)[][] = [
+    ["Tür", "Sıra", "Kooperatif", "Oyun sayısı", "Toplam puan", "Oyuncular"],
+  ];
+  for (const mode of ["official", "practice"] as const)
+    byCooperative(
+      list.filter((x) => x.mode === mode && x.rulesVersion === 1),
+    ).forEach((c, i) =>
+      rows.push([
+        mode === "official" ? "Resmî" : "Serbest",
+        i + 1,
+        c.org,
+        c.games,
+        c.score,
+        c.players.join(", "),
+      ]),
+    );
+  return "\uFEFF" + rows.map((row) => row.map(cell).join(";")).join("\r\n");
+}

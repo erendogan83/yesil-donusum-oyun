@@ -66,6 +66,7 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
   // Idempotent: a retried submission reports what was stored the first time.
   if (existing) return json({ ok: true, mode: existing.mode, duplicate: true });
   let mode = row.mode;
+  // Only listed cooperatives can compete officially.
   if (
     mode === "official" &&
     !(await knownOrganization(e, request, row.organization))
@@ -90,14 +91,7 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
         row.completedAt,
       )
       .run();
-  try {
-    await insert(mode);
-  } catch (err) {
-    // One official result per institution: a second one is stored as practice.
-    if (mode === "official" && /UNIQUE/i.test(String(err))) mode = "practice";
-    else throw err;
-    await insert(mode);
-  }
+  await insert(mode);
   return json({ ok: true, mode, downgraded: mode !== row.mode }, 201);
 };
 

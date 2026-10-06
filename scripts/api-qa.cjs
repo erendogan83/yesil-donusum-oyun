@@ -60,11 +60,20 @@ const auth = { Authorization: `Bearer ${encodeURIComponent(token)}` };
   r = await post(result("game-0001-aaaa"));
   assert.equal((await r.json()).duplicate, true);
 
-  // Second official result for the same institution is downgraded to practice.
+  // Several teams of one cooperative may each have an official result.
   r = await post(result("game-0002-bbbb", { score: 1700 }));
   let body = await r.json();
-  assert.equal(body.mode, "practice");
-  assert.equal(body.downgraded, true);
+  assert.equal(body.mode, "official");
+  assert.equal(body.downgraded, false);
+
+  // A single player: empty or missing second name is accepted.
+  assert.equal(
+    (await post(result("game-0006-ffff", { second: "" }))).status,
+    201,
+  );
+  const solo = result("game-0007-gggg");
+  delete solo.second;
+  assert.equal((await post(solo)).status, 201);
 
   // Another institution, an unknown institution (downgraded) and free play.
   assert.equal(
@@ -129,14 +138,15 @@ const auth = { Authorization: `Bearer ${encodeURIComponent(token)}` };
 
   // Leaderboard is ranked and public.
   const list = (await (await fetch(`${base}/api/results`)).json()).results;
-  assert(list.length === 45, `got ${list.length}`);
+  assert(list.length === 47, `got ${list.length}`);
   for (let i = 1; i < list.length; i++)
     assert(list[i - 1].score >= list[i].score);
-  const officials = list.filter((x) => x.mode === "official");
-  assert.equal(
-    new Set(officials.map((x) => x.organization)).size,
-    officials.length,
-    "one official per institution",
+  const first = list.filter(
+    (x) => x.organization === orgs[0] && x.mode === "official",
+  );
+  assert(
+    first.length >= 4,
+    "the same cooperative keeps all its official results",
   );
 
   // Admin check, single delete, bulk practice delete.

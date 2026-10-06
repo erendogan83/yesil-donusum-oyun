@@ -44,7 +44,9 @@ export async function ensureSchema(db: D1) {
   if (ready) return;
   for (const sql of [
     "CREATE TABLE IF NOT EXISTS results (id TEXT PRIMARY KEY, organization TEXT NOT NULL, first_name TEXT NOT NULL, second_name TEXT NOT NULL, mode TEXT NOT NULL CHECK (mode IN ('official','practice')), score INTEGER NOT NULL, bill REAL NOT NULL, budget REAL NOT NULL, saving_percent REAL NOT NULL, rules_version INTEGER NOT NULL, completed_at TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)",
-    "CREATE UNIQUE INDEX IF NOT EXISTS ux_official_org ON results(organization) WHERE mode = 'official'",
+    // Older deployments limited each cooperative to one official result.
+    "DROP INDEX IF EXISTS ux_official_org",
+    "CREATE INDEX IF NOT EXISTS ix_results_org ON results(organization)",
     "CREATE INDEX IF NOT EXISTS ix_results_rank ON results(mode, score DESC)",
   ])
     await db.prepare(sql).run();
@@ -66,7 +68,13 @@ export function parseResult(body: unknown): ResultRow | string {
     typeof b.id === "string" && /^[\w-]{8,64}$/.test(b.id) ? b.id : null;
   const organization = text(b.organization, 180);
   const first = text(b.first, 80);
-  const second = text(b.second, 80);
+  // A single player is fine: the second name may be empty.
+  const second =
+    b.second === undefined || b.second === ""
+      ? ""
+      : typeof b.second === "string" && b.second.trim().length <= 80
+        ? b.second.trim()
+        : null;
   const mode = b.mode === "official" || b.mode === "practice" ? b.mode : null;
   const score = num(b.score, 0, 2000);
   const bill = num(b.bill, 0, 1_000_000);
@@ -82,7 +90,7 @@ export function parseResult(body: unknown): ResultRow | string {
     !id ||
     !organization ||
     !first ||
-    !second ||
+    second === null ||
     !mode ||
     score === null ||
     !Number.isInteger(score) ||

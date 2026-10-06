@@ -136,8 +136,8 @@ export function start(
     first: team.first.trim(),
     second: team.second.trim(),
   };
-  if (!clean.organization || !clean.first || !clean.second)
-    throw Error("Kooperatifi ve iki katılımcının adını da yazın.");
+  if (!clean.organization || !clean.first)
+    throw Error("Kooperatifi ve en az bir katılımcının adını yazın.");
   if (Object.values(clean).some((x) => x.length > 180))
     throw Error("İsimleri 180 karakterden kısa yazın.");
   if (clean.mode === "official") {
@@ -146,10 +146,6 @@ export function start(
       !organizations.includes(clean.organization)
     )
       throw Error("Resmî oyun için doğrulanmış kurum listesinden seçim yapın.");
-    if (results.some((r) => r.team.organization === clean.organization))
-      throw Error(
-        "Bu kurumun tamamlanmış bir yarışma sonucu var. Serbest denemeyi seçin.",
-      );
   }
   return {
     version: 2,
@@ -178,8 +174,12 @@ export function start(
 }
 function playable(s: State) {
   if (s.version !== 2) throw Error("Önce eski kaydı güncel biçime dönüştürün.");
-  if (!s.team.first.trim() || !s.team.second.trim())
-    throw Error("Kooperatifi ve iki katılımcının adını da yazın.");
+  // New games may have a single player; only old saves must be completed.
+  if (
+    !s.team.first.trim() ||
+    (s.decisionVersion === undefined && !s.team.second.trim())
+  )
+    throw Error("Kooperatifi ve katılımcıların adını yazın.");
   if (s.phase !== "playing") throw Error("Önce dönem ekranını tamamlayın.");
 }
 export function purchase(s: State, id: string): State {
@@ -363,8 +363,6 @@ export function finish(db: Database): Database {
   const s = db.active;
   if (s.team.mode === "practice" || db.results.some((r) => r.id === s.id))
     return db;
-  if (db.results.some((r) => r.team.organization === s.team.organization))
-    throw Error("Bu kurum için sonuç zaten kaydedilmiş.");
   return {
     ...db,
     results: [
@@ -458,10 +456,8 @@ export function validDatabase(value: unknown): value is Database {
     )
   )
     return false;
-  if (
-    new Set(d.results.map((r) => r.id)).size !== d.results.length ||
-    new Set(d.results.map((r) => r.team.organization)).size !== d.results.length
-  )
+  // Several teams of one cooperative may each have an official result.
+  if (new Set(d.results.map((r) => r.id)).size !== d.results.length)
     return false;
   const s = d.active;
   if (s === null) return true;

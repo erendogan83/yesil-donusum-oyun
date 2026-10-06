@@ -13,5 +13,5 @@ CREATE TABLE IF NOT EXISTS results (
   completed_at TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-CREATE UNIQUE INDEX IF NOT EXISTS ux_official_org ON results(organization) WHERE mode = 'official';
+CREATE INDEX IF NOT EXISTS ix_results_org ON results(organization);
 CREATE INDEX IF NOT EXISTS ix_results_rank ON results(mode, score DESC);

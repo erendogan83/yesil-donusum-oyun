@@ -32,11 +32,11 @@ const token = process.env.ADMIN_TOKEN || "secret123";
   const api = (path) =>
     page.evaluate(async (p) => (await fetch(p)).json(), path);
   const status = () => page.locator(".submit-status").innerText();
-  const start = async (org) => {
+  const start = async (org, second = "Nisa") => {
     await click("new");
     await page.locator("#organization").fill(org);
     await page.locator("#first").fill("Ayşe");
-    await page.locator("#second").fill("Nisa");
+    if (second) await page.locator("#second").fill(second);
     await page.locator('[type="submit"]').click();
     await click("tutorial-done");
   };
@@ -85,7 +85,8 @@ const token = process.env.ADMIN_TOKEN || "secret123";
 
   // Offline finish: the result waits, then the retry button sends it.
   await page.goto(base);
-  await start("Bitir QA 2");
+  // A single player: the second name is optional.
+  await start("Bitir QA 2", "");
   await context.setOffline(true);
   await click("help");
   await dialogClick("finish-now");
@@ -105,6 +106,11 @@ const token = process.env.ADMIN_TOKEN || "secret123";
     (r) => r.organization === "Bitir QA 2",
   );
   assert.equal(rows.length, 1);
+  assert.equal(
+    rows[0].second,
+    "",
+    "solo player is stored without a second name",
+  );
   assert.deepEqual(
     errors.filter((e) => !/Failed to fetch|net::/.test(e)),
     [],

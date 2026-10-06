@@ -37,6 +37,8 @@ const row = (i, over = {}) => ({
   });
   // 26 official teams plus 34 free-play teams = 60 results (120 players would be 60 teams).
   for (let i = 0; i < orgs.length; i++) await post(row(i));
+  // A second player of the first cooperative: totals must be added up (1000 + 50).
+  await post(row(200, { organization: orgs[0], score: 50, second: "" }));
   for (let i = 0; i < 34; i++)
     await post(
       row(100 + i, {
@@ -78,11 +80,15 @@ const row = (i, over = {}) => ({
     orgs.length - 3,
     "every official team beyond the podium is listed",
   );
+  const podium = await page.locator(".podium").innerText();
   assert(
-    (await page.locator(".podium").innerText()).includes(
-      new Intl.NumberFormat("tr-TR").format(1000 + orgs.length - 1),
-    ),
-    "top score first",
+    podium.includes(orgs[0]),
+    "cooperative name is shown, ranked first by its total",
+  );
+  assert(podium.includes("2 oyun"), podium);
+  assert(
+    podium.includes("1.050"),
+    "scores of one cooperative are added up: " + podium,
   );
   await click("board:practice");
   assert.equal(await page.locator(".ranks li").count(), 34 - 3);
@@ -113,15 +119,15 @@ const row = (i, over = {}) => ({
   await page.screenshot({ path: "qa/main-revision/board-admin.png" });
   const total = async () =>
     (await (await fetch(`${base}/api/results`)).json()).results.length;
-  assert.equal(await total(), 60);
+  assert.equal(await total(), 61);
   await page.locator('[data-action^="rdelete:"]').first().click();
   await click(
     `rdelete-confirm:${(await page.locator('[data-action^="rdelete-confirm:"]').getAttribute("data-action")).split(":")[1]}`,
   );
   await page.waitForFunction(() =>
-    document.querySelector(".admin-remote h3")?.textContent.includes("59"),
+    document.querySelector(".admin-remote h3")?.textContent.includes("60"),
   );
-  assert.equal(await total(), 59);
+  assert.equal(await total(), 60);
   await click("rbulk:practice");
   await click("rbulk-confirm:practice");
   await page.waitForFunction(() =>

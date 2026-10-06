@@ -4,6 +4,8 @@ import { defineConfig } from "vite";
 export default defineConfig({
   base: "./",
   build: {
+    // Safari 13+ (iOS 13+): syntax is lowered; runtime gaps are filled by src/compat.ts.
+    target: ["es2019", "safari13", "chrome80", "firefox78"],
     chunkSizeWarningLimit: 1600,
     rollupOptions: {
       output: {

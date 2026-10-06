@@ -1,3 +1,4 @@
+import "./compat";
 import { marketPrice, priceLabel, existingFixture } from "./data/market-prices";
 import { acknowledgeSales } from "./model";
 import { FINAL_SALES_INCOME } from "./economy";
@@ -34,7 +35,8 @@ import { discover, consider, setPledges, migrateDatabase } from "./model";
 import { cueSound } from "./sound";
 import {
   fetchResults,
-  remoteRanking,
+  byCooperative,
+  totalsCsv,
   submitResult,
   flushOutbox,
   pendingCount,
@@ -624,7 +626,7 @@ function startScreen() {
   return `<section class="title-screen"><div class="eyebrow">BİRLİKTE ÜRET • BİRLİKTE DÖNÜŞTÜR</div><h1>YEŞİL<br/><span>DÖNÜŞÜM</span></h1><p>Bütçeni yönet.<br/>Doğru seçimleri yap.<br/>Aylık gideri düşür.</p>${db.active && db.active.phase !== "finished" ? `<p class="subtle">Yarım kalan oyununuz var.</p>${btn("DEVAM ET", "resume", "primary")}` : btn("OYUNA BAŞLA", "new", "primary")}${db.active && db.active.phase !== "finished" ? btn("Yeni oyun", "new", "ghost", 'style="margin-top:12px"') : ""}<div class="seal"><small>BİR YERLEŞKE</small><b>4</b><small>DÖNEM • BİRLİKTE</small></div><footer class="start-footer"><span>Bir kooperatif. İki oyuncu. Birlikte değişen bir gelecek.</span>${btn("Liderlik tablosu ↗", "leaderboard", "ghost")}</footer></section>`;
 }
 function registration() {
-  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Bu dönüşüm<br/>sizinle başlıyor.</h2><p class="muted">Birlikte düşünün, birlikte karar verin.</p><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""} ${organizations.length > 0 ? "" : "disabled"}/> Resmî yarışma</label></fieldset>${organizations.length === 0 ? '<p class="subtle">Resmî yarışma kurum listesi yüklendiğinde açılır.</p>' : ""}<label class="field"><span>Kooperatif / Kurum</span><div class="search-row"><input id="organization" name="organization" list="organizations" autocomplete="organization" maxlength="180" placeholder="Kurum adını yazın veya arayın" aria-describedby="form-error"/><button type="button" data-action="clear-org" aria-label="Kurum aramasını temizle">×</button></div><datalist id="organizations">${organizations.map((o) => `<option value="${esc(o)}"></option>`).join("")}</datalist></label><label class="field" for="first"><span>1. Katılımcı</span><input id="first" name="first" required autocomplete="given-name" maxlength="80" aria-describedby="form-error"/></label><label class="field" for="second"><span>2. Katılımcı</span><input id="second" name="second" autocomplete="off" maxlength="80" aria-describedby="form-error" required/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BİRLİKTE BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Deneme sonuçları liderlik tablosuna eklenmez.<br/>Serbest deneme sonuçları liderlik tablosunun "Serbest" sekmesinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Bu dönüşüm<br/>sizinle başlıyor.</h2><p class="muted">Birlikte düşünün, birlikte karar verin.</p><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""} ${organizations.length > 0 ? "" : "disabled"}/> Resmî yarışma</label></fieldset>${organizations.length === 0 ? '<p class="subtle">Resmî yarışma kurum listesi yüklendiğinde açılır.</p>' : ""}<label class="field"><span>Kooperatif / Kurum</span><div class="search-row"><input id="organization" name="organization" list="organizations" autocomplete="organization" maxlength="180" placeholder="Kurum adını yazın veya arayın" aria-describedby="form-error"/><button type="button" data-action="clear-org" aria-label="Kurum aramasını temizle">×</button></div><datalist id="organizations">${organizations.map((o) => `<option value="${esc(o)}"></option>`).join("")}</datalist></label><label class="field" for="first"><span>1. Katılımcı</span><input id="first" name="first" required autocomplete="given-name" maxlength="80" aria-describedby="form-error"/></label><label class="field" for="second"><span>2. Katılımcı (isteğe bağlı)</span><input id="second" name="second" autocomplete="off" maxlength="80" aria-describedby="form-error"/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BİRLİKTE BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Deneme sonuçları liderlik tablosuna eklenmez.<br/>Serbest deneme sonuçları liderlik tablosunun "Serbest" sekmesinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
 }
 function mapScreen() {
   const s = db.active!;
@@ -735,27 +737,40 @@ function boardMarkup(rows: BoardRow[]) {
     )
     .join("")}</ol>`;
 }
+function coopRows(
+  rows: {
+    organization: string;
+    first: string;
+    second: string;
+    score: number;
+  }[],
+): BoardRow[] {
+  return byCooperative(rows).map((c) => ({
+    org: c.org,
+    names: `${c.games} oyun · ${c.players.slice(0, 4).join(", ")}${c.players.length > 4 ? ` +${c.players.length - 4}` : ""}`,
+    score: c.score,
+  }));
+}
 function leaderboard() {
   const live = remote !== null;
-  const names = (a: string, b: string) => [a, b].filter(Boolean).join(" & ");
-  const official: BoardRow[] = live
-    ? remoteRanking(remote!, "official").map((r) => ({
-        org: r.organization,
-        names: names(r.first, r.second),
-        score: r.score,
-      }))
-    : ranking(db.results.filter((r) => r.rulesVersion === 1)).map((r) => ({
-        org: r.team.organization,
-        names: names(r.team.first, r.team.second),
-        score: r.score,
-      }));
-  const practice: BoardRow[] = live
-    ? remoteRanking(remote!, "practice").map((r) => ({
-        org: r.organization,
-        names: names(r.first, r.second),
-        score: r.score,
-      }))
-    : [];
+  // Every player of a cooperative adds to the cooperative's total.
+  const official = coopRows(
+    live
+      ? remote!.filter((r) => r.mode === "official" && r.rulesVersion === 1)
+      : db.results
+          .filter((r) => r.rulesVersion === 1)
+          .map((r) => ({
+            organization: r.team.organization,
+            first: r.team.first,
+            second: r.team.second,
+            score: r.score,
+          })),
+  );
+  const practice = coopRows(
+    live
+      ? remote!.filter((r) => r.mode === "practice" && r.rulesVersion === 1)
+      : [],
+  );
   const tab = (id: "official" | "practice", label: string, n: number) =>
     btn(
       `${label} (${n})`,
@@ -763,7 +778,7 @@ function leaderboard() {
       `ghost board-tab ${boardMode === id ? "active" : ""}`,
       `role="tab" aria-selected="${boardMode === id}"`,
     );
-  return `<section class="leaderboard"><div class="center"><p class="eyebrow">BİRLİKTE BÜYÜYEN BAŞARI</p><h2>Dönüşümün öncüleri</h2><p class="muted">${live ? "Tüm cihazlardan gelen sonuçlar · kendiliğinden güncellenir" : "Ortak tabloya ulaşılamadı; bu cihazdaki resmî sonuçlar gösteriliyor"} · Toplam karar puanına göre sıralanır</p><div class="board-tabs" role="tablist">${tab("official", "Resmî", official.length)}${tab("practice", "Serbest", practice.length)}</div></div>${boardMarkup(boardMode === "official" ? official : practice)}<div class="row" style="justify-content:center;margin-top:25px">${btn("← Açılışa dön", "start", "ghost")}${db.active?.phase === "finished" ? btn("Sonucuma dön", "final", "primary") : ""}</div></section>`;
+  return `<section class="leaderboard"><div class="center"><p class="eyebrow">BİRLİKTE BÜYÜYEN BAŞARI</p><h2>Kooperatifler sıralaması</h2><p class="muted">Aynı kooperatifin oyuncularının puanları toplanır · ${live ? "Tüm cihazlardan gelen sonuçlar, kendiliğinden güncellenir" : "Ortak tabloya ulaşılamadı; bu cihazdaki resmî sonuçlar gösteriliyor"}</p><div class="board-tabs" role="tablist">${tab("official", "Resmî", official.length)}${tab("practice", "Serbest", practice.length)}</div></div>${boardMarkup(boardMode === "official" ? official : practice)}<div class="row" style="justify-content:center;margin-top:25px">${btn("← Açılışa dön", "start", "ghost")}${db.active?.phase === "finished" ? btn("Sonucuma dön", "final", "primary") : ""}</div></section>`;
 }
 function adminRemote() {
   const pending = pendingCount();
@@ -778,12 +793,12 @@ function adminRemote() {
   const login = adminAuthed
     ? `<p class="subtle">Yönetim anahtarı doğrulandı: silme açık.</p><div class="row">${btn("Serbest denemeleri sil", "rbulk:practice", "danger")}${btn("Tüm sunucu kayıtlarını sil", "rbulk:all", "danger")}${btn("Çıkış", "admin-logout", "ghost")}</div>`
     : `<label class="field"><span>Yönetim anahtarı (silmek için)</span><input type="password" id="admin-token" autocomplete="off" aria-describedby="admin-login-hint"/></label><div class="row">${btn("Giriş", "admin-login", "primary")}${btn("Göster / gizle", "admin-reveal", "ghost")}</div><p class="subtle" id="admin-login-hint">Anahtar Cloudflare'de ADMIN_TOKEN olarak tanımlanır.</p>`;
-  return `<div class="admin-remote"><h3>Ortak liderlik tablosu · ${remote.length} kayıt</h3><p class="subtle">Resmî: ${remote.filter((r) => r.mode === "official").length} · Serbest: ${remote.filter((r) => r.mode === "practice").length} · Bu cihazda bekleyen: ${pending}</p>${login}<div class="row">${btn("CSV indir (tüm cihazlar)", "csv-remote", "primary")}${btn("Bu cihazdaki sonuçları sunucuya gönder", "push-local", "ghost")}${btn("Yenile", "admin-refresh", "ghost")}</div><div class="results">${
+  return `<div class="admin-remote"><h3>Ortak liderlik tablosu · ${remote.length} kayıt</h3><p class="subtle">Resmî: ${remote.filter((r) => r.mode === "official").length} · Serbest: ${remote.filter((r) => r.mode === "practice").length} · Bu cihazda bekleyen: ${pending}</p>${login}<div class="row">${btn("CSV indir (tüm cihazlar)", "csv-remote", "primary")}${btn("CSV: kooperatif toplamları", "csv-totals", "primary")}${btn("Bu cihazdaki sonuçları sunucuya gönder", "push-local", "ghost")}${btn("Yenile", "admin-refresh", "ghost")}</div><div class="results">${
     rows
       .slice(remotePage * perPage, (remotePage + 1) * perPage)
       .map(
         (r) =>
-          `<article><div class="row spread"><strong>${esc(r.organization)}</strong><span>${r.mode === "official" ? "Resmî" : "Serbest"} · ${fmt(r.score)} puan</span></div><p>${esc([r.first, r.second].join(" & "))}</p><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${adminAuthed ? btn("Bu sonucu sil", `rdelete:${r.id}`, "danger") : ""}</article>`,
+          `<article><div class="row spread"><strong>${esc(r.organization)}</strong><span>${r.mode === "official" ? "Resmî" : "Serbest"} · ${fmt(r.score)} puan</span></div><p>${esc([r.first, r.second].filter(Boolean).join(" & "))}</p><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${adminAuthed ? btn("Bu sonucu sil", `rdelete:${r.id}`, "danger") : ""}</article>`,
       )
       .join("") || "<p>Henüz kayıt yok.</p>"
   }</div><div class="row">${btn("← Önceki", "rpage:-1", "ghost", remotePage === 0 ? "disabled" : "")}<span>Sayfa ${remotePage + 1} / ${pages}</span>${btn("Sonraki →", "rpage:1", "ghost", remotePage + 1 >= pages ? "disabled" : "")}</div></div>`;
@@ -800,7 +815,7 @@ function admin() {
       .slice(adminPage * perPage, (adminPage + 1) * perPage)
       .map(
         (r) =>
-          `<article><div class="row spread"><strong>${esc(r.team.organization)}</strong><span>%${fmt(r.savingPercent)} · ${fmt(r.score)} puan</span></div><p>${esc([r.team.first, r.team.second].filter(Boolean).join(" & "))}</p><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${btn("Hatalı sonucu sil / yarışma hakkını aç", `delete:${r.id}`, "danger")}</article>`,
+          `<article><div class="row spread"><strong>${esc(r.team.organization)}</strong><span>%${fmt(r.savingPercent)} · ${fmt(r.score)} puan</span></div><p>${esc([r.team.first, r.team.second].filter(Boolean).join(" & "))}</p><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${btn("Hatalı sonucu sil", `delete:${r.id}`, "danger")}</article>`,
       )
       .join("") || "<p>Henüz resmî sonuç yok.</p>"
   }</div><div class="row">${btn("← Önceki", "admin-page:-1", "ghost", adminPage === 0 ? "disabled" : "")}<span>Sayfa ${adminPage + 1} / ${Math.max(1, Math.ceil(all.length / perPage))}</span>${btn("Sonraki →", "admin-page:1", "ghost", (adminPage + 1) * perPage >= all.length ? "disabled" : "")}</div></section>`;
@@ -828,7 +843,8 @@ function render() {
   };
   document.querySelector<HTMLElement>("#stage")!.dataset.room =
     view === "room" ? db.active?.room : "";
-  document.title = `${names[view]} · Yeşil Dönüşüm`;
+  document.title =
+    view === "start" ? names.start : `${names[view]} · Yeşil Dönüşüm`;
   const stockIds = contextIds();
   world.show(view, db.active, category, 0, false, stockIds);
   ui.innerHTML = {
@@ -873,11 +889,6 @@ function animateMeters(before: State) {
     setTimeout(() => delta.remove(), 1900);
   }
 }
-// Official results from other devices also lock their institution.
-const remoteOfficialAsResults = () =>
-  (remote ?? [])
-    .filter((r) => r.mode === "official")
-    .map((r) => ({ team: { organization: r.organization } }) as Result);
 function attachForm() {
   const form = document.querySelector<HTMLFormElement>("#team-form")!;
   form.addEventListener("change", () => {
@@ -899,11 +910,7 @@ function attachForm() {
     button.disabled = true;
     try {
       const s: State = {
-        ...start(
-          team,
-          [...db.results, ...remoteOfficialAsResults()],
-          organizations,
-        ),
+        ...start(team, db.results, organizations),
         decisionVersion: 1,
         decisions: [],
         sorting: {},
@@ -917,13 +924,10 @@ function attachForm() {
       for (const field of ["organization", "first", "second"]) {
         const input = form.elements.namedItem(field) as HTMLInputElement;
         const invalid =
-          !input.value.trim() ||
+          (field !== "second" && !input.value.trim()) ||
           (field === "organization" &&
             team.mode === "official" &&
-            (!organizations.includes(input.value.trim()) ||
-              [...db.results, ...remoteOfficialAsResults()].some(
-                (r) => r.team.organization === input.value.trim(),
-              )));
+            !organizations.includes(input.value.trim()));
         input.setAttribute("aria-invalid", String(invalid));
         if (invalid && !firstInvalid) firstInvalid = input;
       }
@@ -1172,7 +1176,11 @@ async function action(action: string) {
       switchView("registration");
       break;
     case "resume":
-      if (!db.active?.team.second.trim()) {
+      if (
+        db.active &&
+        db.active.decisionVersion === undefined &&
+        !db.active.team.second.trim()
+      ) {
         completeTeam();
         break;
       }
@@ -1637,6 +1645,17 @@ async function action(action: string) {
       );
       break;
     }
+    case "csv-totals":
+      if (!remote) {
+        announce("Sunucuya ulaşılamadı.", true);
+        break;
+      }
+      download(
+        "yesil-donusum-kooperatif-toplamlari.csv",
+        totalsCsv(remote),
+        "text/csv;charset=utf-8",
+      );
+      break;
     case "csv-remote":
       if (!remote) {
         announce("Sunucuya ulaşılamadı.", true);

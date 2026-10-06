@@ -111,7 +111,9 @@ const out = "qa/main-revision";
   await click("pledges-save");
   await click("leaderboard");
   assert(
-    (await page.locator(".podium").innerText()).includes("QA Deniz & QA Ece"),
+    (await page.locator(".podium").innerText()).includes(
+      "1 oyun · QA Deniz, QA Ece",
+    ),
   );
   await page.screenshot({ path: `${out}/official-leaderboard.png` });
   await page.goto(base + "/#admin");

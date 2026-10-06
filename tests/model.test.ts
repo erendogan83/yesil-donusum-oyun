@@ -39,6 +39,7 @@ test("starts at 10000 bill / 2500 budget and retains both participant names", ()
 });
 test("registration rejects blanks and unknown official organizations", () => {
   assert.throws(() => start({ ...team, first: " " }, [], []));
+  assert.throws(() => start({ ...team, organization: " " }, [], []));
   assert.throws(() => start({ ...team, mode: "official" }, [], orgs));
   assert.throws(() =>
     start({ ...team, mode: "official", organization: orgs[0] }, [], []),
@@ -124,7 +125,7 @@ test("all four rounds complete, final score deterministic, practice excluded", (
   const db = finish({ ...emptyDatabase(), active: s });
   assert.equal(db.results.length, 0);
 });
-test("official result is idempotent, ranked by saving and locks institution", () => {
+test("official result is idempotent, ranked by saving; a cooperative may have several results", () => {
   let s = start({ ...team, organization: orgs[0], mode: "official" }, [], orgs);
   s = put(s, "tap-a");
   for (let i = 0; i < 4; i++) s = continueRound(endRound(s));
@@ -133,11 +134,22 @@ test("official result is idempotent, ranked by saving and locks institution", ()
   assert.equal(finish(db).results.length, 1);
   assert.equal(db.results[0].team.second, "Ayşe");
   assert.equal(db.results[0].savingPercent, 1.8);
-  assert.throws(() => start(s.team, db.results, orgs));
+  // The same cooperative can field another team; practice is always possible.
+  assert.equal(start(s.team, db.results, orgs).bill, 10000);
   assert.equal(
     start({ ...s.team, mode: "practice" }, db.results, orgs).bill,
     10000,
   );
+  const second = finish({
+    ...db,
+    active: {
+      ...s,
+      id: "second-team",
+      team: { ...s.team, first: "Mehmet", second: "" },
+    },
+  });
+  assert.equal(second.results.length, 2);
+  assert(validDatabase(second), "two results of one cooperative are valid");
   const r = db.results[0];
   assert.equal(
     ranking([{ ...r, id: "low", savingPercent: 1, score: 99999 }, r])[0].id,
@@ -212,16 +224,13 @@ test("period reward only uses new savings and caps at 500", () => {
   assert.equal(endRound({ ...fresh(), bill: 6000 }).history[0].reward, 500);
 });
 
-test("both participants are mandatory, including whitespace names", () => {
-  for (const names of [
-    { first: "", second: "Ayşe" },
-    { first: "Nisa", second: "" },
-    { first: "Nisa", second: "  " },
-  ])
+test("the first participant is mandatory; the second is optional and trimmed", () => {
+  for (const names of [{ first: "" }, { first: "  " }])
     assert.throws(
       () => start({ ...team, ...names }, [], []),
-      /Kooperatifi ve iki katılımcının adını da yazın/,
+      /en az bir katılımcının adını yazın/,
     );
+  assert.equal(start({ ...team, second: "  " }, [], []).team.second, "");
   assert.equal(
     start({ ...team, second: " Ayşe " }, [], []).team.second,
     "Ayşe",
