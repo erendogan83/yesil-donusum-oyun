@@ -92,6 +92,14 @@ const row = (i, over = {}) => ({
   await page.goto(`${base}/#admin`);
   await page.locator(".admin-remote").waitFor();
   assert.equal(await page.locator('[data-action^="rdelete:"]').count(), 0);
+  // The field can be revealed so a pasted key can be checked.
+  await click("admin-reveal");
+  assert.equal(await page.locator("#admin-token").getAttribute("type"), "text");
+  await click("admin-reveal");
+  assert.equal(
+    await page.locator("#admin-token").getAttribute("type"),
+    "password",
+  );
   await page.locator("#admin-token").fill("wrong");
   await click("admin-login");
   assert.equal(

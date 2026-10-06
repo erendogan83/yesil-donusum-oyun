@@ -777,7 +777,7 @@ function adminRemote() {
   remotePage = Math.max(0, Math.min(remotePage, pages - 1));
   const login = adminAuthed
     ? `<p class="subtle">Yönetim anahtarı doğrulandı: silme açık.</p><div class="row">${btn("Serbest denemeleri sil", "rbulk:practice", "danger")}${btn("Tüm sunucu kayıtlarını sil", "rbulk:all", "danger")}${btn("Çıkış", "admin-logout", "ghost")}</div>`
-    : `<label class="field"><span>Yönetim anahtarı (silmek için)</span><input type="password" id="admin-token" autocomplete="off" aria-describedby="admin-login-hint"/></label><div class="row">${btn("Giriş", "admin-login", "primary")}</div><p class="subtle" id="admin-login-hint">Anahtar Cloudflare'de ADMIN_TOKEN olarak tanımlanır.</p>`;
+    : `<label class="field"><span>Yönetim anahtarı (silmek için)</span><input type="password" id="admin-token" autocomplete="off" aria-describedby="admin-login-hint"/></label><div class="row">${btn("Giriş", "admin-login", "primary")}${btn("Göster / gizle", "admin-reveal", "ghost")}</div><p class="subtle" id="admin-login-hint">Anahtar Cloudflare'de ADMIN_TOKEN olarak tanımlanır.</p>`;
   return `<div class="admin-remote"><h3>Ortak liderlik tablosu · ${remote.length} kayıt</h3><p class="subtle">Resmî: ${remote.filter((r) => r.mode === "official").length} · Serbest: ${remote.filter((r) => r.mode === "practice").length} · Bu cihazda bekleyen: ${pending}</p>${login}<div class="row">${btn("CSV indir (tüm cihazlar)", "csv-remote", "primary")}${btn("Bu cihazdaki sonuçları sunucuya gönder", "push-local", "ghost")}${btn("Yenile", "admin-refresh", "ghost")}</div><div class="results">${
     rows
       .slice(remotePage * perPage, (remotePage + 1) * perPage)
@@ -1553,6 +1553,11 @@ async function action(action: string) {
       storeToken(token);
       render();
       announce("Yönetim anahtarı doğrulandı.");
+      break;
+    }
+    case "admin-reveal": {
+      const input = document.querySelector<HTMLInputElement>("#admin-token");
+      if (input) input.type = input.type === "password" ? "text" : "password";
       break;
     }
     case "admin-logout":
