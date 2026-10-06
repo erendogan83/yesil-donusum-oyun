@@ -44,6 +44,7 @@ import {
   storedToken,
   storeToken,
   type RemoteResult,
+  type SubmitStatus,
 } from "./remote";
 let marketContext: { room: RoomId; zone: string } | null = null;
 let goalFlash: string[] = [],
@@ -107,6 +108,7 @@ import {
   endRound,
   continueRound,
   finish,
+  finishNow,
   score,
   savingPercent,
   ranking,
@@ -190,9 +192,27 @@ const toRemote = (
   rulesVersion: 1,
   completedAt: local?.completedAt ?? new Date().toISOString(),
 });
+// What happened to this game's result on its way to the shared board.
+let submitInfo: SubmitStatus | "sending" | "" = "";
+const submitText = (s: State): string =>
+  ({
+    "": "",
+    sending: "Sonuç gönderiliyor…",
+    sent:
+      s.team.mode === "official"
+        ? "✓ Sonuç liderlik tablosuna kaydedildi."
+        : "✓ Sonuç liderlik tablosunun Serbest sekmesine kaydedildi.",
+    downgraded:
+      "✓ Kaydedildi. Bu kurum için resmî sonuç zaten vardı; sonucunuz serbest deneme olarak yer aldı.",
+    queued: "Sonuç bu cihazda bekliyor; bağlantı gelince otomatik gönderilir.",
+    unavailable:
+      "Ortak tabloya ulaşılamadı. Sonuç bu cihazda kayıtlı; tekrar deneyebilirsiniz.",
+  })[submitInfo];
 async function submitFinished() {
   const s = db.active;
   if (!s || s.phase !== "finished" || s.decisionVersion !== 1) return;
+  submitInfo = "sending";
+  if (view === "final" && finalStep === "result") render();
   const status = await submitResult(
     toRemote(
       s,
@@ -214,6 +234,8 @@ async function submitFinished() {
       "Sonuç bu cihazda bekliyor; bağlantı gelince otomatik gönderilir.",
       true,
     );
+  submitInfo = status;
+  if (view === "final" && finalStep === "result") render();
   void refreshRemote();
 }
 window.addEventListener("online", () => void flushOutbox());
@@ -468,6 +490,7 @@ function switchView(v: View) {
   clearTimeout(toastTimer);
   status.className = "";
   view = v;
+  window.dispatchEvent(new Event("yesil-view-change"));
   clearInterval(boardTimer);
   if (v === "leaderboard" || v === "admin" || v === "registration") {
     void refreshRemote();
@@ -684,7 +707,7 @@ function finalScreen() {
       )}</div><p id="pledge-count" role="status">${pledgeDraft.length} / 3 seçildi</p><div class="row">${btn("Sonucumuza dön", "final-result", "ghost")}${btn("3 YEŞİL HAMLEMİZİ KAYDET", "pledges-save", "gold", pledgeDraft.length === 3 ? "" : "disabled")}</div><p class="subtle">Bu seçimler yarışma skorunu ve sıralamayı değiştirmez.</p></section>`;
   if (finalStep === "card" && s.realLifePledges)
     return `<section class="summary-screen pledge-finale"><div class="pledge-keepsake"><p class="eyebrow">BİZİM 3 YEŞİL HAMLEMİZ</p><h2>${esc(s.team.organization)}</h2><p class="team-signature">${names}</p><ol>${s.realLifePledges.map((p) => `<li>${esc(p)}</li>`).join("")}</ol><p class="closing-line">Küçük başlayın. Birlikte sürdürün.</p></div><div class="row">${btn("LİDERLİK TABLOSUNU GÖR", "leaderboard", "gold")}${btn("Seçimlerimizi değiştir", "pledges", "ghost")}${btn("Sonucumuz", "final-result", "ghost")}</div></section>`;
-  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${esc(s.team.organization)}</h2><p class="final-names">${names}</p><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div><p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Resmî sonuç liderlik tablosuna gönderildi."}</p><p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
+  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${esc(s.team.organization)}</h2><p class="final-names">${names}</p><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div>${s.decisionVersion === 1 ? `<p class="submit-status" role="status">${esc(submitText(s)) || "Sonuç henüz liderlik tablosuna gönderilmedi."}</p>${submitInfo === "sending" || submitInfo === "sent" || submitInfo === "downgraded" ? "" : btn(submitInfo === "" ? "SONUCU LİDERLİK TABLOSUNA GÖNDER" : "TEKRAR GÖNDER", "resubmit", "ghost")}` : ""}<p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Resmî sonuç liderlik tablosuna gönderildi."}</p><p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
 }
 interface BoardRow {
   org: string;
@@ -1165,7 +1188,7 @@ async function action(action: string) {
       break;
     case "help":
       showModal(
-        `<h2 id="dialog-title">Birlikte, adım adım.</h2><p>Soruna bak, bir çözüm seç, yerine koy.</p><p>Oyun kendiliğinden kaydolur.</p>${btn("ANLADIM", "close", "primary")}<div class="secondary-tools">${btn("Başka odaya geç", "map", "ghost")}${btn("Mola ver", "pause", "ghost")}${btn("Tutarlar hakkında", "money-info", "ghost")}</div>`,
+        `<h2 id="dialog-title">Birlikte, adım adım.</h2><p>Soruna bak, bir çözüm seç, yerine koy.</p><p>Oyun kendiliğinden kaydolur.</p>${btn("ANLADIM", "close", "primary")}<div class="secondary-tools">${btn("Başka odaya geç", "map", "ghost")}${btn("Mola ver", "pause", "ghost")}${btn("Tutarlar hakkında", "money-info", "ghost")}${db.active && db.active.phase !== "finished" && db.active.decisionVersion === 1 ? btn("Oyunu bitir ve kaydet", "finish-now", "ghost") : ""}</div>`,
       );
       break;
     case "pause":
@@ -1443,7 +1466,10 @@ async function action(action: string) {
       switchView(stateView());
       cueSound(db.active!.phase === "finished" ? "final" : "goal");
       animateResult();
-      if (db.active!.phase === "finished") void submitFinished();
+      if (db.active!.phase === "finished") {
+        submitInfo = "";
+        void submitFinished();
+      }
       break;
     case "leaderboard":
       switchView("leaderboard");
@@ -1471,6 +1497,27 @@ async function action(action: string) {
         localStorage.getItem(STORAGE_KEY) ?? "",
         "text/plain",
       );
+      break;
+    case "finish-now":
+      confirmAction(
+        "Oyunu şimdi bitirelim mi?",
+        "Kalan bölümler atlanır. Şimdiye kadar verdiğiniz kararların puanı hesaplanır ve liderlik tablosuna kaydedilir. Bu işlem geri alınamaz.",
+        "finish-now-confirm",
+        "BİTİR VE KAYDET",
+      );
+      break;
+    case "finish-now-confirm":
+      await transaction((d) => finish({ ...d, active: finishNow(d.active!) }));
+      finalStep = "result";
+      submitInfo = "";
+      closeModal();
+      switchView("final");
+      cueSound("final");
+      animateResult();
+      void submitFinished();
+      break;
+    case "resubmit":
+      await submitFinished();
       break;
     case "board":
       boardMode = arg === "practice" ? "practice" : "official";
@@ -1686,12 +1733,32 @@ window.addEventListener("keydown", (e) => {
   }
 });
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  // A tab left open keeps running the old code. When a new version takes over,
+  // reload as soon as nothing is in progress (saved games resume anyway).
+  const hadController = !!navigator.serviceWorker.controller;
+  let updateWaiting = false;
+  const idle = () =>
+    !dialog.open &&
+    !learningDialog.open &&
+    ["start", "leaderboard", "admin"].includes(view);
+  window.addEventListener("yesil-view-change", () => {
+    if (updateWaiting && idle()) location.reload();
+  });
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController) return; // First install: nothing stale to replace.
+    updateWaiting = true;
+    if (idle()) location.reload();
+  });
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("./sw.js", { updateViaCache: "none" })
       .then(async (registration) => {
         // Offline, update() rejects; that must not report a failed offline setup.
         await registration.update().catch(() => {});
+        // Look for a new version whenever the tab comes back to the front.
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) void registration.update().catch(() => {});
+        });
         return registration;
       })
       .then(() => navigator.serviceWorker.ready)

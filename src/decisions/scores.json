@@ -214,5 +214,9 @@
   "rev-led-strip": {
     "decisionScore": 0,
     "reason": "Opsiyonel yardımcı ışık; güç/kullanım karşılaştırması yok, çevresel puana dahil değil."
+  },
+  "rev-basin-bucket": {
+    "decisionScore": 0,
+    "reason": "Biriktirilen suyu yeniden kullanmak istediğin kadar kapasite seçersin."
   }
 }

@@ -470,5 +470,24 @@
       "height": 12,
       "alpha": 0.1
     }
+  },
+  "rev-basin-bucket": {
+    "sceneId": "bathroom",
+    "slotId": "basin_floor",
+    "x": 1105,
+    "y": 690,
+    "scale": 0.3,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 1105,
+      "y": 684,
+      "width": 130,
+      "height": 26,
+      "alpha": 0.12
+    }
   }
 }

@@ -415,6 +415,18 @@
       "referenceSource": "",
       "priceStatus": "estimate",
       "note": "TAHMİNİ FİYAT (simülasyon): fişli ve anahtarlı hazır set varsayımı. Doğrulanmış piyasa fiyatı değildir."
+    },
+    "rev-basin-bucket": {
+      "id": "rev-basin-bucket",
+      "displayName": "Kova",
+      "priceTL": 60,
+      "referencePriceTL": null,
+      "referenceDate": "2026-10-06",
+      "referenceProduct": "",
+      "referenceSpecification": "Plastik/metal ev tipi 10 L kova varsayımı",
+      "referenceSource": "",
+      "priceStatus": "estimate",
+      "note": "TAHMİNİ FİYAT (simülasyon): 10 litrelik ev tipi kova. Doğrulanmış piyasa fiyatı değildir."
     }
   },
   "aliases": {

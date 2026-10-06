@@ -3325,3 +3325,8 @@ dialog .actions {
 .admin-remote .field input {
   width: 100%;
 }
+
+.submit-status {
+  margin: 10px 0 4px;
+  font-weight: 700;
+}

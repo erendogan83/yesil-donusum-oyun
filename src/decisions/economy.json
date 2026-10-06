@@ -206,5 +206,9 @@
   "rev-led-strip": {
     "billImpact": 0,
     "impactStatus": "not_estimated"
+  },
+  "rev-basin-bucket": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
   }
 }

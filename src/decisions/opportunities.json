@@ -114,13 +114,13 @@
     "id": "basin",
     "roomId": "bathroom",
     "title": "Isınırken akan su",
-    "scenario": "Duş ısınana kadar akan temiz suyu biriktirebilirsin. Bu isteğe bağlı adım puan getirmez.",
+    "scenario": "Duş ısınana kadar akan temiz suyu bir kapta biriktirebilirsin. Hangi kap sana uyar? Bu isteğe bağlı adım puan getirmez.",
     "x": 64,
     "y": 70,
     "kind": "product",
     "core": false,
     "round": 1,
-    "choices": ["rev-basin-place"]
+    "choices": ["rev-basin-place", "rev-basin-bucket"]
   },
   {
     "id": "flush",

@@ -276,9 +276,16 @@ export function renderPlaced(scene: Phaser.Scene, s: State, room: RoomId) {
       .setAngle(m.rotation)
       .setDepth(m.zIndex)
       .setData("productId", id);
-    if (id === "rev-basin-place") {
+    // Collected warm-up water; the vessel decides where the surface sits.
+    const surface: [number, number, number, number] | undefined =
+      id === "rev-basin-place"
+        ? [1105, 596, 150, 57]
+        : id === "rev-basin-bucket"
+          ? [1105, 569, 98, 22]
+          : undefined;
+    if (surface) {
       const water = scene.add
-        .ellipse(1105, 596, 150, 57, 0x8fcbd0, 0.55)
+        .ellipse(...surface, 0x8fcbd0, 0.55)
         .setDepth(m.zIndex + 0.1)
         .setScale(0.25);
       scene.tweens.add({

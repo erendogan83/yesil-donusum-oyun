@@ -29,6 +29,7 @@ import {
 } from "../src/decisions";
 import { placements } from "../src/placements";
 import { SORT_MISTAKE_PENALTY } from "../src/economy";
+import { finishNow } from "../src/model";
 import { activeOpportunity } from "../src/navigation";
 const fresh = (): State => ({
   ...start(
@@ -77,7 +78,7 @@ test("all core decisions offer at least three choices or sorting destinations; n
       if (o.kind === "product") assert(assets[id].asset && placements[id], id);
     }
   }
-  assert.equal(decisionProducts.length, 34);
+  assert.equal(decisionProducts.length, 35);
 });
 test("every offered choice applies once with deterministic points, valid persisted state and unchanged old rules", () => {
   let s = fresh();
@@ -194,4 +195,29 @@ test("new product learning history can be recovered without legacy copy lookup",
   });
   assert.equal(repaired.active!.lessons![0].id, "rev-tap-repair");
   assert(validDatabase(repaired));
+});
+
+test("finishing now skips the remaining periods but keeps earned points", () => {
+  for (const round of [1, 2, 3, 4]) {
+    let s = commit(fresh(), "rev-tap-repair");
+    while (s.round < round) s = continueRound(endRound(ack(s)));
+    const done = finishNow(ack(s));
+    assert.equal(done.phase, "finished");
+    assert.equal(done.round, 4);
+    assert.equal(score(done), score(s), "no points are added or lost");
+    valid(done);
+    const official = {
+      ...done,
+      team: {
+        ...done.team,
+        organization: "Kurum X",
+        mode: "official" as const,
+      },
+    };
+    assert.equal(
+      finish({ ...emptyDatabase(), active: official }).results.length,
+      1,
+    );
+  }
+  assert.equal(finishNow(finishNow(fresh())).phase, "finished", "idempotent");
 });

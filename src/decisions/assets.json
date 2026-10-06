@@ -206,5 +206,9 @@
   "rev-led-strip": {
     "asset": "obj_living_led_strip_3m",
     "installationSlot": "home_shelf_underside"
+  },
+  "rev-basin-bucket": {
+    "asset": "sprites/generated/bucket",
+    "installationSlot": "basin_floor"
   }
 }

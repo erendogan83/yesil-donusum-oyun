@@ -20,6 +20,9 @@ Alternatif: `node serve.mjs`. `dist/` depoda tutulmaz; ilk çalıştırmada BASL
 - Atık ve çamaşır ayırma: nesneyi hedefe sürükleyip bırak (ya da nesneye, sonra hedefe dokun). Yanlış hedef bırakılabilir:
   ilk yanlış eşleştirme ₺50 krediden götürür ve o nesnenin puanını da götürür; tekrar denemek ücretsizdir ama puan getirmez.
 - Oda sonu: oda bitince "BÖLÜMÜ BİTİR" haritaya döner, onay sormaz. Dönem sonu yalnız haritadadır; tamamlanmamış temel adım varsa hangi alanlar olduğunu yazan bir onay çıkar. İsteğe bağlı fırsatlar (leğen, LED şerit, zamanlayıcı, çatı) dönemi bitirmeye engel olmaz.
+- Kayıt: oyun her adımda bu cihaza kendiliğinden kaydolur. Sonuç, 4. dönem sonunda "Büyük finale geç" ile ya da yardım (?) penceresindeki
+  **Oyunu bitir ve kaydet** ile liderlik tablosuna gönderilir; final ekranı gönderim durumunu gösterir (bekliyorsa **Tekrar gönder**).
+- Isınırken akan su: Leğen ya da Kova (isteğe bağlı, puansız). Kova görseli vektörle çizilmiş basit bir ikondur.
 - Yanlış çözüm sorunu çözmez: musluk damlamaya, ışık/duş boşa akmaya devam eder.
 - Doluluk ve yıkama programı, sifon, diş fırçalama, hijyen ve sulama saati kısa davranış seçimleridir.
 - Leğen, sulama zamanlayıcısı ve çatı yatırımı isteğe bağlıdır; puan avantajı sağlamaz.
@@ -120,6 +123,7 @@ pnpm run format:check
 Chrome kurulu olmalıdır. Tam akış `pnpm run test:e2e` (varsayılan 5175).
 Üretim testleri için `pnpm preview --port 4180` açın; `GAME_URL` ile adresi değiştirebilirsiniz.
 `pnpm run test:sorting` sürükle-bırak, yanlış hedef cezası ve hover kararlılığını sınar (varsayılan 4173; `node serve.mjs`).
+`pnpm run test:finish` "Oyunu bitir ve kaydet", çevrimdışı bitirip tekrar gönderme ve Kova seçeneğini sınar (`npm run dev:cf` sunucusu gerekir).
 `pnpm run test:offline` internet kapalı açılış, dokunmatik, resmî sonuç, CSV/JSON ve erişilebilirlik testidir.
 `pnpm run test:placements` 33 ürünün kurulu sahne görüntülerini üretir (4180).
 `qa/main-revision/` test raporları ve ekran görüntülerini içerir.

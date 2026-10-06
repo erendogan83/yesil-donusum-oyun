@@ -43,7 +43,7 @@
   },
   "rev-basin-place": {
     "title": "Leğen",
-    "shortDescription": "Duş alanına konan su kabı.",
+    "shortDescription": "Alçak, geniş bir su kabı.",
     "resultTitle": "Su leğende birikti.",
     "resultText": "Bu suyu temizlikte veya uygun başka bir işte yeniden kullanabilirsin.",
     "whyText": ""
@@ -362,5 +362,12 @@
     "resultTitle": "Rafına yardımcı ışık ekledin.",
     "resultText": "Bu ek aydınlatma, ana ampulün yerine geçmez. İhtiyacın olmadığında kapatabilirsin.",
     "whyText": "Ek ışık almak tek başına enerji tasarrufu değildir."
+  },
+  "rev-basin-bucket": {
+    "title": "Kova",
+    "shortDescription": "Derin, saplı bir su kovası.",
+    "resultTitle": "Su kovada birikti.",
+    "resultText": "Kova daha çok su alır. Bu suyu temizlikte veya bitkileri sulamada yeniden kullanabilirsin.",
+    "whyText": ""
   }
 }

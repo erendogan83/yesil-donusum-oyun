@@ -171,7 +171,10 @@ test("every marketed product can be bought and installed in its named snap zone"
     const s = { ...fresh(), round: 4, budget: 9999 };
     const r = rooms.find((r) => r.id === p.room)!;
     assert(r.zones.some((z) => z.id === p.zone));
-    if (existingFixture(p.id) || marketPrice(p.id)?.priceTL === null) { assert.throws(() => purchase(s,p.id)); continue; }
+    if (existingFixture(p.id) || marketPrice(p.id)?.priceTL === null) {
+      assert.throws(() => purchase(s, p.id));
+      continue;
+    }
     const next = put(s, p.id);
     assert(next.installed.includes(p.id));
     assert.equal(next.budget, 9999 - p.price);

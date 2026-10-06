@@ -3,7 +3,7 @@
   "revision": 21,
   "active": {
     "version": 2,
-    "id": "d756bdc3-d3eb-4dd2-8e75-a13ba7b57823",
+    "id": "8dc673ff-43b4-4870-b55b-741d65128fe5",
     "team": {
       "organization": "Toplumsal Değişme ve Emekçi Kadın Girişimi Kooperatifi",
       "first": "QA Deniz",
@@ -132,7 +132,7 @@
   },
   "results": [
     {
-      "id": "d756bdc3-d3eb-4dd2-8e75-a13ba7b57823",
+      "id": "8dc673ff-43b4-4870-b55b-741d65128fe5",
       "team": {
         "organization": "Toplumsal Değişme ve Emekçi Kadın Girişimi Kooperatifi",
         "first": "QA Deniz",
@@ -143,7 +143,7 @@
       "budget": 9705,
       "savingPercent": 0,
       "score": 20,
-      "completedAt": "2026-10-06T12:52:08.859Z",
+      "completedAt": "2026-10-06T13:24:08.900Z",
       "rulesVersion": 1,
       "realLifePledges": [
         "Evde damlayan muslukları kontrol edeceğiz.",

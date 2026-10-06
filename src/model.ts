@@ -338,6 +338,20 @@ export function continueRound(s: State): State {
           : {}),
       };
 }
+/** Ends the game immediately: remaining periods are skipped, decisions made so far still count. */
+export function finishNow(s: State): State {
+  let next = s;
+  for (let i = 0; i < 10 && next.phase !== "finished"; i++) {
+    next = next.phase === "playing" ? endRound(next) : continueRound(next);
+    if (
+      next.phase === "playing" &&
+      next.salesIncomeGranted &&
+      !next.salesIncomeAcknowledged
+    )
+      next = acknowledgeSales(next);
+  }
+  return next;
+}
 export function acknowledgeSales(s: State): State {
   if (s.round !== 4 || !s.salesIncomeGranted || s.phase !== "playing")
     throw Error("Satış geliri ekranı henüz açık değil.");
