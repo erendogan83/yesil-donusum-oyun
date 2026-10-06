@@ -2,6 +2,7 @@ node_modules/
 dist/
 .vite/
 .wrangler/
+.dev.vars
 qa/**/*.png
 scripts/_*
 # Original generation sheets (~36 MB); keep them outside git, copy back to public/assets/source/ to rebuild sprites.

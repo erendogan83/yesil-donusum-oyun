@@ -32,6 +32,19 @@ import Phaser from "phaser";
 import { miniGoals, ideas, solutions, roundIdea } from "./journey";
 import { discover, consider, setPledges, migrateDatabase } from "./model";
 import { cueSound } from "./sound";
+import {
+  fetchResults,
+  remoteRanking,
+  submitResult,
+  flushOutbox,
+  pendingCount,
+  adminCheck,
+  adminDelete,
+  adminBulkDelete,
+  storedToken,
+  storeToken,
+  type RemoteResult,
+} from "./remote";
 let marketContext: { room: RoomId; zone: string } | null = null;
 let goalFlash: string[] = [],
   finalStep: "result" | "pledges" | "card" = "result",
@@ -105,6 +118,7 @@ import {
   type State,
   type Database,
   type Team,
+  type Result,
 } from "./model";
 
 const ui = document.querySelector<HTMLDivElement>("#ui")!;
@@ -140,6 +154,69 @@ let inventoryOpen = false,
   actionBusy = false,
   comboTimer = 0;
 let mode: Team["mode"] = "practice";
+// Shared leaderboard (null = backend unreachable, per-device board is used).
+let remote: RemoteResult[] | null = null,
+  boardMode: "official" | "practice" = "official",
+  adminToken = storedToken(),
+  adminAuthed = false,
+  remotePage = 0,
+  boardTimer = 0;
+async function refreshRemote() {
+  remote = await fetchResults();
+  const typing = document.activeElement?.id === "admin-token";
+  if ((view === "leaderboard" || view === "admin") && !typing && !dialog.open)
+    render();
+}
+async function verifyAdmin() {
+  adminAuthed = !!adminToken && (await adminCheck(adminToken)) === true;
+  if (!adminAuthed) {
+    adminToken = "";
+    storeToken("");
+  }
+}
+const toRemote = (
+  s: State,
+  local?: { score: number; savingPercent: number; completedAt: string },
+): RemoteResult => ({
+  id: s.id,
+  organization: s.team.organization,
+  first: s.team.first,
+  second: s.team.second,
+  mode: s.team.mode,
+  score: local?.score ?? score(s),
+  bill: s.bill,
+  budget: s.budget,
+  savingPercent: local?.savingPercent ?? savingPercent(s),
+  rulesVersion: 1,
+  completedAt: local?.completedAt ?? new Date().toISOString(),
+});
+async function submitFinished() {
+  const s = db.active;
+  if (!s || s.phase !== "finished" || s.decisionVersion !== 1) return;
+  const status = await submitResult(
+    toRemote(
+      s,
+      db.results.find((r) => r.id === s.id),
+    ),
+  );
+  if (status === "downgraded")
+    announce(
+      "Bu kurum için resmî sonuç zaten vardı. Sonucunuz serbest deneme olarak kaydedildi.",
+    );
+  else if (status === "sent")
+    announce(
+      s.team.mode === "official"
+        ? "Sonucunuz liderlik tablosuna gönderildi."
+        : "Serbest sonucunuz liderlik tablosuna gönderildi.",
+    );
+  else if (status === "queued")
+    announce(
+      "Sonuç bu cihazda bekliyor; bağlantı gelince otomatik gönderilir.",
+      true,
+    );
+  void refreshRemote();
+}
+window.addEventListener("online", () => void flushOutbox());
 const world = new World("World");
 const game = new Phaser.Game({
   type: Phaser.AUTO,
@@ -350,9 +427,9 @@ async function loadOrganizations() {
     const list: unknown = await response.json();
     if (
       Array.isArray(list) &&
+      list.length > 0 &&
       list.every((x) => typeof x === "string" && x.trim()) &&
-      new Set(list).size === 26 &&
-      list.length === 26
+      new Set(list).size === list.length
     )
       organizations = list;
   } catch {
@@ -361,6 +438,11 @@ async function loadOrganizations() {
   render();
 }
 void loadOrganizations();
+void flushOutbox().then(refreshRemote);
+if (adminToken)
+  void verifyAdmin().then(() => {
+    if (view === "admin") render();
+  });
 function stateView(): View {
   const s = db.active;
   if (!s) return "start";
@@ -386,6 +468,12 @@ function switchView(v: View) {
   clearTimeout(toastTimer);
   status.className = "";
   view = v;
+  clearInterval(boardTimer);
+  if (v === "leaderboard" || v === "admin" || v === "registration") {
+    void refreshRemote();
+    if (v !== "registration")
+      boardTimer = window.setInterval(() => void refreshRemote(), 15000);
+  }
   inventoryOpen = false;
   selectedProduct = null;
   render();
@@ -509,7 +597,7 @@ function startScreen() {
   return `<section class="title-screen"><div class="eyebrow">BİRLİKTE ÜRET • BİRLİKTE DÖNÜŞTÜR</div><h1>YEŞİL<br/><span>DÖNÜŞÜM</span></h1><p>Bütçeni yönet.<br/>Doğru seçimleri yap.<br/>Aylık gideri düşür.</p>${db.active && db.active.phase !== "finished" ? `<p class="subtle">Yarım kalan oyununuz var.</p>${btn("DEVAM ET", "resume", "primary")}` : btn("OYUNA BAŞLA", "new", "primary")}${db.active && db.active.phase !== "finished" ? btn("Yeni oyun", "new", "ghost", 'style="margin-top:12px"') : ""}<div class="seal"><small>BİR YERLEŞKE</small><b>4</b><small>DÖNEM • BİRLİKTE</small></div><footer class="start-footer"><span>Bir kooperatif. İki oyuncu. Birlikte değişen bir gelecek.</span>${btn("Liderlik tablosu ↗", "leaderboard", "ghost")}</footer></section>`;
 }
 function registration() {
-  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Bu dönüşüm<br/>sizinle başlıyor.</h2><p class="muted">Birlikte düşünün, birlikte karar verin.</p><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""} ${organizations.length === 26 ? "" : "disabled"}/> Resmî yarışma</label></fieldset>${organizations.length !== 26 ? '<p class="subtle">Resmî yarışma kurum listesi yüklendiğinde açılır.</p>' : ""}<label class="field"><span>Kooperatif / Kurum</span><div class="search-row"><input id="organization" name="organization" list="organizations" autocomplete="organization" maxlength="180" placeholder="Kurum adını yazın veya arayın" aria-describedby="form-error"/><button type="button" data-action="clear-org" aria-label="Kurum aramasını temizle">×</button></div><datalist id="organizations">${organizations.map((o) => `<option value="${esc(o)}"></option>`).join("")}</datalist></label><label class="field" for="first"><span>1. Katılımcı</span><input id="first" name="first" required autocomplete="given-name" maxlength="80" aria-describedby="form-error"/></label><label class="field" for="second"><span>2. Katılımcı</span><input id="second" name="second" autocomplete="off" maxlength="80" aria-describedby="form-error" required/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BİRLİKTE BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Deneme sonuçları liderlik tablosuna eklenmez.<br/>İsimler ve oyun yalnız bu tarayıcıda saklanır.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Bu dönüşüm<br/>sizinle başlıyor.</h2><p class="muted">Birlikte düşünün, birlikte karar verin.</p><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""} ${organizations.length > 0 ? "" : "disabled"}/> Resmî yarışma</label></fieldset>${organizations.length === 0 ? '<p class="subtle">Resmî yarışma kurum listesi yüklendiğinde açılır.</p>' : ""}<label class="field"><span>Kooperatif / Kurum</span><div class="search-row"><input id="organization" name="organization" list="organizations" autocomplete="organization" maxlength="180" placeholder="Kurum adını yazın veya arayın" aria-describedby="form-error"/><button type="button" data-action="clear-org" aria-label="Kurum aramasını temizle">×</button></div><datalist id="organizations">${organizations.map((o) => `<option value="${esc(o)}"></option>`).join("")}</datalist></label><label class="field" for="first"><span>1. Katılımcı</span><input id="first" name="first" required autocomplete="given-name" maxlength="80" aria-describedby="form-error"/></label><label class="field" for="second"><span>2. Katılımcı</span><input id="second" name="second" autocomplete="off" maxlength="80" aria-describedby="form-error" required/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BİRLİKTE BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Deneme sonuçları liderlik tablosuna eklenmez.<br/>Serbest deneme sonuçları liderlik tablosunun "Serbest" sekmesinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
 }
 function mapScreen() {
   const s = db.active!;
@@ -596,28 +684,82 @@ function finalScreen() {
       )}</div><p id="pledge-count" role="status">${pledgeDraft.length} / 3 seçildi</p><div class="row">${btn("Sonucumuza dön", "final-result", "ghost")}${btn("3 YEŞİL HAMLEMİZİ KAYDET", "pledges-save", "gold", pledgeDraft.length === 3 ? "" : "disabled")}</div><p class="subtle">Bu seçimler yarışma skorunu ve sıralamayı değiştirmez.</p></section>`;
   if (finalStep === "card" && s.realLifePledges)
     return `<section class="summary-screen pledge-finale"><div class="pledge-keepsake"><p class="eyebrow">BİZİM 3 YEŞİL HAMLEMİZ</p><h2>${esc(s.team.organization)}</h2><p class="team-signature">${names}</p><ol>${s.realLifePledges.map((p) => `<li>${esc(p)}</li>`).join("")}</ol><p class="closing-line">Küçük başlayın. Birlikte sürdürün.</p></div><div class="row">${btn("LİDERLİK TABLOSUNU GÖR", "leaderboard", "gold")}${btn("Seçimlerimizi değiştir", "pledges", "ghost")}${btn("Sonucumuz", "final-result", "ghost")}</div></section>`;
-  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${esc(s.team.organization)}</h2><p class="final-names">${names}</p><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div><p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonuç sıralamaya eklenmedi." : "Resmî sonuç bu cihazın liderlik tablosuna kaydedildi."}</p><p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
+  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${esc(s.team.organization)}</h2><p class="final-names">${names}</p><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div><p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Resmî sonuç liderlik tablosuna gönderildi."}</p><p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
+}
+interface BoardRow {
+  org: string;
+  names: string;
+  score: number;
+}
+function boardMarkup(rows: BoardRow[]) {
+  if (!rows.length)
+    return `<div class="empty-result"><h3>İlk başarı hikâyesi sizi bekliyor.</h3><p>${boardMode === "official" ? "Resmî oyun tamamlandığında sonuç burada görünür." : "Serbest deneme tamamlandığında sonuç burada görünür."}</p></div>`;
+  return `<div class="podium">${rows
+    .slice(0, 3)
+    .map(
+      (r, i) =>
+        `<article class="podium-place"><div class="medal">${i + 1}</div><h3>${esc(r.org)}</h3><p>${esc(r.names)}</p><strong>${fmt(r.score)}</strong><p>toplam puan</p></article>`,
+    )
+    .join("")}</div><ol class="ranks" start="4">${rows
+    .slice(3, 300)
+    .map(
+      (r, i) =>
+        `<li><span class="rank-number">${i + 4}</span><div class="rank-team">${esc(r.org)}<small>${esc(r.names)}</small></div><strong>${fmt(r.score)} puan</strong></li>`,
+    )
+    .join("")}</ol>`;
 }
 function leaderboard() {
-  const rs = ranking(db.results.filter((r) => r.rulesVersion === 1)),
-    limit = 26;
-  return `<section class="leaderboard"><div class="center"><p class="eyebrow">BİRLİKTE BÜYÜYEN BAŞARI</p><h2>Dönüşümün öncüleri</h2><p class="muted">Bu cihazdaki resmî sonuçlar · Toplam karar puanına göre sıralanır</p><p class="subtle">Eski sürüm sonuçları yönetim ve yedekte korunur; farklı puan kuralları birlikte karşılaştırılmaz.</p></div>${
-    rs.length
-      ? `<div class="podium">${rs
-          .slice(0, 3)
-          .map(
-            (r, i) =>
-              `<article class="podium-place"><div class="medal">${i + 1}</div><h3>${esc(r.team.organization)}</h3><p>${esc([r.team.first, r.team.second].filter(Boolean).join(" & "))}</p><strong>${fmt(r.score)}</strong><p>toplam puan</p></article>`,
-          )
-          .join("")}</div><ol class="ranks" start="4">${rs
-          .slice(3, limit)
-          .map(
-            (r, i) =>
-              `<li><span class="rank-number">${i + 4}</span><div class="rank-team">${esc(r.team.organization)}<small>${esc([r.team.first, r.team.second].filter(Boolean).join(" & "))}</small></div><strong>${fmt(r.score)} puan</strong></li>`,
-          )
-          .join("")}</ol>`
-      : `<div class="empty-result"><h3>İlk başarı hikâyesi sizi bekliyor.</h3><p>Resmî oyun tamamlandığında sonuç burada görünür.<br/>Serbest denemeler sıralamaya katılmaz.</p></div>`
-  }<div class="row" style="justify-content:center;margin-top:25px">${btn("← Açılışa dön", "start", "ghost")}${db.active?.phase === "finished" ? btn("Sonucuma dön", "final", "primary") : ""}</div></section>`;
+  const live = remote !== null;
+  const names = (a: string, b: string) => [a, b].filter(Boolean).join(" & ");
+  const official: BoardRow[] = live
+    ? remoteRanking(remote!, "official").map((r) => ({
+        org: r.organization,
+        names: names(r.first, r.second),
+        score: r.score,
+      }))
+    : ranking(db.results.filter((r) => r.rulesVersion === 1)).map((r) => ({
+        org: r.team.organization,
+        names: names(r.team.first, r.team.second),
+        score: r.score,
+      }));
+  const practice: BoardRow[] = live
+    ? remoteRanking(remote!, "practice").map((r) => ({
+        org: r.organization,
+        names: names(r.first, r.second),
+        score: r.score,
+      }))
+    : [];
+  const tab = (id: "official" | "practice", label: string, n: number) =>
+    btn(
+      `${label} (${n})`,
+      `board:${id}`,
+      `ghost board-tab ${boardMode === id ? "active" : ""}`,
+      `role="tab" aria-selected="${boardMode === id}"`,
+    );
+  return `<section class="leaderboard"><div class="center"><p class="eyebrow">BİRLİKTE BÜYÜYEN BAŞARI</p><h2>Dönüşümün öncüleri</h2><p class="muted">${live ? "Tüm cihazlardan gelen sonuçlar · kendiliğinden güncellenir" : "Ortak tabloya ulaşılamadı; bu cihazdaki resmî sonuçlar gösteriliyor"} · Toplam karar puanına göre sıralanır</p><div class="board-tabs" role="tablist">${tab("official", "Resmî", official.length)}${tab("practice", "Serbest", practice.length)}</div></div>${boardMarkup(boardMode === "official" ? official : practice)}<div class="row" style="justify-content:center;margin-top:25px">${btn("← Açılışa dön", "start", "ghost")}${db.active?.phase === "finished" ? btn("Sonucuma dön", "final", "primary") : ""}</div></section>`;
+}
+function adminRemote() {
+  const pending = pendingCount();
+  if (remote === null)
+    return `<div class="admin-remote"><h3>Ortak liderlik tablosu</h3><p class="subtle">Sunucuya ulaşılamadı ya da henüz kurulmadı. Bu cihazdan gönderilmeyi bekleyen sonuç: ${pending}.</p><div class="row">${btn("Tekrar dene", "admin-refresh", "ghost")}</div></div>`;
+  const rows = [...remote].sort((a, b) =>
+      b.completedAt.localeCompare(a.completedAt),
+    ),
+    perPage = 8,
+    pages = Math.max(1, Math.ceil(rows.length / perPage));
+  remotePage = Math.max(0, Math.min(remotePage, pages - 1));
+  const login = adminAuthed
+    ? `<p class="subtle">Yönetim anahtarı doğrulandı: silme açık.</p><div class="row">${btn("Serbest denemeleri sil", "rbulk:practice", "danger")}${btn("Tüm sunucu kayıtlarını sil", "rbulk:all", "danger")}${btn("Çıkış", "admin-logout", "ghost")}</div>`
+    : `<label class="field"><span>Yönetim anahtarı (silmek için)</span><input type="password" id="admin-token" autocomplete="off" aria-describedby="admin-login-hint"/></label><div class="row">${btn("Giriş", "admin-login", "primary")}</div><p class="subtle" id="admin-login-hint">Anahtar Cloudflare'de ADMIN_TOKEN olarak tanımlanır.</p>`;
+  return `<div class="admin-remote"><h3>Ortak liderlik tablosu · ${remote.length} kayıt</h3><p class="subtle">Resmî: ${remote.filter((r) => r.mode === "official").length} · Serbest: ${remote.filter((r) => r.mode === "practice").length} · Bu cihazda bekleyen: ${pending}</p>${login}<div class="row">${btn("CSV indir (tüm cihazlar)", "csv-remote", "primary")}${btn("Bu cihazdaki sonuçları sunucuya gönder", "push-local", "ghost")}${btn("Yenile", "admin-refresh", "ghost")}</div><div class="results">${
+    rows
+      .slice(remotePage * perPage, (remotePage + 1) * perPage)
+      .map(
+        (r) =>
+          `<article><div class="row spread"><strong>${esc(r.organization)}</strong><span>${r.mode === "official" ? "Resmî" : "Serbest"} · ${fmt(r.score)} puan</span></div><p>${esc([r.first, r.second].join(" & "))}</p><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${adminAuthed ? btn("Bu sonucu sil", `rdelete:${r.id}`, "danger") : ""}</article>`,
+      )
+      .join("") || "<p>Henüz kayıt yok.</p>"
+  }</div><div class="row">${btn("← Önceki", "rpage:-1", "ghost", remotePage === 0 ? "disabled" : "")}<span>Sayfa ${remotePage + 1} / ${pages}</span>${btn("Sonraki →", "rpage:1", "ghost", remotePage + 1 >= pages ? "disabled" : "")}</div></div>`;
 }
 function admin() {
   const all = ranking(db.results),
@@ -626,7 +768,7 @@ function admin() {
     0,
     Math.min(adminPage, Math.ceil(all.length / perPage) - 1),
   );
-  return `<section class="admin"><div class="row spread"><h2>Etkinlik yönetimi</h2>${btn("Oyuna dön", "leave-admin", "ghost")}</div><p>Bu tarayıcıdaki sonuçlar. Bu ekran yalnız etkinlik görevlisinin kullandığı cihaz içindir.</p><p class="subtle">Kurum listesi: ${organizations.length}/26 · Sonuç sayısı: ${all.length} · Bulut eşitlemesi yok.</p><div class="row">${btn("CSV indir", "csv", "primary")}${btn("Tüm kayıtları yedekle", "backup")}${btn("Ham kaydı indir", "raw-backup", "ghost")}</div><label class="import">Yedeği geri yükle (JSON)<input type="file" id="restore-file" accept="application/json,.json"/></label><p class="subtle">Kurumları public/organizations.json dosyasına 26 benzersiz tam ad olarak ekleyin. Yönetim güvenlik sınırı değildir; cihazı görevli gözetiminde kullanın.</p><div class="results">${
+  return `<section class="admin"><div class="row spread"><h2>Etkinlik yönetimi</h2>${btn("Oyuna dön", "leave-admin", "ghost")}</div><p>Etkinlik görevlisi içindir. Ortak tablodan silmek için yönetim anahtarı gerekir.</p><p class="subtle">Kurum listesi: ${organizations.length} kurum.</p>${adminRemote()}<h3>Bu cihazdaki kayıtlar</h3><p class="subtle">Sonuç sayısı: ${all.length}.</p><div class="row">${btn("CSV indir", "csv", "primary")}${btn("Tüm kayıtları yedekle", "backup")}${btn("Ham kaydı indir", "raw-backup", "ghost")}</div><label class="import">Yedeği geri yükle (JSON)<input type="file" id="restore-file" accept="application/json,.json"/></label><p class="subtle">Kurumları public/organizations.json dosyasına benzersiz tam adlar olarak ekleyin ve yeniden dağıtın. Bu cihazdaki kayıtlar için yönetim anahtarı gerekmez; cihazı görevli gözetiminde kullanın.</p><div class="results">${
     all
       .slice(adminPage * perPage, (adminPage + 1) * perPage)
       .map(
@@ -704,6 +846,11 @@ function animateMeters(before: State) {
     setTimeout(() => delta.remove(), 1900);
   }
 }
+// Official results from other devices also lock their institution.
+const remoteOfficialAsResults = () =>
+  (remote ?? [])
+    .filter((r) => r.mode === "official")
+    .map((r) => ({ team: { organization: r.organization } }) as Result);
 function attachForm() {
   const form = document.querySelector<HTMLFormElement>("#team-form")!;
   form.addEventListener("change", () => {
@@ -725,7 +872,11 @@ function attachForm() {
     button.disabled = true;
     try {
       const s: State = {
-        ...start(team, db.results, organizations),
+        ...start(
+          team,
+          [...db.results, ...remoteOfficialAsResults()],
+          organizations,
+        ),
         decisionVersion: 1,
         decisions: [],
         sorting: {},
@@ -743,7 +894,7 @@ function attachForm() {
           (field === "organization" &&
             team.mode === "official" &&
             (!organizations.includes(input.value.trim()) ||
-              db.results.some(
+              [...db.results, ...remoteOfficialAsResults()].some(
                 (r) => r.team.organization === input.value.trim(),
               )));
         input.setAttribute("aria-invalid", String(invalid));
@@ -779,7 +930,7 @@ async function productDetail(id: string) {
   const large = solar || (!review && p.price > s.budget * LARGE_PURCHASE_SHARE);
   const packaging = id.startsWith("rev-pack-");
   showModal(
-    `<p class="eyebrow">YEŞİL MARKET · ${esc(p.category)}${solar ? " · BÜYÜK YATIRIM" : ""}</p>${art(p.asset, "product-art")}<h2 id="dialog-title">${esc(p.name)}</h2><p class="product-feature">${esc(p.feature)}</p><p class="product-use">${esc(p.description)}</p><dl class="purchase-math"><div><dt>${packaging ? "1 adet ambalaj payı" : "Fiyat"}</dt><dd>${priceLabel(id, p.price)}</dd>${solar ? '<p class="panel-price-note">Yalnız panel fiyatıdır.</p>' : ""}</div>${review ? "" : `<div class="remaining"><dt>${affordable ? "Kalan" : "Bu ürün için eksik"}</dt><dd id="purchase-remaining">${fmtMoney(Math.abs(remaining))}</dd></div>`}</dl>${solar ? '<details class="price-detail"><summary>Fiyata neler dahil?</summary><p>İnverter, konstrüksiyon, kablolama, proje, montaj ve işçilik dahil değildir.</p></details>' : ""}${packaging ? '<p class="panel-price-note">İçindeki ürünün bedeli hariçtir. Çoklu paketten hesaplanan adet payı olabilir.</p>' : ""}${review ? '<p class="error">Paket içeriği ve fiyatı doğrulanıyor. Şimdilik satın alınamaz.</p>' : !owned && !affordable ? `<p class="error">🔒 ${fmtMoney(-remaining)} daha gerekiyor.</p>` : !owned && large ? '<p class="budget-question">Bu büyük bir harcama. Birlikte karar verin.</p>' : ""}<div class="actions">${btn("BİR DAHA BAK", "close", "ghost")}${btn(owned ? "Zaten sizde" : "SATIN AL", `buy:${id}`, "primary", owned || !affordable ? "disabled" : "")}</div>`,
+    `<p class="eyebrow">YEŞİL MARKET · ${esc(p.category)}${solar ? " · BÜYÜK YATIRIM" : ""}</p>${art(p.asset, "product-art")}<h2 id="dialog-title">${esc(p.name)}</h2><p class="product-feature">${esc(p.feature)}</p><p class="product-use">${esc(p.description)}</p><dl class="purchase-math"><div><dt>${packaging ? "1 adet ambalaj payı" : "Fiyat"}</dt><dd>${priceLabel(id, p.price)}</dd>${solar ? '<p class="panel-price-note">Yalnız panel fiyatıdır.</p>' : ""}${marketPrice(id)?.priceStatus === "estimate" ? '<p class="panel-price-note">Bu fiyat oyun için tahmini bir değerdir.</p>' : ""}</div>${review ? "" : `<div class="remaining"><dt>${affordable ? "Kalan" : "Bu ürün için eksik"}</dt><dd id="purchase-remaining">${fmtMoney(Math.abs(remaining))}</dd></div>`}</dl>${solar ? '<details class="price-detail"><summary>Fiyata neler dahil?</summary><p>İnverter, konstrüksiyon, kablolama, proje, montaj ve işçilik dahil değildir.</p></details>' : ""}${packaging ? '<p class="panel-price-note">İçindeki ürünün bedeli hariçtir. Çoklu paketten hesaplanan adet payı olabilir.</p>' : ""}${review ? '<p class="error">Paket içeriği ve fiyatı doğrulanıyor. Şimdilik satın alınamaz.</p>' : !owned && !affordable ? `<p class="error">🔒 ${fmtMoney(-remaining)} daha gerekiyor.</p>` : !owned && large ? '<p class="budget-question">Bu büyük bir harcama. Birlikte karar verin.</p>' : ""}<div class="actions">${btn("BİR DAHA BAK", "close", "ghost")}${btn(owned ? "Zaten sizde" : "SATIN AL", `buy:${id}`, "primary", owned || !affordable ? "disabled" : "")}</div>`,
   );
   dialog.classList.add("product-dialog");
 }
@@ -1292,6 +1443,7 @@ async function action(action: string) {
       switchView(stateView());
       cueSound(db.active!.phase === "finished" ? "final" : "goal");
       animateResult();
+      if (db.active!.phase === "finished") void submitFinished();
       break;
     case "leaderboard":
       switchView("leaderboard");
@@ -1318,6 +1470,142 @@ async function action(action: string) {
         "yesil-donusum-ham-kayit.txt",
         localStorage.getItem(STORAGE_KEY) ?? "",
         "text/plain",
+      );
+      break;
+    case "board":
+      boardMode = arg === "practice" ? "practice" : "official";
+      render();
+      break;
+    case "rpage":
+      remotePage = Math.max(0, remotePage + Number(arg));
+      render();
+      break;
+    case "admin-refresh":
+      await flushOutbox();
+      await refreshRemote();
+      announce(remote ? "Liste yenilendi." : "Sunucuya ulaşılamadı.", !remote);
+      break;
+    case "admin-login": {
+      const input = document.querySelector<HTMLInputElement>("#admin-token");
+      const token = input?.value.trim() ?? "";
+      if (!token) {
+        announce("Yönetim anahtarını yazın.", true);
+        break;
+      }
+      const result = await adminCheck(token);
+      if (result !== true) {
+        announce(result === null ? "Sunucuya ulaşılamadı." : result, true);
+        break;
+      }
+      adminToken = token;
+      adminAuthed = true;
+      storeToken(token);
+      render();
+      announce("Yönetim anahtarı doğrulandı.");
+      break;
+    }
+    case "admin-logout":
+      adminToken = "";
+      adminAuthed = false;
+      storeToken("");
+      render();
+      break;
+    case "rdelete": {
+      const r = remote?.find((r) => r.id === arg);
+      if (r)
+        confirmAction(
+          "Sonuç silinsin mi?",
+          `${esc(r.organization)} · ${r.mode === "official" ? "Resmî" : "Serbest"} · ${fmt(r.score)} puan. Kayıt tüm cihazlar için ortak tablodan silinir.`,
+          `rdelete-confirm:${arg}`,
+          "SONUCU SİL",
+        );
+      break;
+    }
+    case "rdelete-confirm":
+      try {
+        await adminDelete(arg, adminToken);
+        closeModal();
+        await refreshRemote();
+        announce("Sonuç silindi.");
+      } catch (err) {
+        closeModal(); // The toast sits behind an open dialog.
+        announce((err as Error).message, true);
+      }
+      break;
+    case "rbulk":
+      confirmAction(
+        arg === "all"
+          ? "Tüm sunucu kayıtları silinsin mi?"
+          : "Serbest denemeler silinsin mi?",
+        arg === "all"
+          ? "Resmî ve serbest tüm sonuçlar ortak tablodan silinir. Geri alınamaz; önce CSV indirin."
+          : "Serbest deneme sonuçlarının hepsi ortak tablodan silinir. Resmî sonuçlar kalır.",
+        `rbulk-confirm:${arg}`,
+        "SİL",
+      );
+      break;
+    case "rbulk-confirm":
+      try {
+        const n = await adminBulkDelete(
+          arg === "all" ? "all" : "practice",
+          adminToken,
+        );
+        closeModal();
+        await refreshRemote();
+        announce(`${n} kayıt silindi.`);
+      } catch (err) {
+        closeModal();
+        announce((err as Error).message, true);
+      }
+      break;
+    case "push-local": {
+      for (const r of db.results)
+        if (r.rulesVersion === 1)
+          await submitResult({
+            id: r.id,
+            organization: r.team.organization,
+            first: r.team.first,
+            second: r.team.second,
+            mode: "official",
+            score: r.score,
+            bill: r.bill,
+            budget: r.budget,
+            savingPercent: r.savingPercent,
+            rulesVersion: 1,
+            completedAt: r.completedAt,
+          });
+      await refreshRemote();
+      announce(
+        remote ? "Bu cihazdaki sonuçlar gönderildi." : "Sunucuya ulaşılamadı.",
+        !remote,
+      );
+      break;
+    }
+    case "csv-remote":
+      if (!remote) {
+        announce("Sunucuya ulaşılamadı.", true);
+        break;
+      }
+      download(
+        "yesil-donusum-tum-sonuclar.csv",
+        csv(
+          remote.map((r) => ({
+            rulesVersion: 1 as const,
+            id: r.id,
+            team: {
+              organization: r.organization,
+              first: r.first,
+              second: r.second,
+              mode: r.mode,
+            },
+            bill: r.bill,
+            budget: r.budget,
+            savingPercent: r.savingPercent,
+            score: r.score,
+            completedAt: r.completedAt,
+          })),
+        ),
+        "text/csv;charset=utf-8",
       );
       break;
     case "admin-page":

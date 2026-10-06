@@ -39,7 +39,7 @@ Dönem ödülü mevcut kuralla korunur: yeni gider azalmasının %50'si, en çok
 ## Kayıtlar ve kurumlar
 
 `public/organizations.json` mevcut 26 kurumun tam adlarını içerir. İki katılımcı adı zorunludur.
-Deneme sonuçları liderlik tablosuna eklenmez. Resmî sonuç kurumu kilitler; aynı kurum tekrar resmî sonuç yazamaz.
+Serbest deneme sonuçları liderlik tablosunun Serbest sekmesinde görünür. Resmî sonuç kurumu kilitler; aynı kurum tekrar resmî sonuç yazamaz.
 Otomatik kayıt anahtarı `yesil-donusum-v1`, veritabanı biçimi v2 olarak korunur.
 
 Eski oyunlar eski karar/ekonomi kurallarıyla devam eder; eski sonuçlar yeniden puanlanmaz.
@@ -47,8 +47,8 @@ Yeni liderlik tablosu yalnız aynı karar puanı sürümünü karşılaştırır
 Önceki sürümün 30 ürünü ve kaldırılan görevleri eski kayıt uyumluluğu için kodda bulunur, yeni akışta sunulmaz.
 
 Yönetim: `http://127.0.0.1:4173/#admin`. CSV, JSON yedek, silme ve geri yükleme burada bulunur.
-CSV puan kuralını da belirtir. Kayıtlar yalnız bu tarayıcıdadır; bulut eşitlemesi yoktur.
-Yönetim ekranı kimlik doğrulama sınırı değildir. Etkinlikte görevli cihazı kullanın ve JSON yedeği alın.
+CSV puan kuralını ve oyun türünü de belirtir. Sonuçlar ayrıca ortak D1 tablosuna gönderilir (aşağıda); bu cihazdaki kayıt yedek olarak kalır.
+Ortak tablodaki silme işlemleri yönetim anahtarı ister; bu cihazdaki yerel kayıtlar için ekran kimlik doğrulaması yoktur, görevli cihazını kullanın ve JSON yedeği alın.
 
 ## Veri ve görseller
 
@@ -69,21 +69,42 @@ Geliştirme sunucusunda service worker kurulmaz.
 
 ## Cloudflare Pages (pages.dev)
 
-Oyun tamamen statiktir; sunucu kodu veya ortam değişkeni gerekmez. Hash tabanlı yönlendirme
-(`#admin`) kullandığı için yönlendirme kuralı da gerekmez.
+Oyunun kendisi statiktir. Ortak liderlik tablosu için `functions/` klasöründeki Pages Functions ve bir D1
+veritabanı kullanılır (aşağıda). Hash tabanlı yönlendirme (`#admin`) kullanıldığı için yönlendirme kuralı gerekmez.
 
 **Git ile (önerilen):** Cloudflare panelinde _Workers & Pages → Create → Pages → Connect to Git_.
-Build command: `npm run build` (pnpm de olur), Build output directory: `dist`, Node 22 (`.node-version`).
+Build command: `npm run build`, Build output directory: `dist`, Node 22 (`.node-version`).
+`functions/` klasörü otomatik algılanır. **Panelden dosya yükleme (Upload assets) Functions'ı içermez**; ortak tablo
+için Git bağlantısını ya da `npm run deploy` (ilk seferde `wrangler login` ister) komutunu kullanın.
+Proje adı `yesil-donusum` ise adres `https://yesil-donusum.pages.dev` olur.
 
-**Doğrudan yükleme:** `npm run deploy` (ilk seferde `wrangler login` ister) ya da `npm run build` sonrası
-`dist/` klasörünü panelde _Upload assets_ ile yükleyin. Proje adı `yesil-donusum` ise adres
-`https://yesil-donusum.pages.dev` olur.
+### Ortak liderlik tablosu (D1) kurulumu
+
+1. Panel → _Storage & Databases → D1 → Create database_ (ad: `yesil-donusum-db`). Tabloyu oluşturmanız gerekmez,
+   API ilk istekte kendisi kurar (isteğe bağlı: `schema.sql`).
+2. Pages projesi → _Settings → Bindings → Add → D1 database_: değişken adı **`DB`**, veritabanı: `yesil-donusum-db`.
+3. Pages projesi → _Settings → Variables and secrets → Add_: **`ADMIN_TOKEN`** (tür: Secret), güçlü bir parola.
+   Admin sayfasında silme için bu anahtar istenir. İkisini de _Production_ ve _Preview_ için ekleyin.
+4. Yeniden dağıtın (Deployments → Retry deployment ya da yeni bir push).
+
+Yerelde denemek için: `npm run build && npm run dev:cf` (`http://127.0.0.1:8788`, anahtar `secret123`).
+`npm run test:api` ve `npm run test:board` bu sunucuya karşı çalışır.
+
+- **Kim görür:** Tüm cihazların sonuçları aynı tabloda toplanır; tablo 15 sn'de bir kendini yeniler.
+  _Resmî_ ve _Serbest_ sekmeleri vardır. Sınırsız sayıda takım/kurum olabilir; kurum listesi `public/organizations.json`.
+- **Kurum başına bir resmî sonuç:** Aynı kurum ikinci kez resmî bitirirse sunucu sonucu otomatik olarak _Serbest_ yapar.
+  Listede olmayan bir kurum adı da serbest sayılır.
+- **Bağlantı yoksa:** Biten oyun cihazda bekler ve bağlantı gelince otomatik gönderilir. Sunucu yoksa (yerel
+  `node serve.mjs`) tablo bu cihazdaki resmî sonuçları gösterir.
+- **Yönetim (`/#admin`):** Anahtarla giriş yapınca tek tek sonuç silme, serbest denemeleri toplu silme, tüm kayıtları
+  silme (etkinlik öncesi sıfırlama) ve tüm cihazlardan CSV indirme açılır. Anahtar yalnız o sekmede tutulur.
+- **Güvenlik sınırı:** Oyun tarayıcıda çalıştığı için sunucu puanın gerçekten oynanarak kazanıldığını doğrulayamaz;
+  yalnızca biçim ve sınırları (0–2000 puan vb.) denetler. Silme/sıfırlama ise anahtarsız mümkün değildir.
 
 `public/_headers` önbellek ve güvenlik başlıklarını belirler: `js/` ve `css/` (hash'li) bir yıl önbelleğe alınır,
 `index.html`, `sw.js` ve `organizations.json` her seferinde doğrulanır. Derleme, varsa orijinal sheet'leri
 (`assets/source/`) `dist/` dışında bırakır; Pages sınırlarının (dosya başına 25 MiB, 20.000 dosya) çok altındayız.
 `node serve.mjs` aynı başlıkları yerelde uygular, böylece CSP sorunları dağıtımdan önce görülür.
-Kayıtlar tarayıcıya özeldir: `pages.dev` adresindeki kayıtlar yerel `127.0.0.1` kayıtlarıyla paylaşılmaz.
 Kurum listesi için `public/organizations.json` düzenlenip yeniden dağıtılmalıdır.
 
 ## Geliştirme ve doğrulama

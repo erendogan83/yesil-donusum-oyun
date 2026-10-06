@@ -3298,3 +3298,30 @@ dialog .actions {
   font-size: 38px;
   line-height: 1;
 }
+
+.board-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 6px;
+}
+.board-tab.active {
+  background: linear-gradient(#ead18f, #c4a35f);
+  color: #352d21;
+  border-color: #f4dca3;
+  font-weight: bold;
+}
+.admin-remote {
+  margin: 18px 0 26px;
+  padding: 16px;
+  border: 1px solid #d1b87866;
+  border-radius: 12px;
+}
+.admin-remote .field {
+  display: block;
+  max-width: 360px;
+  margin: 10px 0;
+}
+.admin-remote .field input {
+  width: 100%;
+}

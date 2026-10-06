@@ -25,7 +25,10 @@
     "test:placements": "tsx scripts/revision-fixtures.ts && node scripts/revision-placements.cjs",
     "deploy": "npm run build && npx wrangler pages deploy dist --project-name yesil-donusum",
     "test:sorting": "node scripts/sorting-qa.cjs",
-    "test:sections": "node scripts/section-qa.cjs"
+    "test:sections": "node scripts/section-qa.cjs",
+    "dev:cf": "wrangler pages dev dist --d1=DB --binding ADMIN_TOKEN=secret123 --port 8788 --ip 127.0.0.1",
+    "test:api": "node scripts/api-qa.cjs",
+    "test:board": "node scripts/board-qa.cjs"
   },
   "dependencies": {
     "phaser": "3.90.0"

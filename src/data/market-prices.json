@@ -143,14 +143,14 @@
     "rev-pack-lentil-plastic": {
       "id": "rev-pack-lentil-plastic",
       "displayName": "Plastik Paket",
-      "priceTL": null,
+      "priceTL": 1,
       "referencePriceTL": null,
       "referenceDate": "2026-10-06",
       "referenceProduct": "",
       "referenceSpecification": "Aynı ürün ve miktar, farklı ambalaj.",
       "referenceSource": "",
-      "priceStatus": "needs_review",
-      "note": "PRICE REVIEW REQUIRED: ürün sınıfı ve güncel satış tutarı birlikte doğrulanmalı.",
+      "priceStatus": "estimate",
+      "note": "TAHMİNİ FİYAT (simülasyon): ince plastik poşet payı. Doğrulanmış piyasa fiyatı değildir.",
       "previousPriceTL": 10
     },
     "rev-pack-lentil-paper": {
@@ -170,14 +170,14 @@
     "rev-pack-apple-plastic": {
       "id": "rev-pack-apple-plastic",
       "displayName": "İnce Plastik Poşet",
-      "priceTL": null,
+      "priceTL": 1,
       "referencePriceTL": 0.405,
       "referenceDate": "2026-10-06",
       "referenceProduct": "Naksan Arma küçük boy manav poşeti, 4000 adet / 1620 TL",
       "referenceSpecification": "21x42 cm, 14 cm körük; 20 rulo x 200 adet",
       "referenceSource": "https://www.ozalpambalaj.com.tr/rulo-manav-seffaf-poset-kucuk-boy-7-kg",
-      "priceStatus": "needs_review",
-      "note": "PRICE REVIEW REQUIRED: toptan koli referansı bulundu; oyun görseli ve adet maliyeti eşleştirmesi tamamlanmadı.",
+      "priceStatus": "estimate",
+      "note": "TAHMİNİ FİYAT (simülasyon): küçük manav poşeti payı. Doğrulanmış piyasa fiyatı değildir.",
       "previousPriceTL": 10
     },
     "rev-pack-apple-paper": {
@@ -197,14 +197,14 @@
     "rev-pack-towel-box": {
       "id": "rev-pack-towel-box",
       "displayName": "Karton Kutu",
-      "priceTL": null,
+      "priceTL": 16,
       "referencePriceTL": 15.976600000000001,
       "referenceDate": "2026-10-06",
       "referenceProduct": "Unipak 30x20x10 cm 50 li kutu / 798,83 TL",
       "referenceSpecification": "Unipak 30x20x10 cm 50 li kutu / 798,83 TL",
       "referenceSource": "https://www.unipak.com.tr/urun/30x20x10-cm-kesimli-e-ticaret-ve-kargo-kutusu-50-esmer",
-      "priceStatus": "needs_review",
-      "note": "PRICE REVIEW REQUIRED: açılan ürün sayfasında stok yok; mevcut satış teyit edilemedi.",
+      "priceStatus": "estimate",
+      "note": "TAHMİNİ FİYAT (simülasyon): kargo kutusu payı (referans 15,98). Doğrulanmış piyasa fiyatı değildir.",
       "previousPriceTL": 30,
       "provenance": "web"
     },
@@ -225,14 +225,14 @@
     "rev-pack-scarf-box": {
       "id": "rev-pack-scarf-box",
       "displayName": "Karton Kutu",
-      "priceTL": null,
+      "priceTL": 16,
       "referencePriceTL": 15.976600000000001,
       "referenceDate": "2026-10-06",
       "referenceProduct": "Unipak 30x20x10 cm 50 li kutu / 798,83 TL",
       "referenceSpecification": "Unipak 30x20x10 cm 50 li kutu / 798,83 TL",
       "referenceSource": "https://www.unipak.com.tr/urun/30x20x10-cm-kesimli-e-ticaret-ve-kargo-kutusu-50-esmer",
-      "priceStatus": "needs_review",
-      "note": "PRICE REVIEW REQUIRED: açılan ürün sayfasında stok yok; mevcut satış teyit edilemedi.",
+      "priceStatus": "estimate",
+      "note": "TAHMİNİ FİYAT (simülasyon): kargo kutusu payı (referans 15,98). Doğrulanmış piyasa fiyatı değildir.",
       "previousPriceTL": 30,
       "provenance": "web"
     },
@@ -393,28 +393,28 @@
     "textile_opp_bag": {
       "id": "textile_opp_bag",
       "displayName": "İç Paket + Taşıma Poşeti",
-      "priceTL": null,
+      "priceTL": 3,
       "referencePriceTL": 1.9399,
       "referenceDate": "2026-10-06",
       "referenceProduct": "25x30+5 cm 100 adet şeffaf bantlı OPP, paket 193,99 TL",
       "referenceSpecification": "25x30+5 cm 100 adet şeffaf bantlı OPP, paket 193,99 TL",
       "referenceSource": "https://www.posetambalaj.net/",
-      "priceStatus": "needs_review",
-      "note": "PRICE REVIEW REQUIRED: kaynak yalnız iç OPP paketi fiyatlandırıyor; taşıma poşeti dahil değil.",
+      "priceStatus": "estimate",
+      "note": "TAHMİNİ FİYAT (simülasyon): iç OPP paketi (1,94) + taşıma poşeti payı. Doğrulanmış piyasa fiyatı değildir.",
       "previousPriceTL": 10,
       "provenance": "web"
     },
     "led_strip_3m_ready": {
       "id": "led_strip_3m_ready",
       "displayName": "LED Şerit · 3 m",
-      "priceTL": null,
+      "priceTL": 150,
       "referencePriceTL": null,
       "referenceDate": "2026-10-06",
       "referenceProduct": "",
       "referenceSpecification": "Görselde fiş ve anahtar görünmüyor; hazır set kapsamı teyit bekliyor.",
       "referenceSource": "",
-      "priceStatus": "needs_review",
-      "note": "PRICE REVIEW REQUIRED: çıplak şeride hazır set bedeli uygulanmaz."
+      "priceStatus": "estimate",
+      "note": "TAHMİNİ FİYAT (simülasyon): fişli ve anahtarlı hazır set varsayımı. Doğrulanmış piyasa fiyatı değildir."
     }
   },
   "aliases": {

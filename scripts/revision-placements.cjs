@@ -13,7 +13,7 @@ const assert = require("node:assert/strict");
   for (const f of JSON.parse(
     fs.readFileSync("qa/main-revision/placement-fixtures.json", "utf8"),
   )) {
-    await p.goto("http://127.0.0.1:4180");
+    await p.goto(process.env.GAME_URL || "http://127.0.0.1:4180");
     await p.evaluate(
       (d) => localStorage.setItem("yesil-donusum-v1", JSON.stringify(d)),
       f.db,

@@ -142,7 +142,7 @@ export function start(
     throw Error("İsimleri 180 karakterden kısa yazın.");
   if (clean.mode === "official") {
     if (
-      organizations.length !== 26 ||
+      organizations.length === 0 ||
       !organizations.includes(clean.organization)
     )
       throw Error("Resmî oyun için doğrulanmış kurum listesinden seçim yapın.");
@@ -427,7 +427,7 @@ export function validDatabase(value: unknown): value is Database {
     !Number.isInteger(d.revision) ||
     d.revision < 0 ||
     !Array.isArray(d.results) ||
-    d.results.length > 26 ||
+    d.results.length > 5000 ||
     d.results.some(
       (r) =>
         !r ||
@@ -685,6 +685,7 @@ export function csv(results: Result[]): string {
         "Kasa (TL)",
         "Tarih",
         "Puan kuralı",
+        "Oyun türü",
       ],
       ...ranking(results).map((r, i) => [
         i + 1,
@@ -697,6 +698,7 @@ export function csv(results: Result[]): string {
         r.budget,
         r.completedAt,
         r.rulesVersion === 1 ? "Karar puanı v1" : "Eski ekonomi puanı",
+        r.team.mode === "official" ? "Resmî" : "Serbest",
       ]),
     ]
       .map((row) => row.map(cell).join(";"))
