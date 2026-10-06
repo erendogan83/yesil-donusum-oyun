@@ -1,0 +1,41 @@
+{
+  "checks": [
+    {
+      "name": "start",
+      "violations": []
+    },
+    {
+      "name": "registration",
+      "violations": []
+    },
+    {
+      "name": "tutorial",
+      "violations": []
+    },
+    {
+      "name": "kitchen",
+      "violations": []
+    },
+    {
+      "name": "market",
+      "violations": []
+    },
+    {
+      "name": "product",
+      "violations": []
+    },
+    {
+      "name": "learning-card",
+      "violations": []
+    },
+    {
+      "name": "memory",
+      "violations": []
+    },
+    {
+      "name": "tablet",
+      "violations": []
+    }
+  ],
+  "scrollbar": "rgb(174, 149, 106) rgb(48, 43, 33)"
+}

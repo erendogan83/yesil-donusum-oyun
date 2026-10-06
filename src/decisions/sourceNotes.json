@@ -1,0 +1,94 @@
+{
+  "tap": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": []
+  },
+  "waste-sort": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": [
+      "https://www.epa.gov/recycle/how-do-i-recycle-common-recyclables"
+    ]
+  },
+  "shower": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir. Görsel boyut performans kanıtı değildir. Seçenekler oyuna ait örnek model profilleridir; akış kontrol özelliği seçim öncesinde açıklanır.",
+    "sources": []
+  },
+  "basin": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": []
+  },
+  "flush": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": []
+  },
+  "toothbrush": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": []
+  },
+  "hygiene": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir. Yerel atık toplama kuralları kontrol edilmelidir; bu oyunun organik akışı yalnız gıda/bitki artıkları içindir.",
+    "sources": [
+      "https://www.epa.gov/recycle/how-do-i-recycle-common-recyclables"
+    ]
+  },
+  "light-home": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": ["https://www.energy.gov/cmei/ssl/led-basics"]
+  },
+  "light-workshop": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": ["https://www.energy.gov/cmei/ssl/led-basics"]
+  },
+  "office-power": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": []
+  },
+  "laundry-sort": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": []
+  },
+  "laundry-load": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": [
+      "https://energysavingtrust.org.uk/how-save-energy-when-using-your-washing-machine/"
+    ]
+  },
+  "laundry-program": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": [
+      "https://energysavingtrust.org.uk/how-save-energy-when-using-your-washing-machine/"
+    ]
+  },
+  "irrigation": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": ["https://www.epa.gov/watersense/microirrigation"]
+  },
+  "irrigation-time": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": ["https://www.epa.gov/watersense/microirrigation"]
+  },
+  "irrigation-timer": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": []
+  },
+  "pack-lentil": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir. Malzemeler için evrensel üstünlük sırası yoktur; tekrar kullanım/iade ve teslim şartı senaryoda açıkça belirtilir.",
+    "sources": ["https://www.epa.gov/recycle/frequent-questions-recycling"]
+  },
+  "pack-apple": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir. Malzemeler için evrensel üstünlük sırası yoktur; tekrar kullanım/iade ve teslim şartı senaryoda açıkça belirtilir.",
+    "sources": ["https://www.epa.gov/recycle/frequent-questions-recycling"]
+  },
+  "pack-towel": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir. Malzemeler için evrensel üstünlük sırası yoktur; tekrar kullanım/iade ve teslim şartı senaryoda açıkça belirtilir.",
+    "sources": ["https://www.epa.gov/recycle/frequent-questions-recycling"]
+  },
+  "pack-scarf": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir. Malzemeler için evrensel üstünlük sırası yoktur; tekrar kullanım/iade ve teslim şartı senaryoda açıkça belirtilir.",
+    "sources": ["https://www.epa.gov/recycle/frequent-questions-recycling"]
+  },
+  "roof-bonus": {
+    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
+    "sources": []
+  }
+}

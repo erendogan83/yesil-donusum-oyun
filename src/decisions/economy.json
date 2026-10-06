@@ -1,0 +1,210 @@
+{
+  "rev-tap-aerator": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-tap-repair": {
+    "billImpact": -180,
+    "impactStatus": "simulation"
+  },
+  "rev-tap-filter": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-shower-compact": {
+    "billImpact": -260,
+    "impactStatus": "simulation"
+  },
+  "rev-shower-classic": {
+    "billImpact": -120,
+    "impactStatus": "simulation"
+  },
+  "rev-shower-rain": {
+    "billImpact": 80,
+    "impactStatus": "simulation"
+  },
+  "rev-basin-place": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-flush-half": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-flush-full": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-flush-hold": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-toothbrush-open": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-toothbrush-closed": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-toothbrush-brief": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-hygiene-paper": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-hygiene-other": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-hygiene-organic": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-light-home-incandescent": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-light-home-halogen": {
+    "billImpact": -80,
+    "impactStatus": "simulation"
+  },
+  "rev-light-home-led": {
+    "billImpact": -200,
+    "impactStatus": "simulation"
+  },
+  "rev-light-workshop-incandescent": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-light-workshop-halogen": {
+    "billImpact": -80,
+    "impactStatus": "simulation"
+  },
+  "rev-light-workshop-led": {
+    "billImpact": -200,
+    "impactStatus": "simulation"
+  },
+  "rev-office-power-strip": {
+    "billImpact": -200,
+    "impactStatus": "simulation"
+  },
+  "rev-office-power-smart": {
+    "billImpact": -200,
+    "impactStatus": "simulation"
+  },
+  "rev-office-power-meter": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-load-quarter": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-load-half": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-load-full": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-program-eco": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-program-normal": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-program-hot": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-hose": {
+    "billImpact": -180,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-sprinkler": {
+    "billImpact": -40,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-drip": {
+    "billImpact": -180,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-time-morning": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-time-noon": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-time-evening": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-timer-timer": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-lentil-plastic": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-lentil-paper": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-lentil-return": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-apple-plastic": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-apple-paper": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-apple-mesh": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-towel-plastic": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-towel-box": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-towel-kraft": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-scarf-plastic": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-scarf-box": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-scarf-kraft": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-roof-bonus-solar": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-led-strip": {
+    "billImpact": 0,
+    "impactStatus": "not_estimated"
+  }
+}

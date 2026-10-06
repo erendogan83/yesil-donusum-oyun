@@ -1,0 +1,244 @@
+{
+  "passed": true,
+  "errors": [],
+  "audits": [
+    {
+      "width": 1920,
+      "name": "market",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "bathroom-shower-b-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "bathroom-shower-a-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "home-bulb-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "home-led-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "workshop-basic-strip-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "workshop-strip-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "waste-bin-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "waste-sort-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "roof-solar-lamp-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "roof-solar-choice",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "summary",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "final",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "market",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "bathroom-shower-b-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "bathroom-shower-a-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "bathroom-replacement-card",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "home-bulb-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "home-led-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "home-replacement-card",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "workshop-basic-strip-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "workshop-strip-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "workshop-replacement-card",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "waste-bin-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "waste-sort-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "waste-replacement-card",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "roof-solar-lamp-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "roof-solar-choice",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "roof-replacement-card",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "summary",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "final",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "market",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "bathroom-shower-b-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "bathroom-shower-a-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "home-bulb-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "home-led-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "workshop-basic-strip-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "workshop-strip-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "waste-bin-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "waste-sort-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "roof-solar-lamp-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "roof-solar-choice",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "summary",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "final",
+      "violations": []
+    }
+  ],
+  "checks": [
+    "TL detail math",
+    "uniform neutral pre-purchase style",
+    "all five exclusive replacements",
+    "no refunds",
+    "active state reload",
+    "opportunity counts",
+    "period and final money",
+    "30% budget prompt",
+    "transient receipt",
+    "once-per-period budget thought",
+    "40-second non-answer hint"
+  ],
+  "viewports": [
+    1920,
+    1366,
+    1024
+  ]
+}

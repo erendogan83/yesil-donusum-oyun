@@ -1,0 +1,218 @@
+{
+  "rev-tap-aerator": {
+    "decisionScore": 20,
+    "reason": "Musluk ucu akışı düzenler; aşınmış contayı onarmaz."
+  },
+  "rev-tap-repair": {
+    "decisionScore": 100,
+    "reason": "Conta yenilendiği için kaçak kesildi."
+  },
+  "rev-tap-filter": {
+    "decisionScore": 20,
+    "reason": "Filtre suyu süzer, fakat arızalı contayı onarmaz."
+  },
+  "rev-shower-compact": {
+    "decisionScore": 100,
+    "reason": "Bu model, duş sırasında gereksiz akışı azaltan bir iç parçaya sahip."
+  },
+  "rev-shower-classic": {
+    "decisionScore": 60,
+    "reason": "Bu modelin ayarı suyu dağıtır; akışı kompakt model kadar sınırlamaz."
+  },
+  "rev-shower-rain": {
+    "decisionScore": 20,
+    "reason": "Bu senaryodaki geniş başlık aynı sürede daha fazla su kullanır."
+  },
+  "rev-basin-place": {
+    "decisionScore": 0,
+    "reason": "Bu suyu temizlikte veya uygun başka bir işte yeniden kullanabilirsin."
+  },
+  "rev-flush-half": {
+    "decisionScore": 100,
+    "reason": "Bu kullanımda yarım sifon işi tamamladı."
+  },
+  "rev-flush-full": {
+    "decisionScore": 40,
+    "reason": "Bu kullanımda tam sifona ihtiyaç yoktu."
+  },
+  "rev-flush-hold": {
+    "decisionScore": 20,
+    "reason": "Düğmeyi basılı tutmak bu kullanım için gerekli değildi."
+  },
+  "rev-toothbrush-open": {
+    "decisionScore": 20,
+    "reason": "Fırçalama boyunca akan suyun çoğu kullanılmadan gidere gitti."
+  },
+  "rev-toothbrush-closed": {
+    "decisionScore": 100,
+    "reason": "Musluğu yalnız durularken açmak yeterliydi."
+  },
+  "rev-toothbrush-brief": {
+    "decisionScore": 100,
+    "reason": "Fırçalama aralarında musluğu kapalı tuttun."
+  },
+  "rev-hygiene-paper": {
+    "decisionScore": 20,
+    "reason": "Kirli hijyenik kâğıdı temiz kâğıt ve kartondan ayrı tut."
+  },
+  "rev-hygiene-other": {
+    "decisionScore": 100,
+    "reason": "Temiz karton rulo kâğıda; kirli peçete ve ıslak mendil diğer atığa gider."
+  },
+  "rev-hygiene-organic": {
+    "decisionScore": 20,
+    "reason": "Bu kap yalnız yemek ve bitki artıkları için ayrıldı."
+  },
+  "rev-light-home-incandescent": {
+    "decisionScore": 20,
+    "reason": "Akkor ampul, aynı ışığı üretirken enerjinin daha büyük bölümünü ısıya çevirir."
+  },
+  "rev-light-home-halogen": {
+    "decisionScore": 60,
+    "reason": "Aynı aydınlık için klasik ampulden az, LED’den fazla elektrik kullanır."
+  },
+  "rev-light-home-led": {
+    "decisionScore": 100,
+    "reason": "LED, aynı parlaklıktaki akkor ve halojen ampullerden daha az elektrik kullanır."
+  },
+  "rev-light-workshop-incandescent": {
+    "decisionScore": 20,
+    "reason": "Akkor ampul, aynı ışığı üretirken enerjinin daha büyük bölümünü ısıya çevirir."
+  },
+  "rev-light-workshop-halogen": {
+    "decisionScore": 60,
+    "reason": "Aynı aydınlık için klasik ampulden az, LED’den fazla elektrik kullanır."
+  },
+  "rev-light-workshop-led": {
+    "decisionScore": 100,
+    "reason": "LED, aynı parlaklıktaki akkor ve halojen ampullerden daha az elektrik kullanır."
+  },
+  "rev-office-power-strip": {
+    "decisionScore": 100,
+    "reason": "İş bitince anahtarı kapatmak bekleme tüketimini durdurur."
+  },
+  "rev-office-power-smart": {
+    "decisionScore": 100,
+    "reason": "Saati mesaiye göre ayarladığın için cihazlar beklemede kalmadı."
+  },
+  "rev-office-power-meter": {
+    "decisionScore": 20,
+    "reason": "Ölçmek tek başına tüketimi azaltmaz; cihazların kapanması da gerekir."
+  },
+  "rev-laundry-load-quarter": {
+    "decisionScore": 20,
+    "reason": "Aynı çamaşırları bitirmek için daha çok yıkama gerekebilir."
+  },
+  "rev-laundry-load-half": {
+    "decisionScore": 60,
+    "reason": "Biraz daha biriktirmek yıkama sayısını azaltabilirdi."
+  },
+  "rev-laundry-load-full": {
+    "decisionScore": 100,
+    "reason": "Çamaşırları sıkıştırmadan biriktirmek, aynı miktar için gereken yıkama sayısını azaltır."
+  },
+  "rev-laundry-program-eco": {
+    "decisionScore": 100,
+    "reason": "Bu günlük çamaşırlar için yüksek ısı gerekmiyordu; daha az su ısıttın."
+  },
+  "rev-laundry-program-normal": {
+    "decisionScore": 60,
+    "reason": "Bu çamaşırlar düşük sıcaklıkta da yıkanabilirdi; daha fazla su ısıttın."
+  },
+  "rev-laundry-program-hot": {
+    "decisionScore": 20,
+    "reason": "Bu senaryoda özel hijyen ihtiyacı yoktu; yüksek ısıya gerek kalmıyordu."
+  },
+  "rev-irrigation-hose": {
+    "decisionScore": 100,
+    "reason": "Hortumu kökte tutup geçişlerde kapattığında boş alanları sulamadın."
+  },
+  "rev-irrigation-sprinkler": {
+    "decisionScore": 40,
+    "reason": "Fıskiye suyu sebze sıralarının arasına da dağıttı."
+  },
+  "rev-irrigation-drip": {
+    "decisionScore": 100,
+    "reason": "Damla hattı suyu sıra aralarına dağıtmak yerine bitki dibine verdi."
+  },
+  "rev-irrigation-time-morning": {
+    "decisionScore": 100,
+    "reason": "Güneş yükselmeden sulamak sıcak öğle saatine göre buharlaşmayı azaltır."
+  },
+  "rev-irrigation-time-noon": {
+    "decisionScore": 40,
+    "reason": "Bu senaryoda sıcaklık nedeniyle su daha çabuk buharlaşır."
+  },
+  "rev-irrigation-time-evening": {
+    "decisionScore": 100,
+    "reason": "Güneşin etkisi azaldığında sulamak sıcak öğleye göre buharlaşmayı azaltır."
+  },
+  "rev-irrigation-timer-timer": {
+    "decisionScore": 0,
+    "reason": "Zamanlayıcı unutmayı azaltır; doğru süreyi seçmek yine senin kararındır."
+  },
+  "rev-pack-lentil-plastic": {
+    "decisionScore": 40,
+    "reason": "Bu paketin tekrar dolum sistemi yok; her alışverişte yeni paket kullanılıyor."
+  },
+  "rev-pack-lentil-paper": {
+    "decisionScore": 40,
+    "reason": "Bu paketin tekrar dolum sistemi yok; her alışverişte yeni paket kullanılıyor."
+  },
+  "rev-pack-lentil-return": {
+    "decisionScore": 100,
+    "reason": "Kavanoz iade edilip yeniden doldurulacak; her alışverişte yeni ambalaj gerekmiyor."
+  },
+  "rev-pack-apple-plastic": {
+    "decisionScore": 40,
+    "reason": "Bu senaryoda torba bir kez kullanılıyor; sonraki alışverişte yenisi gerekiyor."
+  },
+  "rev-pack-apple-paper": {
+    "decisionScore": 40,
+    "reason": "Bu senaryoda torba bir kez kullanılıyor; sonraki alışverişte yenisi gerekiyor."
+  },
+  "rev-pack-apple-mesh": {
+    "decisionScore": 100,
+    "reason": "Fileyi sonraki alışverişlerde de kullanarak yeni torba ihtiyacını azalttın."
+  },
+  "rev-pack-towel-plastic": {
+    "decisionScore": 20,
+    "reason": "İç paket ve taşıma poşetiyle aynı ürün için iki ambalaj kullandın."
+  },
+  "rev-pack-towel-box": {
+    "decisionScore": 60,
+    "reason": "Kargo yapılmayan bu teslimde sert kutu yerine daha az malzemeli çanta yeterliydi."
+  },
+  "rev-pack-towel-kraft": {
+    "decisionScore": 100,
+    "reason": "Ürünü tek ambalajla teslim ettin; ek taşıma poşetine gerek kalmadı."
+  },
+  "rev-pack-scarf-plastic": {
+    "decisionScore": 20,
+    "reason": "İç paket ve taşıma poşetiyle aynı ürün için iki ambalaj kullandın."
+  },
+  "rev-pack-scarf-box": {
+    "decisionScore": 60,
+    "reason": "Kargo yapılmayan bu teslimde sert kutu yerine daha az malzemeli çanta yeterliydi."
+  },
+  "rev-pack-scarf-kraft": {
+    "decisionScore": 100,
+    "reason": "Ürünü tek ambalajla teslim ettin; ek taşıma poşetine gerek kalmadı."
+  },
+  "rev-roof-bonus-solar": {
+    "decisionScore": 0,
+    "reason": "Gerçek yatırım için çatı uygunluğu ve tüketim birlikte değerlendirilmelidir."
+  },
+  "sort-waste-sort": {
+    "decisionScore": 100,
+    "reason": "Her nesnenin ilk eşleştirmesi sayılır; doğru eşleştirme oranı 100 puana ölçeklenir."
+  },
+  "sort-laundry-sort": {
+    "decisionScore": 100,
+    "reason": "Her çamaşır grubunun ilk eşleştirmesi sayılır; doğru oranı 100 puana ölçeklenir."
+  },
+  "rev-led-strip": {
+    "decisionScore": 0,
+    "reason": "Opsiyonel yardımcı ışık; güç/kullanım karşılaştırması yok, çevresel puana dahil değil."
+  }
+}

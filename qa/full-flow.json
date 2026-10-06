@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    "all nine rooms",
+    "good bad neutral conditional mechanics via unit tests",
+    "four periods",
+    "four free actions",
+    "combinations",
+    "practice excluded",
+    "official finish",
+    "official lock",
+    "names",
+    "CSV",
+    "backup",
+    "delete/reset",
+    "restore",
+    "1920x1080",
+    "800x600",
+    "390x844"
+  ]
+}

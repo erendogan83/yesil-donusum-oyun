@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "checks": [
+    "quota rollback",
+    "form values preserved",
+    "multi-tab update",
+    "purchase once",
+    "corrupt save preserved",
+    "corrupt save recovery"
+  ]
+}

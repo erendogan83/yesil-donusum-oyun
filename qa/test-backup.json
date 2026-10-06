@@ -1,0 +1,132 @@
+{
+  "version": 2,
+  "revision": 118,
+  "active": {
+    "version": 2,
+    "id": "0a3bc5f9-0912-4817-91ae-0c9d7ae50d10",
+    "team": {
+      "organization": "TEST KURUMU 1 — gerçek kurum değildir",
+      "first": "Deniz",
+      "second": "Ece",
+      "mode": "official"
+    },
+    "round": 4,
+    "bill": 9820,
+    "budget": 2440,
+    "inventory": [],
+    "installed": [
+      "tap-a"
+    ],
+    "activeInstallations": [
+      "tap-a"
+    ],
+    "replacedInstallations": [],
+    "budgetMoments": [],
+    "actions": [],
+    "combos": [],
+    "moves": [
+      {
+        "id": "tap-a",
+        "name": "Musluk Ucu",
+        "impact": -180,
+        "cost": 150,
+        "room": "kitchen",
+        "round": 1
+      }
+    ],
+    "history": [
+      {
+        "round": 1,
+        "before": 10000,
+        "after": 9820,
+        "saving": 180,
+        "reward": 90
+      },
+      {
+        "round": 2,
+        "before": 9820,
+        "after": 9820,
+        "saving": 0,
+        "reward": 0
+      },
+      {
+        "round": 3,
+        "before": 9820,
+        "after": 9820,
+        "saving": 0,
+        "reward": 0
+      },
+      {
+        "round": 4,
+        "before": 9820,
+        "after": 9820,
+        "saving": 0,
+        "reward": 0
+      }
+    ],
+    "phase": "finished",
+    "room": "map",
+    "tutorial": false,
+    "journeyVersion": 1,
+    "discoveries": [
+      {
+        "round": 1,
+        "room": "kitchen",
+        "zone": "tap"
+      }
+    ],
+    "considered": [
+      {
+        "round": 1,
+        "productId": "tap-a"
+      }
+    ],
+    "lessons": [
+      {
+        "memoryName": "Muslukta küçük dokunuş",
+        "title": "Küçücük parça, güzel fark.",
+        "result": "Musluğu değiştirmeden gereksiz su akışını azalttın.",
+        "realLife": "Evde uygulanması kolay ve düşük maliyetli fikirlerden biri.",
+        "takeaway": "Önce küçük kayıplara bak.",
+        "id": "tap-a",
+        "asset": "sheet-06-1",
+        "category": "Su",
+        "billImpact": -180,
+        "comboImpact": 0,
+        "replacementImpact": 0,
+        "spent": 150,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      }
+    ],
+    "originScene": "kitchen",
+    "originZone": "tap",
+    "realLifePledges": [
+      "Musluk uçlarında küçük bir iyileştirmeyi araştıracağız.",
+      "Evde ve işte küçük kayıpları kontrol edeceğiz.",
+      "Yeni bir ürün almadan önce ihtiyacımızı konuşacağız."
+    ]
+  },
+  "results": [
+    {
+      "id": "0a3bc5f9-0912-4817-91ae-0c9d7ae50d10",
+      "team": {
+        "organization": "TEST KURUMU 1 — gerçek kurum değildir",
+        "first": "Deniz",
+        "second": "Ece",
+        "mode": "official"
+      },
+      "bill": 9820,
+      "budget": 2440,
+      "savingPercent": 1.8,
+      "score": 848,
+      "completedAt": "2026-10-04T17:01:10.480Z",
+      "realLifePledges": [
+        "Musluk uçlarında küçük bir iyileştirmeyi araştıracağız.",
+        "Evde ve işte küçük kayıpları kontrol edeceğiz.",
+        "Yeni bir ürün almadan önce ihtiyacımızı konuşacağız."
+      ]
+    }
+  ]
+}

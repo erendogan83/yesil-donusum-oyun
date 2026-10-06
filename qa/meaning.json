@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    "mandatory two names",
+    "26 supplied organizations",
+    "brief intro",
+    "three goals per period",
+    "contextual shelf",
+    "scene free idea",
+    "persistent lesson",
+    "combo surprise and memory",
+    "incremental capped reward",
+    "three pledges score-independent",
+    "pledge reload",
+    "legacy save/participant completion",
+    "1366 and 1920 visuals"
+  ]
+}

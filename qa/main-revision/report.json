@@ -1,0 +1,10 @@
+{
+  "errors": [],
+  "decisions": 22,
+  "viewports": [
+    1366,
+    1536,
+    1920
+  ],
+  "expectedScore": 1783
+}

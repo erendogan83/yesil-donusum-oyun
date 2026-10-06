@@ -1,0 +1,709 @@
+{
+  "version": 2,
+  "revision": 115,
+  "active": {
+    "version": 2,
+    "id": "11863c34-3693-4fea-b79c-34c1918ebf3d",
+    "team": {
+      "organization": "QA Kooperatifi",
+      "first": "Ayşe",
+      "second": "Nisa",
+      "mode": "practice"
+    },
+    "round": 4,
+    "bill": 8780,
+    "budget": 8152,
+    "inventory": [],
+    "installed": [
+      "rev-tap-repair",
+      "rev-shower-compact",
+      "rev-light-home-led",
+      "rev-light-workshop-led",
+      "rev-office-power-strip",
+      "rev-irrigation-hose",
+      "rev-pack-lentil-return",
+      "rev-pack-apple-mesh",
+      "rev-pack-towel-kraft",
+      "rev-pack-scarf-kraft"
+    ],
+    "activeInstallations": [
+      "rev-tap-repair",
+      "rev-shower-compact",
+      "rev-light-home-led",
+      "rev-light-workshop-led",
+      "rev-office-power-strip",
+      "rev-irrigation-hose",
+      "rev-pack-lentil-return",
+      "rev-pack-apple-mesh",
+      "rev-pack-towel-kraft",
+      "rev-pack-scarf-kraft"
+    ],
+    "replacedInstallations": [],
+    "budgetMoments": [
+      3
+    ],
+    "actions": [],
+    "combos": [],
+    "moves": [
+      {
+        "id": "rev-tap-repair",
+        "name": "Tamir Seti",
+        "impact": -180,
+        "cost": 349,
+        "room": "kitchen",
+        "round": 1
+      },
+      {
+        "id": "rev-shower-compact",
+        "name": "Kompakt Başlık",
+        "impact": -260,
+        "cost": 1009,
+        "room": "bathroom",
+        "round": 1
+      },
+      {
+        "id": "rev-light-home-led",
+        "name": "LED Ampul",
+        "impact": -200,
+        "cost": 50,
+        "room": "home",
+        "round": 1
+      },
+      {
+        "id": "rev-light-workshop-led",
+        "name": "LED Ampul",
+        "impact": -200,
+        "cost": 50,
+        "room": "workshop",
+        "round": 2
+      },
+      {
+        "id": "rev-office-power-strip",
+        "name": "Anahtarlı Çoklu Priz",
+        "impact": -200,
+        "cost": 139,
+        "room": "workshop",
+        "round": 2
+      },
+      {
+        "id": "rev-irrigation-hose",
+        "name": "Hortum Tabancası",
+        "impact": -180,
+        "cost": 300,
+        "room": "garden",
+        "round": 3
+      },
+      {
+        "id": "rev-pack-lentil-return",
+        "name": "İadeli Cam Kavanoz",
+        "impact": 0,
+        "cost": 90,
+        "room": "storage",
+        "round": 3
+      },
+      {
+        "id": "rev-pack-apple-mesh",
+        "name": "Tekrar Kullanılabilir File",
+        "impact": 0,
+        "cost": 100,
+        "room": "storage",
+        "round": 3
+      },
+      {
+        "id": "rev-pack-towel-kraft",
+        "name": "Tek Kraft Çanta",
+        "impact": 0,
+        "cost": 8,
+        "room": "storage",
+        "round": 4
+      },
+      {
+        "id": "rev-pack-scarf-kraft",
+        "name": "Tek Kraft Çanta",
+        "impact": 0,
+        "cost": 8,
+        "room": "storage",
+        "round": 4
+      }
+    ],
+    "history": [
+      {
+        "round": 1,
+        "before": 10000,
+        "after": 9360,
+        "saving": 640,
+        "reward": 160
+      },
+      {
+        "round": 2,
+        "before": 9360,
+        "after": 8960,
+        "saving": 400,
+        "reward": 100
+      },
+      {
+        "round": 3,
+        "before": 8960,
+        "after": 8780,
+        "saving": 180,
+        "reward": 45
+      },
+      {
+        "round": 4,
+        "before": 8780,
+        "after": 8780,
+        "saving": 0,
+        "reward": 0
+      }
+    ],
+    "phase": "finished",
+    "room": "roof",
+    "tutorial": false,
+    "journeyVersion": 1,
+    "discoveries": [
+      {
+        "round": 1,
+        "room": "kitchen",
+        "zone": "rev-tap"
+      },
+      {
+        "round": 1,
+        "room": "bathroom",
+        "zone": "rev-shower"
+      },
+      {
+        "round": 1,
+        "room": "home",
+        "zone": "rev-light-home"
+      },
+      {
+        "round": 2,
+        "room": "workshop",
+        "zone": "rev-light-workshop"
+      },
+      {
+        "round": 2,
+        "room": "workshop",
+        "zone": "rev-office-power"
+      },
+      {
+        "round": 3,
+        "room": "garden",
+        "zone": "rev-irrigation"
+      },
+      {
+        "round": 3,
+        "room": "storage",
+        "zone": "rev-pack-lentil"
+      },
+      {
+        "round": 3,
+        "room": "storage",
+        "zone": "rev-pack-apple"
+      },
+      {
+        "round": 4,
+        "room": "storage",
+        "zone": "rev-pack-towel"
+      },
+      {
+        "round": 4,
+        "room": "storage",
+        "zone": "rev-pack-scarf"
+      }
+    ],
+    "considered": [
+      {
+        "round": 1,
+        "productId": "rev-tap-repair"
+      },
+      {
+        "round": 1,
+        "productId": "rev-shower-compact"
+      },
+      {
+        "round": 1,
+        "productId": "rev-light-home-led"
+      },
+      {
+        "round": 2,
+        "productId": "rev-light-workshop-led"
+      },
+      {
+        "round": 2,
+        "productId": "rev-office-power-strip"
+      },
+      {
+        "round": 3,
+        "productId": "rev-irrigation-hose"
+      },
+      {
+        "round": 3,
+        "productId": "rev-pack-lentil-return"
+      },
+      {
+        "round": 3,
+        "productId": "rev-pack-apple-mesh"
+      },
+      {
+        "round": 4,
+        "productId": "rev-pack-towel-kraft"
+      },
+      {
+        "round": 4,
+        "productId": "rev-pack-scarf-kraft"
+      }
+    ],
+    "lessons": [
+      {
+        "id": "rev-tap-repair",
+        "title": "Damlatma durdu.",
+        "result": "Conta yenilendiği için kaçak kesildi. Evde damlayan musluğu da küçük bir bakımla onarabilirsin.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Tamir Seti",
+        "asset": "sprites/generated/faucet-repair",
+        "category": "Su",
+        "billImpact": -180,
+        "comboImpact": 0,
+        "spent": 349,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "sort-waste-sort",
+        "title": "Ayırma tamamlandı.",
+        "result": "Temiz ambalajları ayırdın. Kirli peçete bu sistemde diğer atığa gider.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Mutfaktaki atıklar",
+        "asset": "sprites/generated/waste-paper",
+        "category": "Su",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 0,
+        "tone": "neutral",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-shower-compact",
+        "title": "Su akışı sınırlandı.",
+        "result": "Bu model, duş sırasında gereksiz akışı azaltan bir iç parçaya sahip.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Kompakt Başlık",
+        "asset": "sprites/generated/shower-compact",
+        "category": "Su",
+        "billImpact": -260,
+        "comboImpact": 0,
+        "spent": 1009,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-flush-half",
+        "title": "Yeterli suyu kullandın.",
+        "result": "Bu kullanımda yarım sifon işi tamamladı.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Yarım sifon",
+        "asset": "",
+        "category": "Su",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 0,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-toothbrush-closed",
+        "title": "Kullanmadığın suyu durdurdun.",
+        "result": "Musluğu yalnız durularken açmak yeterliydi.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Fırçalarken kapat",
+        "asset": "",
+        "category": "Su",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 0,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-hygiene-other",
+        "title": "Kirli peçeteyi ayırdın.",
+        "result": "Kirli peçete ve ıslak mendil diğer atıktır. Temiz karton rulo ise kâğıt kutusuna gider.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Diğer atık",
+        "asset": "",
+        "category": "Su",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 0,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-light-home-led",
+        "title": "LED ampul takıldı.",
+        "result": "Aynı aydınlatma ihtiyacını eski tip ampullere göre daha düşük elektrik tüketimiyle karşılar.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "LED Ampul",
+        "asset": "sprites/generated/bulb-led",
+        "category": "Enerji",
+        "billImpact": -200,
+        "comboImpact": 0,
+        "spent": 50,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-light-workshop-led",
+        "title": "LED ampul takıldı.",
+        "result": "Aynı aydınlatma ihtiyacını eski tip ampullere göre daha düşük elektrik tüketimiyle karşılar.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "LED Ampul",
+        "asset": "sprites/generated/bulb-led",
+        "category": "Enerji",
+        "billImpact": -200,
+        "comboImpact": 0,
+        "spent": 50,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-office-power-strip",
+        "title": "Cihazların elektriği kesildi.",
+        "result": "İş bitince anahtarı kapatmak bekleme tüketimini durdurur.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Anahtarlı Çoklu Priz",
+        "asset": "obj_workshop_power_strip_installed",
+        "category": "Enerji",
+        "billImpact": -200,
+        "comboImpact": 0,
+        "spent": 139,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "sort-laundry-sort",
+        "title": "Ayırma tamamlandı.",
+        "result": "Beyaz, renkli ve koyu çamaşırları ayırdın. Evde bakım etiketlerini de kontrol et.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Çamaşırları ayır",
+        "asset": "sprites/generated/clothes-white",
+        "category": "Ev",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 0,
+        "tone": "neutral",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-laundry-load-full",
+        "title": "Önerilen kapasiteyle çalıştırdın.",
+        "result": "Çamaşırları sıkıştırmadan biriktirmek, aynı miktar için gereken yıkama sayısını azaltır.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Uygun tam yük",
+        "asset": "",
+        "category": "Ev",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 0,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-laundry-program-eco",
+        "title": "Düşük sıcaklıkta yıkadın.",
+        "result": "Bu günlük çamaşırlar için yüksek ısı gerekmiyordu; daha az su ısıttın.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "30°C / ECO",
+        "asset": "",
+        "category": "Ev",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 0,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-irrigation-hose",
+        "title": "Suyu her köke elle yönelttin.",
+        "result": "Hortumu kökte tutup geçişlerde kapattığında boş alanları sulamadın.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Hortum Tabancası",
+        "asset": "sprites/generated/irrigation-hose",
+        "category": "Bahçe",
+        "billImpact": -180,
+        "comboImpact": 0,
+        "spent": 300,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-irrigation-time-morning",
+        "title": "Serin saati seçtin.",
+        "result": "Güneş yükselmeden sulamak sıcak öğle saatine göre buharlaşmayı azaltır.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Sabah",
+        "asset": "",
+        "category": "Bahçe",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 0,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-pack-lentil-return",
+        "title": "Ürün teslim edildi.",
+        "result": "Kavanoz iade edilip yeniden doldurulacak; her alışverişte yeni ambalaj gerekmiyor.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "İadeli Cam Kavanoz",
+        "asset": "sprites/generated/lentil-return",
+        "category": "Gıda",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 90,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-pack-apple-mesh",
+        "title": "Ürün teslim edildi.",
+        "result": "Fileyi sonraki alışverişlerde de kullanarak yeni torba ihtiyacını azalttın.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Tekrar Kullanılabilir File",
+        "asset": "sprites/generated/apple-mesh",
+        "category": "Gıda",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 100,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-pack-towel-kraft",
+        "title": "Ürün teslim edildi.",
+        "result": "Ürünü tek ambalajla teslim ettin; ek taşıma poşetine gerek kalmadı.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Tek Kraft Çanta",
+        "asset": "sprites/generated/towel-kraft",
+        "category": "Gıda",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 8,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      },
+      {
+        "id": "rev-pack-scarf-kraft",
+        "title": "Ürün teslim edildi.",
+        "result": "Ürünü tek ambalajla teslim ettin; ek taşıma poşetine gerek kalmadı.",
+        "realLife": "",
+        "takeaway": "",
+        "memoryName": "Tek Kraft Çanta",
+        "asset": "sprites/generated/scarf-kraft",
+        "category": "Gıda",
+        "billImpact": 0,
+        "comboImpact": 0,
+        "spent": 8,
+        "tone": "good",
+        "acknowledged": true,
+        "remind": false
+      }
+    ],
+    "decisionVersion": 1,
+    "decisions": [
+      {
+        "opportunityId": "tap",
+        "choiceId": "rev-tap-repair",
+        "round": 1
+      },
+      {
+        "opportunityId": "waste-sort",
+        "choiceId": "sorted",
+        "round": 1
+      },
+      {
+        "opportunityId": "shower",
+        "choiceId": "rev-shower-compact",
+        "round": 1
+      },
+      {
+        "opportunityId": "basin",
+        "choiceId": "skip",
+        "round": 1
+      },
+      {
+        "opportunityId": "flush",
+        "choiceId": "rev-flush-half",
+        "round": 1
+      },
+      {
+        "opportunityId": "toothbrush",
+        "choiceId": "rev-toothbrush-closed",
+        "round": 1
+      },
+      {
+        "opportunityId": "hygiene",
+        "choiceId": "rev-hygiene-other",
+        "round": 1
+      },
+      {
+        "opportunityId": "light-home",
+        "choiceId": "rev-light-home-led",
+        "round": 1
+      },
+      {
+        "opportunityId": "light-workshop",
+        "choiceId": "rev-light-workshop-led",
+        "round": 2
+      },
+      {
+        "opportunityId": "office-power",
+        "choiceId": "rev-office-power-strip",
+        "round": 2
+      },
+      {
+        "opportunityId": "laundry-sort",
+        "choiceId": "sorted",
+        "round": 2
+      },
+      {
+        "opportunityId": "laundry-load",
+        "choiceId": "rev-laundry-load-full",
+        "round": 2
+      },
+      {
+        "opportunityId": "laundry-program",
+        "choiceId": "rev-laundry-program-eco",
+        "round": 2
+      },
+      {
+        "opportunityId": "led-strip",
+        "choiceId": "skip",
+        "round": 2
+      },
+      {
+        "opportunityId": "irrigation",
+        "choiceId": "rev-irrigation-hose",
+        "round": 3
+      },
+      {
+        "opportunityId": "irrigation-time",
+        "choiceId": "rev-irrigation-time-morning",
+        "round": 3
+      },
+      {
+        "opportunityId": "irrigation-timer",
+        "choiceId": "skip",
+        "round": 3
+      },
+      {
+        "opportunityId": "pack-lentil",
+        "choiceId": "rev-pack-lentil-return",
+        "round": 3
+      },
+      {
+        "opportunityId": "pack-apple",
+        "choiceId": "rev-pack-apple-mesh",
+        "round": 3
+      },
+      {
+        "opportunityId": "pack-towel",
+        "choiceId": "rev-pack-towel-kraft",
+        "round": 4
+      },
+      {
+        "opportunityId": "pack-scarf",
+        "choiceId": "rev-pack-scarf-kraft",
+        "round": 4
+      },
+      {
+        "opportunityId": "roof-bonus",
+        "choiceId": "skip",
+        "round": 4
+      }
+    ],
+    "sorting": {
+      "waste-sort": {
+        "firstAnswers": {
+          "tissue": "paper",
+          "paper": "paper",
+          "plastic": "plastic",
+          "glass": "glass",
+          "metal": "metal",
+          "organic": "organic"
+        },
+        "placed": [
+          "paper",
+          "plastic",
+          "glass",
+          "metal",
+          "organic",
+          "tissue"
+        ]
+      },
+      "laundry-sort": {
+        "firstAnswers": {
+          "white": "white",
+          "color": "color",
+          "dark": "dark"
+        },
+        "placed": [
+          "white",
+          "color",
+          "dark"
+        ]
+      }
+    },
+    "originScene": "roof",
+    "purchaseCosts": {
+      "rev-tap-repair": 349,
+      "rev-shower-compact": 1009,
+      "rev-light-home-led": 50,
+      "rev-light-workshop-led": 50,
+      "rev-office-power-strip": 139,
+      "rev-irrigation-hose": 300,
+      "rev-pack-lentil-return": 90,
+      "rev-pack-apple-mesh": 100,
+      "rev-pack-towel-kraft": 8,
+      "rev-pack-scarf-kraft": 8
+    },
+    "salesIncomeGranted": true,
+    "salesIncomeAcknowledged": true
+  },
+  "results": []
+}

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "offlineAssets": 51,
+  "errors": [],
+  "axeViolations": 0,
+  "officialResult": true,
+  "csv": true,
+  "restore": true,
+  "touch": [
+    844,
+    390
+  ]
+}

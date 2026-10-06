@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#302b21" />
+    <meta
+      name="description"
+      content="Kooperatifiniz için birlikte karar verin. Dört dönemde yeşil dönüşümü başlatın."
+    />
+    <title>Yeşil Dönüşüm</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Yeşil Dönüşüm" />
+    <meta
+      property="og:description"
+      content="Kooperatifiniz için birlikte karar verin. Dört dönemde yeşil dönüşümü başlatın."
+    />
+  </head>
+  <body>
+    <noscript
+      ><p style="padding: 24px; color: #f3e8d0">
+        Yeşil Dönüşüm oynamak için JavaScript gerekir.
+      </p></noscript
+    >
+    <main id="stage">
+      <div id="game" aria-hidden="true"></div>
+      <div id="ui"></div>
+      <div id="status" role="status" aria-live="polite"></div>
+      <div id="save-status" role="status"></div>
+    </main>
+    <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

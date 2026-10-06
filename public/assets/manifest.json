@@ -1,0 +1,483 @@
+[
+  {
+    "source": "BG_BATHROOM_BASE.png.png",
+    "kind": "background",
+    "output": "bg_bathroom_base.webp"
+  },
+  {
+    "source": "BG_GARDEN_BASE.png.png",
+    "kind": "background",
+    "output": "bg_garden_base.webp"
+  },
+  {
+    "source": "BG_HOME_LIVING_BASE.png.png",
+    "kind": "background",
+    "output": "bg_home_living_base.webp"
+  },
+  {
+    "source": "BG_KITCHEN_BASE.png.png",
+    "kind": "background",
+    "output": "bg_kitchen_base.webp"
+  },
+  {
+    "source": "BG_LAUNDRY_BASE.png.png",
+    "kind": "background",
+    "output": "bg_laundry_base.webp"
+  },
+  {
+    "source": "BG_MAIN_OVERVIEW_BASE.png.png",
+    "kind": "background",
+    "output": "bg_main_overview_base.webp"
+  },
+  {
+    "source": "BG_MARKET_BASE.png.png",
+    "kind": "background",
+    "output": "bg_market_base.webp"
+  },
+  {
+    "source": "BG_ROOF_BASE.png.png",
+    "kind": "background",
+    "output": "bg_roof_base.webp"
+  },
+  {
+    "source": "BG_STORAGE_PACKAGING_BASE.png.png",
+    "kind": "background",
+    "output": "bg_storage_packaging_base.webp"
+  },
+  {
+    "source": "BG_WASTE_COMPOST_BASE.png.png",
+    "kind": "background",
+    "output": "bg_waste_compost_base.webp"
+  },
+  {
+    "source": "BG_WORKSHOP_OFFICE_BASE.png.png",
+    "kind": "background",
+    "output": "bg_workshop_office_base.webp"
+  },
+  {
+    "source": "OBJ_DRIP_IRRIGATION.png",
+    "kind": "installed-object",
+    "output": "obj_drip_irrigation.webp"
+  },
+  {
+    "source": "OBJ_LAUNDRY_SMART_PLUG_INSTALLED.png.png",
+    "kind": "installed-object",
+    "output": "obj_laundry_smart_plug_installed.webp"
+  },
+  {
+    "source": "OBJ_SOLAR_ARRAY.png.png",
+    "kind": "installed-object",
+    "output": "obj_solar_array.webp"
+  },
+  {
+    "source": "OBJ_THERMAL_CURTAIN.png.png",
+    "kind": "installed-object",
+    "output": "obj_thermal_curtain.webp"
+  },
+  {
+    "source": "OBJ_WORKSHOP_POWER_STRIP_INSTALLED.png.png",
+    "kind": "installed-object",
+    "output": "obj_workshop_power_strip_installed.webp"
+  },
+  {
+    "source": "OBJ_WORKSHOP_WATTMETER_INSTALLED.png.png",
+    "kind": "installed-object",
+    "output": "obj_workshop_wattmeter_installed.webp"
+  },
+  {
+    "source": "OBJECT SHEET 01.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "sheet-01-1.webp"
+  },
+  {
+    "source": "OBJECT SHEET 01.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "sheet-01-2.webp"
+  },
+  {
+    "source": "OBJECT SHEET 01.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "sheet-01-3.webp"
+  },
+  {
+    "source": "OBJECT SHEET 01.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "sheet-01-4.webp"
+  },
+  {
+    "source": "OBJECT SHEET 01.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "sheet-01-5.webp"
+  },
+  {
+    "source": "OBJECT SHEET 01.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "sheet-01-6.webp"
+  },
+  {
+    "source": "OBJECT SHEET 02.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "sheet-02-1.webp"
+  },
+  {
+    "source": "OBJECT SHEET 02.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "sheet-02-2.webp"
+  },
+  {
+    "source": "OBJECT SHEET 02.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "sheet-02-3.webp"
+  },
+  {
+    "source": "OBJECT SHEET 02.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "sheet-02-4.webp"
+  },
+  {
+    "source": "OBJECT SHEET 02.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "sheet-02-5.webp"
+  },
+  {
+    "source": "OBJECT SHEET 02.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "sheet-02-6.webp"
+  },
+  {
+    "source": "OBJECT SHEET 03.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "sheet-03-1.webp"
+  },
+  {
+    "source": "OBJECT SHEET 03.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "sheet-03-2.webp"
+  },
+  {
+    "source": "OBJECT SHEET 03.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "sheet-03-3.webp"
+  },
+  {
+    "source": "OBJECT SHEET 03.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "sheet-03-4.webp"
+  },
+  {
+    "source": "OBJECT SHEET 03.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "sheet-03-5.webp"
+  },
+  {
+    "source": "OBJECT SHEET 03.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "sheet-03-6.webp"
+  },
+  {
+    "source": "OBJECT SHEET 04.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "sheet-04-1.webp"
+  },
+  {
+    "source": "OBJECT SHEET 04.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "sheet-04-2.webp"
+  },
+  {
+    "source": "OBJECT SHEET 04.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "sheet-04-3.webp"
+  },
+  {
+    "source": "OBJECT SHEET 04.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "sheet-04-4.webp"
+  },
+  {
+    "source": "OBJECT SHEET 04.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "sheet-04-5.webp"
+  },
+  {
+    "source": "OBJECT SHEET 04.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "sheet-04-6.webp"
+  },
+  {
+    "source": "OBJECT SHEET 05.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "sheet-05-1.webp"
+  },
+  {
+    "source": "OBJECT SHEET 05.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "sheet-05-2.webp"
+  },
+  {
+    "source": "OBJECT SHEET 05.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "sheet-05-3.webp"
+  },
+  {
+    "source": "OBJECT SHEET 05.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "sheet-05-4.webp"
+  },
+  {
+    "source": "OBJECT SHEET 05.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "sheet-05-5.webp"
+  },
+  {
+    "source": "OBJECT SHEET 05.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "sheet-05-6.webp"
+  },
+  {
+    "source": "OBJECT SHEET 06.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "sheet-06-1.webp"
+  },
+  {
+    "source": "OBJECT SHEET 06.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "sheet-06-2.webp"
+  },
+  {
+    "source": "OBJECT SHEET 06.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "sheet-06-3.webp"
+  },
+  {
+    "source": "OBJECT SHEET 06.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "sheet-06-4.webp"
+  },
+  {
+    "source": "OBJECT SHEET 06.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "sheet-06-5.webp"
+  },
+  {
+    "source": "OBJECT SHEET 06.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "sheet-06-6.webp"
+  },
+  {
+    "source": "OBJECT SHEET 07.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "sheet-07-1.webp"
+  },
+  {
+    "source": "OBJECT SHEET 07.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "sheet-07-2.webp"
+  },
+  {
+    "source": "OBJECT SHEET 07.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "sheet-07-3.webp"
+  },
+  {
+    "source": "OBJECT SHEET 07.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "sheet-07-4.webp"
+  },
+  {
+    "source": "OBJECT SHEET 07.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "sheet-07-5.webp"
+  },
+  {
+    "source": "OBJECT SHEET 07.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "sheet-07-6.webp"
+  },
+  {
+    "source": "OBJECT SHEET 08.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "sheet-08-1.webp"
+  },
+  {
+    "source": "OBJECT SHEET 08.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "sheet-08-2.webp"
+  },
+  {
+    "source": "OBJECT SHEET 08.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "sheet-08-3.webp"
+  },
+  {
+    "source": "OBJECT SHEET 08.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "sheet-08-4.webp"
+  },
+  {
+    "source": "OBJECT SHEET 08.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "sheet-08-5.webp"
+  },
+  {
+    "source": "OBJECT SHEET 08.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "sheet-08-6.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_01.png.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "extra-01-1.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_01.png.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "extra-01-2.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_01.png.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "extra-01-3.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_01.png.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "extra-01-4.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_01.png.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "extra-01-5.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_01.png.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "extra-01-6.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_02.png.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "extra-02-1.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_02.png.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "extra-02-2.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_02.png.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "extra-02-3.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_02.png.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "extra-02-4.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_02.png.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "extra-02-5.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_02.png.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "extra-02-6.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_03.png.png",
+    "kind": "object",
+    "cell": 1,
+    "output": "extra-03-1.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_03.png.png",
+    "kind": "object",
+    "cell": 2,
+    "output": "extra-03-2.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_03.png.png",
+    "kind": "object",
+    "cell": 3,
+    "output": "extra-03-3.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_03.png.png",
+    "kind": "object",
+    "cell": 4,
+    "output": "extra-03-4.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_03.png.png",
+    "kind": "object",
+    "cell": 5,
+    "output": "extra-03-5.webp"
+  },
+  {
+    "source": "OBJECT_SHEET_03.png.png",
+    "kind": "object",
+    "cell": 6,
+    "output": "extra-03-6.webp"
+  }
+]

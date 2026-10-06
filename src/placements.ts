@@ -1,0 +1,703 @@
+import decisionPlacements from "./decisions/placements.json";
+import type { RoomId, Product, Category } from "./data";
+
+// Hand-calibrated against the supplied 1536×1024 backgrounds. The stage crops
+// 32 pixels from each vertical edge, so all y values below are stage coordinates.
+export type Point = [number, number];
+export interface Placement {
+  sceneId: RoomId;
+  slotId: string;
+  x: number;
+  y: number;
+  scale: number;
+  rotation: number;
+  anchorX: number;
+  anchorY: number;
+  zIndex: number;
+  replaceExisting: boolean;
+  scaleY?: number;
+  asset?: string;
+  crop?: [number, number, number, number];
+  flipX?: boolean;
+  mask?: Point[];
+  occluders?: Point[][];
+  shadow?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    alpha: number;
+    rotation?: number;
+  };
+  // The crop is rectified from its illustrated source plane into this physical plane.
+  plane?: {
+    source: [Point, Point, Point, Point];
+    target: [Point, Point, Point, Point];
+  };
+  render?: "image" | "maintenance" | "irrigation" | "seal";
+  cable?: Point[];
+}
+export const placements: Record<string, Placement> = {
+  "tap-a": {
+    sceneId: "kitchen",
+    slotId: "faucet_outlet",
+    x: 762,
+    y: 346,
+    scale: 0.046,
+    rotation: -5,
+    anchorX: 0.7,
+    anchorY: 0.13,
+    zIndex: 14,
+    replaceExisting: true,
+    asset: "sheet-06-1",
+  },
+  repair: {
+    sceneId: "kitchen",
+    slotId: "faucet_joint",
+    x: 805,
+    y: 369,
+    scale: 1,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.5,
+    zIndex: 12,
+    replaceExisting: false,
+    render: "maintenance",
+  },
+  "shower-a": {
+    sceneId: "bathroom",
+    slotId: "shower_arm_tip",
+    x: 1108,
+    y: 67,
+    scale: 0.24,
+    rotation: 9,
+    anchorX: 0.32,
+    anchorY: 0.025,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "extra-01-1",
+    crop: [174, 146, 180, 202],
+  },
+  "shower-b": {
+    sceneId: "bathroom",
+    slotId: "shower_arm_tip",
+    x: 1108,
+    y: 66,
+    scale: 0.25,
+    rotation: 0,
+    anchorX: 0.505,
+    anchorY: 0.01,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "extra-01-2",
+    crop: [30, 114, 460, 222],
+  },
+  led: {
+    sceneId: "home",
+    slotId: "pendant_bulb",
+    x: 815,
+    y: 55,
+    scale: 0.063,
+    rotation: 180,
+    anchorX: 0.51,
+    anchorY: 0.91,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "sheet-06-3",
+  },
+  bulb: {
+    sceneId: "home",
+    slotId: "pendant_bulb",
+    x: 815,
+    y: 55,
+    scale: 0.068,
+    rotation: 180,
+    anchorX: 0.48,
+    anchorY: 0.9,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "sheet-06-4",
+  },
+  curtain: {
+    sceneId: "home",
+    slotId: "window_frame",
+    x: 628,
+    y: 351,
+    scale: 0.73,
+    scaleY: 0.9,
+    rotation: -3,
+    anchorX: 0.5,
+    anchorY: 0.985,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "obj_thermal_curtain",
+    mask: [
+      [428, 32],
+      [820, 71],
+      [819, 374],
+      [426, 327],
+    ],
+  },
+  seal: {
+    sceneId: "home",
+    slotId: "window_seams",
+    x: 628,
+    y: 179,
+    scale: 1,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.5,
+    zIndex: 10,
+    replaceExisting: false,
+    render: "seal",
+  },
+  containers: {
+    sceneId: "kitchen",
+    slotId: "island_storage",
+    x: 750,
+    y: 694,
+    scale: 0.2,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 12,
+    replaceExisting: false,
+    shadow: {
+      x: 750,
+      y: 690,
+      width: 90,
+      height: 22,
+      alpha: 0.16,
+      rotation: 15,
+    },
+  },
+  wrap: {
+    sceneId: "kitchen",
+    slotId: "island_wrapping",
+    x: 601,
+    y: 664,
+    scale: 0.145,
+    rotation: 8,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 12,
+    replaceExisting: false,
+    shadow: {
+      x: 601,
+      y: 659,
+      width: 65,
+      height: 14,
+      alpha: 0.12,
+      rotation: 15,
+    },
+  },
+  strip: {
+    sceneId: "workshop",
+    slotId: "desk_power_strip",
+    x: 1083,
+    y: 336,
+    scale: 0.28,
+    rotation: 0,
+    anchorX: 0.9,
+    anchorY: 0.16,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "obj_workshop_power_strip_installed",
+    shadow: {
+      x: 992,
+      y: 401,
+      width: 62,
+      height: 10,
+      alpha: 0.15,
+      rotation: 20,
+    },
+  },
+  "basic-strip": {
+    sceneId: "workshop",
+    slotId: "desk_basic_strip",
+    x: 1005,
+    y: 409,
+    scale: 0.15,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "sheet-06-6",
+    shadow: {
+      x: 1005,
+      y: 407,
+      width: 63,
+      height: 11,
+      alpha: 0.15,
+      rotation: 20,
+    },
+    cable: [
+      [1033, 402],
+      [1089, 385],
+      [1111, 350],
+    ],
+  },
+  meter: {
+    sceneId: "workshop",
+    slotId: "desk_meter_socket",
+    x: 1113,
+    y: 348,
+    scale: 0.17,
+    rotation: 0,
+    anchorX: 0.84,
+    anchorY: 0.33,
+    zIndex: 14,
+    replaceExisting: true,
+    asset: "obj_workshop_wattmeter_installed",
+  },
+  "smart-plug": {
+    sceneId: "laundry",
+    slotId: "washer_socket",
+    x: 560,
+    y: 238,
+    scale: 0.22,
+    rotation: 0,
+    anchorX: 0.73,
+    anchorY: 0.15,
+    zIndex: 10,
+    replaceExisting: true,
+    asset: "obj_laundry_smart_plug_installed",
+    occluders: [
+      [
+        [434, 320],
+        [604, 358],
+        [610, 563],
+        [451, 519],
+      ],
+    ],
+  },
+  rack: {
+    sceneId: "laundry",
+    slotId: "sunlit_floor",
+    x: 1070,
+    y: 747,
+    scale: 0.57,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.97,
+    zIndex: 14,
+    replaceExisting: false,
+    shadow: {
+      x: 1070,
+      y: 723,
+      width: 260,
+      height: 47,
+      alpha: 0.13,
+      rotation: 8,
+    },
+  },
+  rope: {
+    sceneId: "laundry",
+    slotId: "wall_drying_rack",
+    x: 1160,
+    y: 553,
+    scale: 0.4,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.5,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "sheet-08-2",
+  },
+  drip: {
+    sceneId: "garden",
+    slotId: "planted_rows",
+    x: 902,
+    y: 505,
+    scale: 1,
+    rotation: 0,
+    anchorX: 0,
+    anchorY: 0,
+    zIndex: 9,
+    replaceExisting: true,
+    render: "irrigation",
+  },
+  watering: {
+    sceneId: "garden",
+    slotId: "path_watering_can",
+    x: 841,
+    y: 661,
+    scale: 0.19,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.97,
+    zIndex: 12,
+    replaceExisting: false,
+    shadow: {
+      x: 841,
+      y: 655,
+      width: 70,
+      height: 18,
+      alpha: 0.15,
+      rotation: -20,
+    },
+  },
+  mulch: {
+    sceneId: "garden",
+    slotId: "soil_cover",
+    x: 870,
+    y: 586,
+    scale: 0.13,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.97,
+    zIndex: 10,
+    replaceExisting: false,
+    shadow: { x: 870, y: 583, width: 60, height: 12, alpha: 0.1 },
+  },
+  rain: {
+    sceneId: "garden",
+    slotId: "downpipe_barrel",
+    x: 732,
+    y: 285,
+    scale: 0.215,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "sheet-05-6",
+    shadow: {
+      x: 732,
+      y: 278,
+      width: 75,
+      height: 18,
+      alpha: 0.2,
+      rotation: -15,
+    },
+    cable: [
+      [718, 152],
+      [718, 170],
+      [730, 179],
+    ],
+  },
+  tank: {
+    sceneId: "garden",
+    slotId: "extra_water_storage",
+    x: 834,
+    y: 266,
+    scale: 0.22,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 11,
+    replaceExisting: false,
+    shadow: { x: 834, y: 259, width: 75, height: 18, alpha: 0.16 },
+  },
+  bags: {
+    sceneId: "storage",
+    slotId: "packing_bags",
+    x: 792,
+    y: 597,
+    scale: 0.22,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 12,
+    replaceExisting: false,
+    shadow: {
+      x: 792,
+      y: 594,
+      width: 88,
+      height: 15,
+      alpha: 0.14,
+      rotation: 14,
+    },
+  },
+  jars: {
+    sceneId: "storage",
+    slotId: "packing_jars",
+    x: 695,
+    y: 545,
+    scale: 0.2,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 11,
+    replaceExisting: false,
+    shadow: { x: 695, y: 542, width: 73, height: 16, alpha: 0.12 },
+  },
+  crate: {
+    sceneId: "storage",
+    slotId: "packing_crate",
+    x: 944,
+    y: 710,
+    scale: 0.32,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 14,
+    replaceExisting: false,
+    shadow: {
+      x: 944,
+      y: 702,
+      width: 140,
+      height: 27,
+      alpha: 0.15,
+      rotation: 12,
+    },
+  },
+  sort: {
+    sceneId: "waste",
+    slotId: "wall_sorting",
+    x: 1050,
+    y: 572,
+    scale: 0.51,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 11,
+    replaceExisting: true,
+    shadow: {
+      x: 1050,
+      y: 563,
+      width: 230,
+      height: 28,
+      alpha: 0.14,
+      rotation: 12,
+    },
+  },
+  bin: {
+    sceneId: "waste",
+    slotId: "wall_bin",
+    x: 1250,
+    y: 586,
+    scale: 0.34,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 12,
+    replaceExisting: true,
+    shadow: { x: 1250, y: 580, width: 92, height: 22, alpha: 0.17 },
+  },
+  compost: {
+    sceneId: "waste",
+    slotId: "compost_corner",
+    x: 710,
+    y: 553,
+    scale: 0.34,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 10,
+    replaceExisting: true,
+    shadow: {
+      x: 710,
+      y: 545,
+      width: 145,
+      height: 27,
+      alpha: 0.14,
+      rotation: 13,
+    },
+  },
+  solar: {
+    sceneId: "roof",
+    slotId: "main_roof_plane",
+    x: 795,
+    y: 423,
+    scale: 1,
+    rotation: 0,
+    anchorX: 0,
+    anchorY: 0,
+    zIndex: 12,
+    replaceExisting: true,
+    asset: "obj_solar_array",
+    plane: {
+      source: [
+        [42, 19],
+        [482, 142],
+        [410, 301],
+        [14, 139],
+      ],
+      target: [
+        [567, 335],
+        [955, 184],
+        [1133, 421],
+        [745, 572],
+      ],
+    },
+  },
+  "portable-solar": {
+    sceneId: "roof",
+    slotId: "small_roof_panel",
+    x: 1043,
+    y: 478,
+    scale: 0.3,
+    rotation: -14,
+    anchorX: 0.5,
+    anchorY: 0.97,
+    zIndex: 13,
+    replaceExisting: false,
+    shadow: {
+      x: 1043,
+      y: 470,
+      width: 120,
+      height: 18,
+      alpha: 0.15,
+      rotation: -22,
+    },
+  },
+  "solar-lamp": {
+    sceneId: "roof",
+    slotId: "roof_corner_lamp",
+    x: 1300,
+    y: 478,
+    scale: 0.18,
+    rotation: 0,
+    anchorX: 0.5,
+    anchorY: 0.98,
+    zIndex: 14,
+    replaceExisting: false,
+    shadow: { x: 1300, y: 473, width: 35, height: 10, alpha: 0.16 },
+  },
+};
+
+export interface ShelfSlot {
+  id: string;
+  x: number;
+  y: number;
+  maxWidth: number;
+  maxHeight: number;
+  zIndex: number;
+  shadowAlpha: number;
+}
+// Contact points are on the upper surfaces of the wood, not centered in the shelf bays.
+const shelfCoordinates = [
+  { x: 331, y: 236, maxWidth: 155, maxHeight: 53 },
+  { x: 641, y: 237, maxWidth: 165, maxHeight: 54 },
+  { x: 961, y: 241, maxWidth: 165, maxHeight: 54 },
+  { x: 331, y: 309, maxWidth: 160, maxHeight: 63 },
+  { x: 641, y: 302, maxWidth: 165, maxHeight: 55 },
+  { x: 961, y: 314, maxWidth: 165, maxHeight: 61 },
+];
+const shelfFamilies: Record<Category, string> = {
+  Su: "water",
+  Enerji: "energy",
+  Ev: "home",
+  Bahçe: "garden",
+  Gıda: "food",
+  "Atık / Yeniden kullanım": "reuse",
+};
+export const shelfSlots = (category: Category): ShelfSlot[] =>
+  shelfCoordinates.map((s, i) => ({
+    ...s,
+    id: `market_${shelfFamilies[category]}_shelf_${String(i + 1).padStart(2, "0")}`,
+    zIndex: 10 + i,
+    shadowAlpha: 0.12,
+  }));
+export const marketScales: Record<string, number> = {
+  "tap-a": 0.14,
+  repair: 0.145,
+  "shower-a": 0.16,
+  "shower-b": 0.16,
+  led: 0.13,
+  bulb: 0.125,
+  curtain: 0.14,
+  seal: 0.145,
+  containers: 0.15,
+  wrap: 0.14,
+  strip: 0.16,
+  "basic-strip": 0.155,
+  meter: 0.14,
+  "smart-plug": 0.15,
+  rack: 0.15,
+  rope: 0.16,
+  drip: 0.16,
+  watering: 0.15,
+  mulch: 0.15,
+  rain: 0.16,
+  tank: 0.17,
+  bags: 0.155,
+  jars: 0.155,
+  crate: 0.17,
+  sort: 0.19,
+  bin: 0.16,
+  compost: 0.17,
+  solar: 0.18,
+  "portable-solar": 0.15,
+  "solar-lamp": 0.14,
+};
+export function shelfTransform(
+  p: Product,
+  slot: ShelfSlot,
+  width: number,
+  height: number,
+) {
+  const scale = Math.min(
+    marketScales[p.id] ?? 1,
+    slot.maxWidth / width,
+    slot.maxHeight / height,
+  );
+  return {
+    x: slot.x,
+    y: slot.y,
+    scale,
+    width: width * scale,
+    height: height * scale,
+  };
+}
+// Actual room labels and effect sources deliberately differ: the shower arm is
+// high on the wall, while its touch target must remain below the corner HUD.
+export const problemSources: Partial<Record<RoomId, Record<string, Point>>> = {
+  kitchen: { tap: [762, 347] },
+  bathroom: { shower: [1108, 110] },
+  home: { light: [815, 76] },
+  workshop: { power: [1083, 336] },
+  laundry: { machine: [550, 432] },
+  garden: { barrel: [720, 224] },
+};
+
+Object.assign(placements, decisionPlacements);
+placements["rev-office-power-strip"] = { ...placements.strip };
+placements["rev-office-power-meter"] = { ...placements.meter };
+placements["rev-office-power-smart"] = {
+  sceneId: "workshop",
+  slotId: "office_smart_socket",
+  x: 1113,
+  y: 348,
+  scale: 0.14,
+  rotation: 0,
+  anchorX: 0.73,
+  anchorY: 0.15,
+  zIndex: 14,
+  replaceExisting: true,
+  asset: "obj_laundry_smart_plug_installed",
+};
+placements["rev-roof-bonus-solar"] = { ...placements.solar };
+placements["rev-led-strip"] = {
+  sceneId: "home",
+  slotId: "home_shelf_underside",
+  x: 1100,
+  y: 335,
+  scale: 1,
+  rotation: 0,
+  anchorX: 0,
+  anchorY: 0,
+  zIndex: 14,
+  replaceExisting: false,
+  plane: {
+    source: [
+      [480, 185],
+      [1400, 395],
+      [1400, 440],
+      [480, 230],
+    ],
+    target: [
+      [1048, 318],
+      [1152, 345],
+      [1152, 352],
+      [1048, 325],
+    ],
+  },
+};
+
+problemSources.kitchen!["rev-tap"] = [762, 347];
+problemSources.bathroom!["rev-shower"] = [1108, 110];
+problemSources.home!["rev-light-home"] = [815, 76];
+problemSources.workshop!["rev-light-workshop"] = [854, 134];

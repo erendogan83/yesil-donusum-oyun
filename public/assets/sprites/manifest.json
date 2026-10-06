@@ -1,0 +1,950 @@
+{
+  "faucet-aerator": {
+    "source": "OBJECT_SHEET_IRRIGATION_METHODS_FINAL.png.png",
+    "sourceSHA256": "34f07cbf7e77b554f6731abeaeb0a04de95c3901ecb25414b02f01628c88e916",
+    "cell": [
+      0,
+      0,
+      724,
+      724
+    ],
+    "trim": [
+      163,
+      177,
+      547,
+      577
+    ],
+    "width": 384,
+    "height": 400,
+    "asset": "sprites/generated/faucet-aerator",
+    "derivedSHA256": "03f43af71f49e3c3096f11af0701929bec1506016327047a078c1d40462443b4",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "faucet-repair": {
+    "source": "OBJECT_SHEET_IRRIGATION_METHODS_FINAL.png.png",
+    "sourceSHA256": "34f07cbf7e77b554f6731abeaeb0a04de95c3901ecb25414b02f01628c88e916",
+    "cell": [
+      724,
+      0,
+      1448,
+      724
+    ],
+    "trim": [
+      48,
+      113,
+      689,
+      594
+    ],
+    "width": 641,
+    "height": 481,
+    "asset": "sprites/generated/faucet-repair",
+    "derivedSHA256": "dd19ccce489e3a7e853c3c020eec52c88cae278b6b3d472f4efdb4bedf9d63e8",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "faucet-filter": {
+    "source": "OBJECT_SHEET_IRRIGATION_METHODS_FINAL.png.png",
+    "sourceSHA256": "34f07cbf7e77b554f6731abeaeb0a04de95c3901ecb25414b02f01628c88e916",
+    "cell": [
+      1448,
+      0,
+      2172,
+      724
+    ],
+    "trim": [
+      127,
+      72,
+      636,
+      637
+    ],
+    "width": 509,
+    "height": 565,
+    "asset": "sprites/generated/faucet-filter",
+    "derivedSHA256": "5c5f24f53c5bb4d36b3c84cd5f3ecc006b11a800653e29b2e037423a7fea206c",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "shower-compact": {
+    "source": "OBJECT_SHEET_SHOWER_CHOICES_FINAL.png.png",
+    "sourceSHA256": "01003e9de57696037f5c56b6929923fbf3b3a441328c7124ef03beef47d8b487",
+    "cell": [
+      0,
+      0,
+      724,
+      724
+    ],
+    "trim": [
+      78,
+      81,
+      724,
+      598
+    ],
+    "width": 485,
+    "height": 517,
+    "asset": "sprites/generated/shower-compact",
+    "derivedSHA256": "6958c1ead4d9e3162bc2ec2e16e4a9773d5cd53da09a1becccce5cea31e2c1fc",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "shower-classic": {
+    "source": "OBJECT_SHEET_SHOWER_CHOICES_FINAL.png.png",
+    "sourceSHA256": "01003e9de57696037f5c56b6929923fbf3b3a441328c7124ef03beef47d8b487",
+    "cell": [
+      724,
+      0,
+      1448,
+      724
+    ],
+    "trim": [
+      0,
+      74,
+      724,
+      648
+    ],
+    "width": 519,
+    "height": 574,
+    "asset": "sprites/generated/shower-classic",
+    "derivedSHA256": "aba2f63129e914b6e94add6c1d39fd49000c5dadb74d82a6e3b89b7843fcfb8b",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "shower-rain": {
+    "source": "OBJECT_SHEET_SHOWER_CHOICES_FINAL.png.png",
+    "sourceSHA256": "01003e9de57696037f5c56b6929923fbf3b3a441328c7124ef03beef47d8b487",
+    "cell": [
+      1448,
+      0,
+      2172,
+      724
+    ],
+    "trim": [
+      0,
+      63,
+      662,
+      671
+    ],
+    "width": 662,
+    "height": 608,
+    "asset": "sprites/generated/shower-rain",
+    "derivedSHA256": "8473ca5a7362d4e8963e9704f3522b54ec71e9bf6eeeb188e67b7f1b3fc27757",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bulb-incandescent": {
+    "source": "OBJECT_SHEET_LIGHTING_CHOICES.png.png",
+    "sourceSHA256": "81f18cebe1685de3b9df20c1a42c933955e414aa2f7fed3c93eca08611b0b62b",
+    "cell": [
+      0,
+      0,
+      591,
+      887
+    ],
+    "trim": [
+      112,
+      103,
+      539,
+      781
+    ],
+    "width": 427,
+    "height": 678,
+    "asset": "sprites/generated/bulb-incandescent",
+    "derivedSHA256": "15b5ca6d43df7877243574330c11df0c899e26c9d914ab407021e40eaa5cce7d",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bulb-halogen": {
+    "source": "OBJECT_SHEET_LIGHTING_CHOICES.png.png",
+    "sourceSHA256": "81f18cebe1685de3b9df20c1a42c933955e414aa2f7fed3c93eca08611b0b62b",
+    "cell": [
+      591,
+      0,
+      1183,
+      887
+    ],
+    "trim": [
+      83,
+      107,
+      509,
+      785
+    ],
+    "width": 426,
+    "height": 678,
+    "asset": "sprites/generated/bulb-halogen",
+    "derivedSHA256": "ee5b7f1ea3c6c7c4686dab374069c3fc062eb5ebc376a434cc52cad2126a281d",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bulb-led": {
+    "source": "OBJECT_SHEET_LIGHTING_CHOICES.png.png",
+    "sourceSHA256": "81f18cebe1685de3b9df20c1a42c933955e414aa2f7fed3c93eca08611b0b62b",
+    "cell": [
+      1183,
+      0,
+      1774,
+      887
+    ],
+    "trim": [
+      58,
+      105,
+      481,
+      786
+    ],
+    "width": 423,
+    "height": 681,
+    "asset": "sprites/generated/bulb-led",
+    "derivedSHA256": "1a47bbdbb502429b865c3125484ed6319d7e56151496dd2bf32daffb42b7df4a",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "irrigation-hose": {
+    "source": "OBJ_IRRIGATION_TIMER_INSTALLED.png.png",
+    "sourceSHA256": "04919db0049ee78fa0cf200de98b8546014aa1cad0c99d3df053205a7f9c9291",
+    "cell": [
+      0,
+      0,
+      724,
+      724
+    ],
+    "trim": [
+      16,
+      74,
+      724,
+      647
+    ],
+    "width": 695,
+    "height": 573,
+    "asset": "sprites/generated/irrigation-hose",
+    "derivedSHA256": "cfd555535c00933aa1aad2a09776bfdef4f6f986e0760aa98b697e440476ccdf",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "irrigation-sprinkler": {
+    "source": "OBJ_IRRIGATION_TIMER_INSTALLED.png.png",
+    "sourceSHA256": "04919db0049ee78fa0cf200de98b8546014aa1cad0c99d3df053205a7f9c9291",
+    "cell": [
+      724,
+      0,
+      1448,
+      724
+    ],
+    "trim": [
+      0,
+      168,
+      724,
+      604
+    ],
+    "width": 724,
+    "height": 436,
+    "asset": "sprites/generated/irrigation-sprinkler",
+    "derivedSHA256": "dfe3315682fff6a6976ebcb9a56a4d8a724584fa65394ef0bac65677db9e5647",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "irrigation-drip": {
+    "source": "OBJ_IRRIGATION_TIMER_INSTALLED.png.png",
+    "sourceSHA256": "04919db0049ee78fa0cf200de98b8546014aa1cad0c99d3df053205a7f9c9291",
+    "cell": [
+      1448,
+      0,
+      2172,
+      724
+    ],
+    "trim": [
+      0,
+      127,
+      702,
+      644
+    ],
+    "width": 702,
+    "height": 517,
+    "asset": "sprites/generated/irrigation-drip",
+    "derivedSHA256": "55ff0295b54bded680fe4960de0d32a7d26e44a1dbcb298dd4a87fe3aab6cd6b",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "lentil-plastic": {
+    "source": "OBJECT_SHEET_FOOD_PACKAGING_FINAL.png.png",
+    "sourceSHA256": "0540ec1ca586c438695cbe330e03f3feb7f6449be0a317ffaac0a08f557b4d2b",
+    "cell": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "trim": [
+      86,
+      17,
+      457,
+      512
+    ],
+    "width": 371,
+    "height": 495,
+    "asset": "sprites/generated/lentil-plastic",
+    "derivedSHA256": "b5ee381fe17cd15a7b1d43284e45fad0c0add41d778c0571330522efe18ad2e3",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "lentil-paper": {
+    "source": "OBJECT_SHEET_FOOD_PACKAGING_FINAL.png.png",
+    "sourceSHA256": "0540ec1ca586c438695cbe330e03f3feb7f6449be0a317ffaac0a08f557b4d2b",
+    "cell": [
+      512,
+      0,
+      1024,
+      512
+    ],
+    "trim": [
+      66,
+      22,
+      445,
+      484
+    ],
+    "width": 379,
+    "height": 462,
+    "asset": "sprites/generated/lentil-paper",
+    "derivedSHA256": "8c8436e3d604126fe2fe1d454b880f0a230c2786fc48509a075502520e65256c",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "lentil-return": {
+    "source": "OBJECT_SHEET_FOOD_PACKAGING_FINAL.png.png",
+    "sourceSHA256": "0540ec1ca586c438695cbe330e03f3feb7f6449be0a317ffaac0a08f557b4d2b",
+    "cell": [
+      1024,
+      0,
+      1536,
+      512
+    ],
+    "trim": [
+      71,
+      27,
+      396,
+      480
+    ],
+    "width": 325,
+    "height": 453,
+    "asset": "sprites/generated/lentil-return",
+    "derivedSHA256": "1479345a8bfc7b9201b768710dc9a244689a65b5428bd6ec8d371235ee3bc4ff",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "apple-plastic": {
+    "source": "OBJECT_SHEET_FOOD_PACKAGING_FINAL.png.png",
+    "sourceSHA256": "0540ec1ca586c438695cbe330e03f3feb7f6449be0a317ffaac0a08f557b4d2b",
+    "cell": [
+      0,
+      512,
+      512,
+      1024
+    ],
+    "trim": [
+      57,
+      0,
+      496,
+      463
+    ],
+    "width": 439,
+    "height": 463,
+    "asset": "sprites/generated/apple-plastic",
+    "derivedSHA256": "e21b831bd09491fcf370c09b09e24057ecd7796b51fea3401dbbd94c6a6f5316",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "apple-paper": {
+    "source": "OBJECT_SHEET_FOOD_PACKAGING_FINAL.png.png",
+    "sourceSHA256": "0540ec1ca586c438695cbe330e03f3feb7f6449be0a317ffaac0a08f557b4d2b",
+    "cell": [
+      512,
+      512,
+      1024,
+      1024
+    ],
+    "trim": [
+      57,
+      15,
+      455,
+      480
+    ],
+    "width": 398,
+    "height": 465,
+    "asset": "sprites/generated/apple-paper",
+    "derivedSHA256": "e58acc9d57017c049543c8fd2933de21239fa76ec2006683cfcdb3665460a950",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "apple-mesh": {
+    "source": "OBJECT_SHEET_FOOD_PACKAGING_FINAL.png.png",
+    "sourceSHA256": "0540ec1ca586c438695cbe330e03f3feb7f6449be0a317ffaac0a08f557b4d2b",
+    "cell": [
+      1024,
+      512,
+      1536,
+      1024
+    ],
+    "trim": [
+      15,
+      8,
+      475,
+      468
+    ],
+    "width": 460,
+    "height": 460,
+    "asset": "sprites/generated/apple-mesh",
+    "derivedSHA256": "fded0ce244cfc758f72b4be3b168a28d825bb027ba60525699588f5c10558dea",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "towel-plastic": {
+    "source": "OBJECT_SHEET_TEXTILE_PACKAGING_FINAL_V2.png.png",
+    "sourceSHA256": "dde06fba1a4c2b2d426092c17429c357758c89399b3d377edc003ddb98c4e7d4",
+    "cell": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "trim": [
+      48,
+      8,
+      476,
+      512
+    ],
+    "width": 428,
+    "height": 504,
+    "asset": "sprites/generated/towel-plastic",
+    "derivedSHA256": "8f1a1804292bb511813980181a37e9fc2e4708f8b5e46c24342fdf8f78b4c51d",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "towel-box": {
+    "source": "OBJECT_SHEET_TEXTILE_PACKAGING_FINAL_V2.png.png",
+    "sourceSHA256": "dde06fba1a4c2b2d426092c17429c357758c89399b3d377edc003ddb98c4e7d4",
+    "cell": [
+      512,
+      0,
+      1024,
+      512
+    ],
+    "trim": [
+      23,
+      37,
+      504,
+      512
+    ],
+    "width": 481,
+    "height": 475,
+    "asset": "sprites/generated/towel-box",
+    "derivedSHA256": "09b89d28fe4a5e49adc39efb4ee7de3995702b3b97498f303f8d4d8dfd072a76",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "towel-kraft": {
+    "source": "OBJECT_SHEET_TEXTILE_PACKAGING_FINAL_V2.png.png",
+    "sourceSHA256": "dde06fba1a4c2b2d426092c17429c357758c89399b3d377edc003ddb98c4e7d4",
+    "cell": [
+      1024,
+      0,
+      1536,
+      512
+    ],
+    "trim": [
+      72,
+      13,
+      464,
+      512
+    ],
+    "width": 392,
+    "height": 499,
+    "asset": "sprites/generated/towel-kraft",
+    "derivedSHA256": "d599947ee44c2f0fe09b5081ae0b64384ca51868f50d545bb60970b256aa8430",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "scarf-plastic": {
+    "source": "OBJECT_SHEET_TEXTILE_PACKAGING_FINAL_V2.png.png",
+    "sourceSHA256": "dde06fba1a4c2b2d426092c17429c357758c89399b3d377edc003ddb98c4e7d4",
+    "cell": [
+      0,
+      512,
+      512,
+      1024
+    ],
+    "trim": [
+      45,
+      0,
+      484,
+      481
+    ],
+    "width": 439,
+    "height": 481,
+    "asset": "sprites/generated/scarf-plastic",
+    "derivedSHA256": "e3bca67fb6265e5c6e12d3168ca94873042c7f9ebf4a95dccbbc2eae17925c8c",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "scarf-box": {
+    "source": "OBJECT_SHEET_TEXTILE_PACKAGING_FINAL_V2.png.png",
+    "sourceSHA256": "dde06fba1a4c2b2d426092c17429c357758c89399b3d377edc003ddb98c4e7d4",
+    "cell": [
+      512,
+      512,
+      1024,
+      1024
+    ],
+    "trim": [
+      18,
+      0,
+      504,
+      510
+    ],
+    "width": 486,
+    "height": 489,
+    "asset": "sprites/generated/scarf-box",
+    "derivedSHA256": "bd421e1dc0ea219201018f92eaf87f3680008abf1df69f0cbac8c347d133804d",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "scarf-kraft": {
+    "source": "OBJECT_SHEET_TEXTILE_PACKAGING_FINAL_V2.png.png",
+    "sourceSHA256": "dde06fba1a4c2b2d426092c17429c357758c89399b3d377edc003ddb98c4e7d4",
+    "cell": [
+      1024,
+      512,
+      1536,
+      1024
+    ],
+    "trim": [
+      67,
+      0,
+      477,
+      499
+    ],
+    "width": 410,
+    "height": 499,
+    "asset": "sprites/generated/scarf-kraft",
+    "derivedSHA256": "778653eedf5426a901afd87b84d0937ae7d5717fa88ad4796f47981ea754d572",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "waste-paper": {
+    "source": "OBJECT_SHEET_WASTE_SORTING.png.png",
+    "sourceSHA256": "5d2a0289f31db189e60ef362a30eb50b27a21ec4a694bd41f2109add02b3233e",
+    "cell": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "trim": [
+      27,
+      106,
+      512,
+      472
+    ],
+    "width": 485,
+    "height": 366,
+    "asset": "sprites/generated/waste-paper",
+    "derivedSHA256": "d39a96e89433bfd8fdac13817939759d3f63d4dde111219b3a01d4492cb4eca1",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "waste-plastic": {
+    "source": "OBJECT_SHEET_WASTE_SORTING.png.png",
+    "sourceSHA256": "5d2a0289f31db189e60ef362a30eb50b27a21ec4a694bd41f2109add02b3233e",
+    "cell": [
+      512,
+      0,
+      1024,
+      512
+    ],
+    "trim": [
+      0,
+      18,
+      402,
+      482
+    ],
+    "width": 282,
+    "height": 464,
+    "asset": "sprites/generated/waste-plastic",
+    "derivedSHA256": "0dabbc996eb6acc86a44174c8d70deb194f52c7428d1cea1b3c2cabd9c6b8bd6",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "waste-glass": {
+    "source": "OBJECT_SHEET_WASTE_SORTING.png.png",
+    "sourceSHA256": "5d2a0289f31db189e60ef362a30eb50b27a21ec4a694bd41f2109add02b3233e",
+    "cell": [
+      1024,
+      0,
+      1536,
+      512
+    ],
+    "trim": [
+      91,
+      116,
+      473,
+      472
+    ],
+    "width": 382,
+    "height": 356,
+    "asset": "sprites/generated/waste-glass",
+    "derivedSHA256": "059bebccf651b6c8d0cc81eb46c126bd075008c4e5c630ede567588492fca512",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "waste-metal": {
+    "source": "OBJECT_SHEET_WASTE_SORTING.png.png",
+    "sourceSHA256": "5d2a0289f31db189e60ef362a30eb50b27a21ec4a694bd41f2109add02b3233e",
+    "cell": [
+      0,
+      512,
+      512,
+      1024
+    ],
+    "trim": [
+      83,
+      19,
+      512,
+      451
+    ],
+    "width": 300,
+    "height": 432,
+    "asset": "sprites/generated/waste-metal",
+    "derivedSHA256": "4a5da3171a760e80b48eb0218f751de19db445bf64e5e6aa4a4373ea50d509d2",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "waste-organic": {
+    "source": "OBJECT_SHEET_WASTE_SORTING.png.png",
+    "sourceSHA256": "5d2a0289f31db189e60ef362a30eb50b27a21ec4a694bd41f2109add02b3233e",
+    "cell": [
+      512,
+      512,
+      1024,
+      1024
+    ],
+    "trim": [
+      0,
+      22,
+      512,
+      458
+    ],
+    "width": 512,
+    "height": 436,
+    "asset": "sprites/generated/waste-organic",
+    "derivedSHA256": "a394245e3edc5653aa351c84203d04f9714ce4a2303a89ed676157787621a18a",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "waste-tissue": {
+    "source": "OBJECT_SHEET_WASTE_SORTING.png.png",
+    "sourceSHA256": "5d2a0289f31db189e60ef362a30eb50b27a21ec4a694bd41f2109add02b3233e",
+    "cell": [
+      1024,
+      512,
+      1536,
+      1024
+    ],
+    "trim": [
+      0,
+      96,
+      463,
+      435
+    ],
+    "width": 356,
+    "height": 339,
+    "asset": "sprites/generated/waste-tissue",
+    "derivedSHA256": "8a3734594daf8d8bf7f85d8d9d87849276bf12e4b5e2010098d71e71f86db3c8",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "clothes-white": {
+    "source": "OBJECT_SHEET_LAUNDRY_CLOTHES.png.png",
+    "sourceSHA256": "463a9e52fff4f2d454dcc549b25b4c8c3b546a4b1d0e66c5176b477ebebcf031",
+    "cell": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "trim": [
+      35,
+      93,
+      502,
+      489
+    ],
+    "width": 467,
+    "height": 396,
+    "asset": "sprites/generated/clothes-white",
+    "derivedSHA256": "c8fcacc0ee554d48b61bcdaeceed6145128b1a0afd3708bf7e6e2bc7a981d7aa",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "clothes-color": {
+    "source": "OBJECT_SHEET_LAUNDRY_CLOTHES.png.png",
+    "sourceSHA256": "463a9e52fff4f2d454dcc549b25b4c8c3b546a4b1d0e66c5176b477ebebcf031",
+    "cell": [
+      512,
+      0,
+      1024,
+      512
+    ],
+    "trim": [
+      26,
+      93,
+      488,
+      477
+    ],
+    "width": 462,
+    "height": 384,
+    "asset": "sprites/generated/clothes-color",
+    "derivedSHA256": "3d72dacb0f934f5fb6447d83f454ea45b14e4399f784b1a76a153aedbc4547d3",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "clothes-dark": {
+    "source": "OBJECT_SHEET_LAUNDRY_CLOTHES.png.png",
+    "sourceSHA256": "463a9e52fff4f2d454dcc549b25b4c8c3b546a4b1d0e66c5176b477ebebcf031",
+    "cell": [
+      1024,
+      0,
+      1536,
+      512
+    ],
+    "trim": [
+      12,
+      85,
+      487,
+      477
+    ],
+    "width": 475,
+    "height": 392,
+    "asset": "sprites/generated/clothes-dark",
+    "derivedSHA256": "cdcf454c0c4339a53db9d22c48e0d8ee0c0d06c1cde241ea5aac6cf7dee8aa46",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "basket-white": {
+    "source": "OBJECT_SHEET_LAUNDRY_CLOTHES.png.png",
+    "sourceSHA256": "463a9e52fff4f2d454dcc549b25b4c8c3b546a4b1d0e66c5176b477ebebcf031",
+    "cell": [
+      0,
+      512,
+      512,
+      1024
+    ],
+    "trim": [
+      24,
+      42,
+      501,
+      426
+    ],
+    "width": 477,
+    "height": 384,
+    "asset": "sprites/generated/basket-white",
+    "derivedSHA256": "a34c80b93f2362b1abd543dd2dc03df834f4b3d9c593e8d55b032df038d0733f",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "basket-color": {
+    "source": "OBJECT_SHEET_LAUNDRY_CLOTHES.png.png",
+    "sourceSHA256": "463a9e52fff4f2d454dcc549b25b4c8c3b546a4b1d0e66c5176b477ebebcf031",
+    "cell": [
+      512,
+      512,
+      1024,
+      1024
+    ],
+    "trim": [
+      20,
+      42,
+      495,
+      424
+    ],
+    "width": 475,
+    "height": 382,
+    "asset": "sprites/generated/basket-color",
+    "derivedSHA256": "0488328eed9719e78d44d2367334f2e66bb0c57de72d2653e39e29b52839ea0c",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "basket-dark": {
+    "source": "OBJECT_SHEET_LAUNDRY_CLOTHES.png.png",
+    "sourceSHA256": "463a9e52fff4f2d454dcc549b25b4c8c3b546a4b1d0e66c5176b477ebebcf031",
+    "cell": [
+      1024,
+      512,
+      1536,
+      1024
+    ],
+    "trim": [
+      14,
+      41,
+      491,
+      426
+    ],
+    "width": 477,
+    "height": 385,
+    "asset": "sprites/generated/basket-dark",
+    "derivedSHA256": "bcb0be27cc25ea6e337b3932ffbd38c274afdba6dcd39765fff7da6e47a5f670",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bag-paper": {
+    "source": "Renkli Mandallı Altı Plastik Torba.png",
+    "sourceSHA256": "452533fe6b1156a33e5421cc248fbcf443c340418176357f4d57b3eb09eaa807",
+    "cell": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "trim": [
+      82,
+      26,
+      492,
+      495
+    ],
+    "width": 410,
+    "height": 469,
+    "asset": "sprites/generated/bag-paper",
+    "derivedSHA256": "f9b5d2e3f19ec4671bbce03f28a0c4084daa7e2c0d881b348ec43f9544d67683",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bag-plastic": {
+    "source": "Renkli Mandallı Altı Plastik Torba.png",
+    "sourceSHA256": "452533fe6b1156a33e5421cc248fbcf443c340418176357f4d57b3eb09eaa807",
+    "cell": [
+      512,
+      0,
+      1024,
+      512
+    ],
+    "trim": [
+      63,
+      27,
+      472,
+      493
+    ],
+    "width": 409,
+    "height": 466,
+    "asset": "sprites/generated/bag-plastic",
+    "derivedSHA256": "0f888fd7a5c8c6f5e9978305efe66ef25403dfdf69f33befa4f1ef20a41b3b3f",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bag-glass": {
+    "source": "Renkli Mandallı Altı Plastik Torba.png",
+    "sourceSHA256": "452533fe6b1156a33e5421cc248fbcf443c340418176357f4d57b3eb09eaa807",
+    "cell": [
+      1024,
+      0,
+      1536,
+      512
+    ],
+    "trim": [
+      43,
+      26,
+      450,
+      493
+    ],
+    "width": 407,
+    "height": 467,
+    "asset": "sprites/generated/bag-glass",
+    "derivedSHA256": "786d5a5ac14d543bd6135c7548054455acbbc146cbef976a5be934f20148bd58",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bag-metal": {
+    "source": "Renkli Mandallı Altı Plastik Torba.png",
+    "sourceSHA256": "452533fe6b1156a33e5421cc248fbcf443c340418176357f4d57b3eb09eaa807",
+    "cell": [
+      0,
+      512,
+      512,
+      1024
+    ],
+    "trim": [
+      83,
+      16,
+      497,
+      480
+    ],
+    "width": 414,
+    "height": 464,
+    "asset": "sprites/generated/bag-metal",
+    "derivedSHA256": "5e6cfbf0d44b4bd141203dc5c7cabd0beb5f6b973649152939f5fb1ba0b544af",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bag-organic": {
+    "source": "Renkli Mandallı Altı Plastik Torba.png",
+    "sourceSHA256": "452533fe6b1156a33e5421cc248fbcf443c340418176357f4d57b3eb09eaa807",
+    "cell": [
+      512,
+      512,
+      1024,
+      1024
+    ],
+    "trim": [
+      63,
+      12,
+      473,
+      478
+    ],
+    "width": 410,
+    "height": 466,
+    "asset": "sprites/generated/bag-organic",
+    "derivedSHA256": "ea1035e8ab754939e459bd15a723120647d6e129f43f65afd542e9e88086812a",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "bag-other": {
+    "source": "Renkli Mandallı Altı Plastik Torba.png",
+    "sourceSHA256": "452533fe6b1156a33e5421cc248fbcf443c340418176357f4d57b3eb09eaa807",
+    "cell": [
+      1024,
+      512,
+      1536,
+      1024
+    ],
+    "trim": [
+      45,
+      15,
+      454,
+      480
+    ],
+    "width": 409,
+    "height": 465,
+    "asset": "sprites/generated/bag-other",
+    "derivedSHA256": "49c7d04dcec97c8e546579c5b33f1f706e451f681f978bace0ee63a1ef463d75",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "basin": {
+    "source": "OBJ_BATHROOM_BASIN.png.png",
+    "sourceSHA256": "0e06b8367fd206851820a4dd26b804c091bad374535d443c9625971bfaac3546",
+    "cell": [
+      0,
+      0,
+      1254,
+      1254
+    ],
+    "trim": [
+      95,
+      250,
+      1161,
+      1077
+    ],
+    "width": 1066,
+    "height": 827,
+    "asset": "sprites/generated/basin",
+    "derivedSHA256": "c4e6c7df3c7f16a247ae4d9c026c864549c75cfeec7f8d4280891d6f2c803bd5",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "irrigation-timer": {
+    "source": "OBJ_IRRIGATION_TIMER.png.png",
+    "sourceSHA256": "b2f397a942dc6b0c610186690df17b75796688d189c77459787d53e2f0fd254e",
+    "cell": [
+      0,
+      0,
+      1024,
+      1536
+    ],
+    "trim": [
+      258,
+      77,
+      841,
+      1440
+    ],
+    "width": 583,
+    "height": 1363,
+    "asset": "sprites/generated/irrigation-timer",
+    "derivedSHA256": "a04541d5c892b82f4d8d0f669de5960a85f21fdc3927df701b88434b071c31ba",
+    "cleanup": "alpha trim; isolated neighboring fragments removed on selected objects"
+  },
+  "shower-compact-installed": {
+    "derivedFrom": "shower-compact",
+    "width": 273,
+    "height": 338,
+    "asset": "sprites/generated/shower-compact-installed",
+    "derivedSHA256": "24906b4c6e7af1b9b2424453efca86e51d476565a14debb3b0150ea0322be84d",
+    "note": "Head and neck cropped from supplied shower; wall mount excluded."
+  },
+  "shower-classic-installed": {
+    "derivedFrom": "shower-classic",
+    "width": 376,
+    "height": 414,
+    "asset": "sprites/generated/shower-classic-installed",
+    "derivedSHA256": "e9096c2d350860ae7e8ccdecc4cb25c95c9f1b740635f131519b74b9fda395c2",
+    "note": "Head and neck cropped from supplied shower; wall mount excluded."
+  },
+  "shower-rain-installed": {
+    "derivedFrom": "shower-rain",
+    "width": 662,
+    "height": 472,
+    "asset": "sprites/generated/shower-rain-installed",
+    "derivedSHA256": "51392407eae8b4a2f5a9149f20bb0f1f38e4dd0feb5fbdc0effbe7a77486d686",
+    "note": "Head and neck cropped from supplied shower; wall mount excluded."
+  }
+}

@@ -1,0 +1,431 @@
+[
+  {
+    "id": "tap",
+    "roomId": "kitchen",
+    "title": "Damlayan musluk",
+    "scenario": "Musluk kapalıyken damlatıyor. Sorun, içindeki aşınmış conta.",
+    "x": 50,
+    "y": 37,
+    "kind": "product",
+    "core": true,
+    "round": 1,
+    "choices": ["rev-tap-aerator", "rev-tap-repair", "rev-tap-filter"]
+  },
+  {
+    "id": "waste-sort",
+    "roomId": "kitchen",
+    "title": "Mutfaktaki atıklar",
+    "scenario": "Bu oyunda temiz ambalajlar ayrı, yemek artıkları organik, kirli peçeteler diğer atıkta toplanıyor.",
+    "x": 53,
+    "y": 66,
+    "kind": "sorting",
+    "core": true,
+    "round": 1,
+    "choices": [],
+    "targets": [
+      {
+        "id": "paper",
+        "title": "Kâğıt / karton",
+        "asset": "sprites/generated/bag-paper"
+      },
+      {
+        "id": "plastic",
+        "title": "Plastik",
+        "asset": "sprites/generated/bag-plastic"
+      },
+      {
+        "id": "glass",
+        "title": "Cam",
+        "asset": "sprites/generated/bag-glass"
+      },
+      {
+        "id": "metal",
+        "title": "Metal",
+        "asset": "sprites/generated/bag-metal"
+      },
+      {
+        "id": "organic",
+        "title": "Organik",
+        "asset": "sprites/generated/bag-organic"
+      },
+      {
+        "id": "other",
+        "title": "Diğer atık",
+        "asset": "sprites/generated/bag-other"
+      }
+    ],
+    "items": [
+      {
+        "id": "paper",
+        "title": "Temiz karton",
+        "asset": "sprites/generated/waste-paper",
+        "target": "paper"
+      },
+      {
+        "id": "plastic",
+        "title": "Boş plastik şişe",
+        "asset": "sprites/generated/waste-plastic",
+        "target": "plastic"
+      },
+      {
+        "id": "glass",
+        "title": "Boş cam kavanoz",
+        "asset": "sprites/generated/waste-glass",
+        "target": "glass"
+      },
+      {
+        "id": "metal",
+        "title": "Boş metal konserve",
+        "asset": "sprites/generated/waste-metal",
+        "target": "metal"
+      },
+      {
+        "id": "organic",
+        "title": "Sebze artıkları",
+        "asset": "sprites/generated/waste-organic",
+        "target": "organic"
+      },
+      {
+        "id": "tissue",
+        "title": "Kirli peçete",
+        "asset": "sprites/generated/waste-tissue",
+        "target": "other"
+      }
+    ],
+    "result": {
+      "title": "Ayırma tamamlandı.",
+      "text": "Kirli peçete temiz kâğıda karışmadı.",
+      "why": "Her toplama sisteminin kabul ettiği atıkları ayrıca kontrol et."
+    }
+  },
+  {
+    "id": "shower",
+    "roomId": "bathroom",
+    "title": "Duş başlığı",
+    "scenario": "Aynı süre duş alınacak. Bu üç modelin akış düzenleri farklı.",
+    "x": 70,
+    "y": 43,
+    "kind": "product",
+    "core": true,
+    "round": 1,
+    "choices": ["rev-shower-compact", "rev-shower-classic", "rev-shower-rain"]
+  },
+  {
+    "id": "basin",
+    "roomId": "bathroom",
+    "title": "Isınırken akan su",
+    "scenario": "Duş ısınana kadar akan temiz suyu biriktirebilirsin. Bu isteğe bağlı adım puan getirmez.",
+    "x": 64,
+    "y": 70,
+    "kind": "product",
+    "core": false,
+    "round": 1,
+    "choices": ["rev-basin-place"]
+  },
+  {
+    "id": "flush",
+    "roomId": "bathroom",
+    "title": "Sifon seçimi",
+    "scenario": "Bu kullanımda yarım sifon yeterli. Düğme bırakılınca akış duruyor.",
+    "x": 40,
+    "y": 59,
+    "kind": "behavior",
+    "core": true,
+    "round": 1,
+    "choices": ["rev-flush-half", "rev-flush-full", "rev-flush-hold"]
+  },
+  {
+    "id": "toothbrush",
+    "roomId": "bathroom",
+    "title": "Diş fırçalarken su",
+    "scenario": "Dişlerini fırçalarken musluğu nasıl kullanırsın?",
+    "x": 29,
+    "y": 42,
+    "kind": "behavior",
+    "core": true,
+    "round": 1,
+    "choices": [
+      "rev-toothbrush-open",
+      "rev-toothbrush-closed",
+      "rev-toothbrush-brief"
+    ]
+  },
+  {
+    "id": "hygiene",
+    "roomId": "bathroom",
+    "title": "Kirli kâğıt",
+    "scenario": "Bu kirli peçete nereye gitmeli? Burada hijyenik atık için ayrı diğer atık kabı var.",
+    "x": 36,
+    "y": 68,
+    "kind": "behavior",
+    "core": true,
+    "round": 1,
+    "choices": ["rev-hygiene-paper", "rev-hygiene-other", "rev-hygiene-organic"]
+  },
+  {
+    "id": "light-home",
+    "roomId": "home",
+    "title": "Aydınlatma",
+    "scenario": "Odadaki eski ampul hâlâ çalışıyor. Ne yapacaksın?",
+    "x": 79,
+    "y": 37,
+    "kind": "product",
+    "core": true,
+    "round": 1,
+    "choices": [
+      "rev-light-home-incandescent",
+      "rev-light-home-halogen",
+      "rev-light-home-led"
+    ]
+  },
+  {
+    "id": "light-workshop",
+    "roomId": "workshop",
+    "title": "Aydınlatma",
+    "scenario": "Odadaki eski ampul hâlâ çalışıyor. Ne yapacaksın?",
+    "x": 60,
+    "y": 18,
+    "kind": "product",
+    "core": true,
+    "round": 2,
+    "choices": [
+      "rev-light-workshop-incandescent",
+      "rev-light-workshop-halogen",
+      "rev-light-workshop-led"
+    ]
+  },
+  {
+    "id": "office-power",
+    "roomId": "workshop",
+    "title": "Mesai sonrası cihazlar",
+    "scenario": "Bilgisayar ve yazıcı mesai sonrası beklemede. Otomatik priz mesai bitimine ayarlanacak; anahtarlı priz her akşam kapatılacak.",
+    "x": 66,
+    "y": 50,
+    "kind": "product",
+    "core": true,
+    "round": 2,
+    "choices": [
+      "rev-office-power-strip",
+      "rev-office-power-smart",
+      "rev-office-power-meter"
+    ]
+  },
+  {
+    "id": "laundry-sort",
+    "roomId": "laundry",
+    "title": "Çamaşırları ayır",
+    "scenario": "Etiketleri aynı yıkamaya uygun olan günlük çamaşırları renklerine göre ayır.",
+    "x": 50,
+    "y": 65,
+    "kind": "sorting",
+    "core": true,
+    "round": 2,
+    "choices": [],
+    "targets": [
+      {
+        "id": "white",
+        "title": "Beyazlar",
+        "asset": "sprites/generated/basket-white"
+      },
+      {
+        "id": "color",
+        "title": "Renkliler",
+        "asset": "sprites/generated/basket-color"
+      },
+      {
+        "id": "dark",
+        "title": "Koyular",
+        "asset": "sprites/generated/basket-dark"
+      }
+    ],
+    "items": [
+      {
+        "id": "white",
+        "title": "Beyaz çamaşırlar",
+        "asset": "sprites/generated/clothes-white",
+        "target": "white"
+      },
+      {
+        "id": "color",
+        "title": "Renkli çamaşırlar",
+        "asset": "sprites/generated/clothes-color",
+        "target": "color"
+      },
+      {
+        "id": "dark",
+        "title": "Koyu çamaşırlar",
+        "asset": "sprites/generated/clothes-dark",
+        "target": "dark"
+      }
+    ],
+    "result": {
+      "title": "Ayırma tamamlandı.",
+      "text": "Çamaşırları renk gruplarına ayırdın.",
+      "why": "Yıkamadan önce giysilerin bakım etiketlerini de kontrol et."
+    }
+  },
+  {
+    "id": "laundry-load",
+    "roomId": "laundry",
+    "title": "Makineyi ne zaman çalıştıralım?",
+    "scenario": "Aynı gruptan daha fazla çamaşır var. Acil yıkama gerekmiyor; makinenin önerilen kapasitesini aşma.",
+    "x": 31,
+    "y": 49,
+    "kind": "load",
+    "core": true,
+    "round": 2,
+    "choices": [
+      "rev-laundry-load-quarter",
+      "rev-laundry-load-half",
+      "rev-laundry-load-full"
+    ]
+  },
+  {
+    "id": "laundry-program",
+    "roomId": "laundry",
+    "title": "Yıkama programı",
+    "scenario": "Günlük, normal kirli çamaşırlar; özel hijyen gereksinimi yok. Etiketleri düşük sıcaklığa uygun.",
+    "x": 31,
+    "y": 49,
+    "kind": "behavior",
+    "core": true,
+    "round": 2,
+    "choices": [
+      "rev-laundry-program-eco",
+      "rev-laundry-program-normal",
+      "rev-laundry-program-hot"
+    ]
+  },
+  {
+    "id": "irrigation",
+    "roomId": "garden",
+    "title": "Sebze sıraları",
+    "scenario": "Sıra aralarında bitki yok. Amaç suyu yalnız köklere vermek; hortumu seçersen her köke tek tek yönelteceksin.",
+    "x": 53,
+    "y": 63,
+    "kind": "product",
+    "core": true,
+    "round": 3,
+    "choices": [
+      "rev-irrigation-hose",
+      "rev-irrigation-sprinkler",
+      "rev-irrigation-drip"
+    ]
+  },
+  {
+    "id": "irrigation-time",
+    "roomId": "garden",
+    "title": "Sulama zamanı",
+    "scenario": "Sıcak ve kuru bir günde sulama yapacaksın. Toprak sulamaya ihtiyaç duyuyor.",
+    "x": 53,
+    "y": 63,
+    "kind": "behavior",
+    "core": true,
+    "round": 3,
+    "choices": [
+      "rev-irrigation-time-morning",
+      "rev-irrigation-time-noon",
+      "rev-irrigation-time-evening"
+    ]
+  },
+  {
+    "id": "irrigation-timer",
+    "roomId": "garden",
+    "title": "Sulama süresi",
+    "scenario": "Süreyi takip etmek için yardımcı ekipman ekleyebilirsin. Bu isteğe bağlı adım puan getirmez.",
+    "x": 47,
+    "y": 29,
+    "kind": "product",
+    "core": false,
+    "round": 3,
+    "choices": ["rev-irrigation-timer-timer"]
+  },
+  {
+    "id": "pack-lentil",
+    "roomId": "storage",
+    "title": "Mercimek ambalajı",
+    "scenario": "Aynı miktar mercimeği düzenli alıyorsun. Cam kavanoz burada iade edilip tekrar dolduruluyor.",
+    "x": 51,
+    "y": 63,
+    "kind": "product",
+    "core": true,
+    "round": 3,
+    "choices": [
+      "rev-pack-lentil-plastic",
+      "rev-pack-lentil-paper",
+      "rev-pack-lentil-return"
+    ]
+  },
+  {
+    "id": "pack-apple",
+    "roomId": "storage",
+    "title": "Elma ambalajı",
+    "scenario": "Aynı miktar elmayı her hafta alıyorsun. Fileyi sonraki alışverişlere de getireceksin.",
+    "x": 51,
+    "y": 63,
+    "kind": "product",
+    "core": true,
+    "round": 3,
+    "choices": [
+      "rev-pack-apple-plastic",
+      "rev-pack-apple-paper",
+      "rev-pack-apple-mesh"
+    ]
+  },
+  {
+    "id": "pack-towel",
+    "roomId": "storage",
+    "title": "Havlu teslimi",
+    "scenario": "Müşteri aynı havluyu standından alıp yanında götürüyor. Kargo yok; paketlerin hepsi taşımaya hazır.",
+    "x": 51,
+    "y": 63,
+    "kind": "product",
+    "core": true,
+    "round": 4,
+    "choices": [
+      "rev-pack-towel-plastic",
+      "rev-pack-towel-box",
+      "rev-pack-towel-kraft"
+    ]
+  },
+  {
+    "id": "pack-scarf",
+    "roomId": "storage",
+    "title": "Şal teslimi",
+    "scenario": "Müşteri aynı şalı standından alıp yanında götürüyor. Kargo yok; paketlerin hepsi taşımaya hazır.",
+    "x": 51,
+    "y": 63,
+    "kind": "product",
+    "core": true,
+    "round": 4,
+    "choices": [
+      "rev-pack-scarf-plastic",
+      "rev-pack-scarf-box",
+      "rev-pack-scarf-kraft"
+    ]
+  },
+  {
+    "id": "roof-bonus",
+    "roomId": "roof",
+    "title": "Güneş yatırımı",
+    "scenario": "Bu örnek yatırım puanlanmaz. Gerçek kurulumda çatı, izinler ve tüketim ayrıca değerlendirilir.",
+    "x": 55,
+    "y": 51,
+    "kind": "product",
+    "core": false,
+    "round": 4,
+    "choices": ["rev-roof-bonus-solar"]
+  },
+  {
+    "id": "led-strip",
+    "roomId": "home",
+    "title": "Raf aydınlatması",
+    "scenario": "Dinlenme köşesine yardımcı ışık eklemek ister misin?",
+    "x": 74,
+    "y": 39,
+    "kind": "product",
+    "core": false,
+    "round": 2,
+    "choices": ["rev-led-strip"]
+  }
+]

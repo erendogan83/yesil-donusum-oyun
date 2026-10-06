@@ -1,0 +1,23 @@
+{
+  "findings": [
+    {
+      "category": "violation",
+      "file": "src/main.ts",
+      "line": 118,
+      "message": "Enabled literal button has no detectable action or submit behavior.",
+      "remediation": "Connect the button to a real action, make it a submit button, or disable/remove it.",
+      "ruleId": "affordance.actionless-button",
+      "severity": "error"
+    }
+  ],
+  "mode": "strict",
+  "projectRoot": "C:\\Users\\Nisa\\Documents\\Codex\\2026-10-03\\files-mentioned-by-the-user-yeni\\outputs\\yesil-donusum",
+  "schemaVersion": 1,
+  "summary": {
+    "errors": 1,
+    "total": 1,
+    "unresolved": 0,
+    "violations": 1,
+    "warnings": 0
+  }
+}

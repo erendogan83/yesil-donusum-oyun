@@ -1,0 +1,210 @@
+{
+  "rev-tap-aerator": {
+    "asset": "sprites/generated/faucet-aerator",
+    "installationSlot": "faucet_outlet"
+  },
+  "rev-tap-repair": {
+    "asset": "sprites/generated/faucet-repair",
+    "installationSlot": "faucet_joint"
+  },
+  "rev-tap-filter": {
+    "asset": "sprites/generated/faucet-filter",
+    "installationSlot": "faucet_filter"
+  },
+  "rev-shower-compact": {
+    "asset": "sprites/generated/shower-compact",
+    "installationSlot": "shower_arm_tip"
+  },
+  "rev-shower-classic": {
+    "asset": "sprites/generated/shower-classic",
+    "installationSlot": "shower_arm_tip"
+  },
+  "rev-shower-rain": {
+    "asset": "sprites/generated/shower-rain",
+    "installationSlot": "shower_arm_tip"
+  },
+  "rev-basin-place": {
+    "asset": "sprites/generated/basin",
+    "installationSlot": "basin_floor"
+  },
+  "rev-flush-half": {
+    "asset": "",
+    "installationSlot": "flush"
+  },
+  "rev-flush-full": {
+    "asset": "",
+    "installationSlot": "flush"
+  },
+  "rev-flush-hold": {
+    "asset": "",
+    "installationSlot": "flush"
+  },
+  "rev-toothbrush-open": {
+    "asset": "",
+    "installationSlot": "toothbrush"
+  },
+  "rev-toothbrush-closed": {
+    "asset": "",
+    "installationSlot": "toothbrush"
+  },
+  "rev-toothbrush-brief": {
+    "asset": "",
+    "installationSlot": "toothbrush"
+  },
+  "rev-hygiene-paper": {
+    "asset": "",
+    "installationSlot": "hygiene"
+  },
+  "rev-hygiene-other": {
+    "asset": "",
+    "installationSlot": "hygiene"
+  },
+  "rev-hygiene-organic": {
+    "asset": "",
+    "installationSlot": "hygiene"
+  },
+  "rev-light-home-incandescent": {
+    "asset": "sprites/generated/bulb-incandescent",
+    "installationSlot": "light-home"
+  },
+  "rev-light-home-halogen": {
+    "asset": "sprites/generated/bulb-halogen",
+    "installationSlot": "light-home"
+  },
+  "rev-light-home-led": {
+    "asset": "sprites/generated/bulb-led",
+    "installationSlot": "light-home"
+  },
+  "rev-light-workshop-incandescent": {
+    "asset": "sprites/generated/bulb-incandescent",
+    "installationSlot": "light-workshop"
+  },
+  "rev-light-workshop-halogen": {
+    "asset": "sprites/generated/bulb-halogen",
+    "installationSlot": "light-workshop"
+  },
+  "rev-light-workshop-led": {
+    "asset": "sprites/generated/bulb-led",
+    "installationSlot": "light-workshop"
+  },
+  "rev-office-power-strip": {
+    "asset": "obj_workshop_power_strip_installed",
+    "installationSlot": "office-strip"
+  },
+  "rev-office-power-smart": {
+    "asset": "obj_laundry_smart_plug_installed",
+    "installationSlot": "office-smart"
+  },
+  "rev-office-power-meter": {
+    "asset": "obj_workshop_wattmeter_installed",
+    "installationSlot": "office-meter"
+  },
+  "rev-laundry-load-quarter": {
+    "asset": "",
+    "installationSlot": "laundry-load"
+  },
+  "rev-laundry-load-half": {
+    "asset": "",
+    "installationSlot": "laundry-load"
+  },
+  "rev-laundry-load-full": {
+    "asset": "",
+    "installationSlot": "laundry-load"
+  },
+  "rev-laundry-program-eco": {
+    "asset": "",
+    "installationSlot": "laundry-program"
+  },
+  "rev-laundry-program-normal": {
+    "asset": "",
+    "installationSlot": "laundry-program"
+  },
+  "rev-laundry-program-hot": {
+    "asset": "",
+    "installationSlot": "laundry-program"
+  },
+  "rev-irrigation-hose": {
+    "asset": "sprites/generated/irrigation-hose",
+    "installationSlot": "garden-hose"
+  },
+  "rev-irrigation-sprinkler": {
+    "asset": "sprites/generated/irrigation-sprinkler",
+    "installationSlot": "garden-sprinkler"
+  },
+  "rev-irrigation-drip": {
+    "asset": "sprites/generated/irrigation-drip",
+    "installationSlot": "garden-drip"
+  },
+  "rev-irrigation-time-morning": {
+    "asset": "",
+    "installationSlot": "irrigation-time"
+  },
+  "rev-irrigation-time-noon": {
+    "asset": "",
+    "installationSlot": "irrigation-time"
+  },
+  "rev-irrigation-time-evening": {
+    "asset": "",
+    "installationSlot": "irrigation-time"
+  },
+  "rev-irrigation-timer-timer": {
+    "asset": "sprites/generated/irrigation-timer",
+    "installationSlot": "garden-timer"
+  },
+  "rev-pack-lentil-plastic": {
+    "asset": "sprites/generated/lentil-plastic",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-lentil-paper": {
+    "asset": "sprites/generated/lentil-paper",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-lentil-return": {
+    "asset": "sprites/generated/lentil-return",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-apple-plastic": {
+    "asset": "sprites/generated/apple-plastic",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-apple-paper": {
+    "asset": "sprites/generated/apple-paper",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-apple-mesh": {
+    "asset": "sprites/generated/apple-mesh",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-towel-plastic": {
+    "asset": "sprites/generated/towel-plastic",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-towel-box": {
+    "asset": "sprites/generated/towel-box",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-towel-kraft": {
+    "asset": "sprites/generated/towel-kraft",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-scarf-plastic": {
+    "asset": "sprites/generated/scarf-plastic",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-scarf-box": {
+    "asset": "sprites/generated/scarf-box",
+    "installationSlot": "packing-table"
+  },
+  "rev-pack-scarf-kraft": {
+    "asset": "sprites/generated/scarf-kraft",
+    "installationSlot": "packing-table"
+  },
+  "rev-roof-bonus-solar": {
+    "asset": "obj_solar_array",
+    "installationSlot": "roof-plane"
+  },
+  "rev-led-strip": {
+    "asset": "obj_living_led_strip_3m",
+    "installationSlot": "home_shelf_underside"
+  }
+}

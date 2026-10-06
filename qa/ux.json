@@ -1,0 +1,186 @@
+{
+  "passed": true,
+  "errors": [],
+  "audits": [
+    {
+      "width": 1920,
+      "name": "overview",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "kitchen",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "kitchen-market",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "kitchen-purchased",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "kitchen-ready",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "bathroom",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "bathroom-market",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "bathroom-purchased",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "bathroom-ready",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "workshop",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "laundry",
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "name": "garden",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "overview",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "kitchen",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "kitchen-market",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "kitchen-purchased",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "kitchen-ready",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "bathroom",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "bathroom-market",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "bathroom-purchased",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "bathroom-ready",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "workshop",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "laundry",
+      "violations": []
+    },
+    {
+      "width": 1366,
+      "name": "garden",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "overview",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "kitchen",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "kitchen-market",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "kitchen-purchased",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "kitchen-ready",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "bathroom",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "bathroom-market",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "bathroom-purchased",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "bathroom-ready",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "workshop",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "laundry",
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "name": "garden",
+      "violations": []
+    }
+  ]
+}

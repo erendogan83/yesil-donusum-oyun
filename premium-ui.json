@@ -1,0 +1,27 @@
+{
+  "profile": "product-admin",
+  "sourceRoots": ["src"],
+  "locale": "tr-TR",
+  "canonicalMap": "UX-CONTRACT.md",
+  "requiredCapabilities": [
+    "Select/Listbox",
+    "Form",
+    "Scrollbar",
+    "Toast",
+    "CRUD"
+  ],
+  "ownership": {
+    "Select/Listbox": "native"
+  },
+  "requiredCommands": ["unit", "e2e", "build", "format"],
+  "commands": {
+    "unit": "pnpm test",
+    "e2e": "pnpm run test:e2e",
+    "build": "pnpm build",
+    "format": "pnpm run format:check"
+  },
+  "evidence": {
+    "crudFullFlow": "scripts/revision-flow.cjs",
+    "failurePaths": "tests/decisions.test.ts"
+  }
+}

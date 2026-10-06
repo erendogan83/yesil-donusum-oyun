@@ -1,0 +1,44 @@
+{
+  "name": "yesil-donusum",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build && node scripts/offline.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "tsx --test tests/*.test.ts",
+    "format": "prettier --write src tests scripts *.json *.md *.ts index.html serve.mjs",
+    "format:check": "prettier --check src tests scripts *.json *.md *.ts index.html serve.mjs",
+    "test:e2e": "node scripts/revision-flow.cjs",
+    "test:full": "node scripts/revision-flow.cjs",
+    "test:offline": "node scripts/revision-offline.cjs",
+    "test:a11y": "node scripts/accessibility.cjs",
+    "test:resilience": "node scripts/resilience.cjs",
+    "test:motion": "node scripts/motion.cjs",
+    "test:touch": "node scripts/revision-offline.cjs",
+    "test:refinement": "node scripts/refinement.cjs",
+    "test:meaning": "node scripts/meaning.cjs",
+    "test:tl": "node scripts/tl.cjs",
+    "test:ux": "node scripts/ux.cjs",
+    "test:revision": "node scripts/revision-flow.cjs",
+    "test:placements": "tsx scripts/revision-fixtures.ts && node scripts/revision-placements.cjs",
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name yesil-donusum",
+    "test:sorting": "node scripts/sorting-qa.cjs"
+  },
+  "dependencies": {
+    "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "~5.9.3",
+    "vite": "^6.4.1",
+    "tsx": "^4.20.6",
+    "prettier": "^3.6.2",
+    "playwright": "1.62.1",
+    "@axe-core/playwright": "^4.10.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

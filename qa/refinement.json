@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "errors": [],
+  "combinations": 10,
+  "checks": [
+    "touch",
+    "persistent lesson",
+    "reload",
+    "Escape",
+    "good/neutral/bad"
+  ]
+}

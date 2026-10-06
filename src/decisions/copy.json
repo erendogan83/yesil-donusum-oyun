@@ -1,0 +1,366 @@
+{
+  "rev-tap-aerator": {
+    "title": "Musluk Ucu (Perlatör)",
+    "shortDescription": "Musluğun ucuna takılan bir aparat.",
+    "resultTitle": "Damlatma devam ediyor.",
+    "resultText": "Musluk ucu akışı düzenler; aşınmış contayı onarmaz.",
+    "whyText": ""
+  },
+  "rev-tap-repair": {
+    "title": "Tamir Seti",
+    "shortDescription": "Conta takımı. El aletleri fiyata dahil değildir.",
+    "resultTitle": "Damlatma durdu.",
+    "resultText": "Conta yenilendiği için kaçak kesildi. Evde damlayan musluğu da küçük bir bakımla onarabilirsin.",
+    "whyText": ""
+  },
+  "rev-tap-filter": {
+    "title": "Musluk Filtresi",
+    "shortDescription": "Musluğa takılan filtre kartuşu.",
+    "resultTitle": "Filtre takıldı; kaçak sürüyor.",
+    "resultText": "Filtre suyu süzer, fakat arızalı contayı onarmaz.",
+    "whyText": ""
+  },
+  "rev-shower-compact": {
+    "title": "Kompakt Başlık",
+    "shortDescription": "İçinde akış sınırlayıcı parça bulunur.",
+    "resultTitle": "Su akışı sınırlandı.",
+    "resultText": "Bu model, duş sırasında gereksiz akışı azaltan bir iç parçaya sahip.",
+    "whyText": ""
+  },
+  "rev-shower-classic": {
+    "title": "Standart Duş Başlığı",
+    "shortDescription": "Standart hortuma takılan krom el duşu.",
+    "resultTitle": "Standart başlık takıldı.",
+    "resultText": "Bu senaryoda akış sınırlayıcı başlık kadar su azaltmadı. Evde seçerken akış özelliğini kontrol edebilirsin.",
+    "whyText": ""
+  },
+  "rev-shower-rain": {
+    "title": "Geniş Yağmur Başlığı",
+    "shortDescription": "Geniş yüzeyden su verir.",
+    "resultTitle": "Daha geniş bir akış seçtin.",
+    "resultText": "Bu senaryodaki geniş başlık aynı sürede daha fazla su kullanır.",
+    "whyText": ""
+  },
+  "rev-basin-place": {
+    "title": "Leğen",
+    "shortDescription": "Duş alanına konan su kabı.",
+    "resultTitle": "Su leğende birikti.",
+    "resultText": "Bu suyu temizlikte veya uygun başka bir işte yeniden kullanabilirsin.",
+    "whyText": ""
+  },
+  "rev-flush-half": {
+    "title": "Yarım sifon",
+    "shortDescription": "Küçük düğmeyle az su kullanılır.",
+    "resultTitle": "Yeterli suyu kullandın.",
+    "resultText": "Bu kullanımda yarım sifon işi tamamladı.",
+    "whyText": ""
+  },
+  "rev-flush-full": {
+    "title": "Tam sifon",
+    "shortDescription": "Büyük düğmeyle tüm depo boşalır.",
+    "resultTitle": "Gerekenden fazla su aktı.",
+    "resultText": "Bu kullanımda tam sifona ihtiyaç yoktu.",
+    "whyText": ""
+  },
+  "rev-flush-hold": {
+    "title": "Düğmeyi basılı tut",
+    "shortDescription": "Düğme basılı kaldıkça su akar.",
+    "resultTitle": "Su daha uzun süre aktı.",
+    "resultText": "Düğmeyi basılı tutmak bu kullanım için gerekli değildi.",
+    "whyText": ""
+  },
+  "rev-toothbrush-open": {
+    "title": "Fırçalarken açık bırak",
+    "shortDescription": "Fırçalama boyunca musluk açık kalır.",
+    "resultTitle": "Kullanmadığın sırada su aktı.",
+    "resultText": "Fırçalama boyunca akan suyun çoğu kullanılmadan gidere gitti.",
+    "whyText": ""
+  },
+  "rev-toothbrush-closed": {
+    "title": "Fırçalarken kapat",
+    "shortDescription": "Musluk yalnız fırçalamadan önce ve sonra açılır.",
+    "resultTitle": "Kullanmadığın suyu durdurdun.",
+    "resultText": "Musluğu yalnız durularken açmak yeterliydi.",
+    "whyText": ""
+  },
+  "rev-toothbrush-brief": {
+    "title": "Gerektikçe kısa aç",
+    "shortDescription": "Musluk yalnız durulamak için kısa süre açılır.",
+    "resultTitle": "Suyu gerektiği anda kullandın.",
+    "resultText": "Fırçalama aralarında musluğu kapalı tuttun.",
+    "whyText": ""
+  },
+  "rev-hygiene-paper": {
+    "title": "Kâğıt / karton",
+    "shortDescription": "Kâğıt ve karton için toplama kutusu.",
+    "resultTitle": "Kirli peçete kâğıt kutusuna uygun değil.",
+    "resultText": "Kirli peçete ve ıslak mendil diğer atıktır. Temiz karton rulo ise kâğıt kutusuna gider.",
+    "whyText": ""
+  },
+  "rev-hygiene-other": {
+    "title": "Diğer atık",
+    "shortDescription": "Geri dönüşmeyen atıklar için kutu.",
+    "resultTitle": "Kirli peçeteyi ayırdın.",
+    "resultText": "Kirli peçete ve ıslak mendil diğer atıktır. Temiz karton rulo ise kâğıt kutusuna gider.",
+    "whyText": ""
+  },
+  "rev-hygiene-organic": {
+    "title": "Organik artıklar",
+    "shortDescription": "Yemek artıkları için kutu.",
+    "resultTitle": "Bu toplama sisteminde organik kaba uygun değil.",
+    "resultText": "Kirli peçete ve ıslak mendil diğer atıktır. Temiz karton rulo ise kâğıt kutusuna gider.",
+    "whyText": ""
+  },
+  "rev-light-home-incandescent": {
+    "title": "Eski ampulle devam et",
+    "shortDescription": "Yeni ürün almadan mevcut ampulü kullanmaya devam edersin.",
+    "resultTitle": "Mevcut ampulle devam ettin.",
+    "resultText": "Yeni harcama yapmadın. Eski ampul aynı elektrik tüketimiyle çalışmaya devam ediyor.",
+    "whyText": ""
+  },
+  "rev-light-home-halogen": {
+    "title": "Halojen Ampul",
+    "shortDescription": "Standart E27 duyda kullanılan halojen ampul.",
+    "resultTitle": "Halojen ampulü taktın.",
+    "resultText": "Aynı aydınlık için klasik ampulden az, LED’den fazla elektrik kullanır.",
+    "whyText": ""
+  },
+  "rev-light-home-led": {
+    "title": "LED Ampul",
+    "shortDescription": "Standart E27 duyda kullanılan 9 W LED ampul.",
+    "resultTitle": "LED ampul takıldı.",
+    "resultText": "Aynı aydınlatma ihtiyacını eski tip ampullere göre daha düşük elektrik tüketimiyle karşılar.",
+    "whyText": ""
+  },
+  "rev-light-workshop-incandescent": {
+    "title": "Eski ampulle devam et",
+    "shortDescription": "Yeni ürün almadan mevcut ampulü kullanmaya devam edersin.",
+    "resultTitle": "Mevcut ampulle devam ettin.",
+    "resultText": "Yeni harcama yapmadın. Eski ampul aynı elektrik tüketimiyle çalışmaya devam ediyor.",
+    "whyText": ""
+  },
+  "rev-light-workshop-halogen": {
+    "title": "Halojen Ampul",
+    "shortDescription": "Standart E27 duyda kullanılan halojen ampul.",
+    "resultTitle": "Halojen ampulü taktın.",
+    "resultText": "Aynı aydınlık için klasik ampulden az, LED’den fazla elektrik kullanır.",
+    "whyText": ""
+  },
+  "rev-light-workshop-led": {
+    "title": "LED Ampul",
+    "shortDescription": "Standart E27 duyda kullanılan 9 W LED ampul.",
+    "resultTitle": "LED ampul takıldı.",
+    "resultText": "Aynı aydınlatma ihtiyacını eski tip ampullere göre daha düşük elektrik tüketimiyle karşılar.",
+    "whyText": ""
+  },
+  "rev-office-power-strip": {
+    "title": "Anahtarlı Çoklu Priz",
+    "shortDescription": "Anahtarlı, üç çıkışlı, 2 metre grup priz.",
+    "resultTitle": "Cihazların elektriği kesildi.",
+    "resultText": "İş bitince anahtarı kapatmak bekleme tüketimini durdurur.",
+    "whyText": ""
+  },
+  "rev-office-power-smart": {
+    "title": "Akıllı Priz",
+    "shortDescription": "Belirlenen saatte elektriği kesebilir.",
+    "resultTitle": "Mesai bitince elektrik kesildi.",
+    "resultText": "Saati mesaiye göre ayarladığın için cihazlar beklemede kalmadı.",
+    "whyText": ""
+  },
+  "rev-office-power-meter": {
+    "title": "Wattmetre / Enerji Ölçer",
+    "shortDescription": "Bağlı cihazın tüketimini ölçer.",
+    "resultTitle": "Tüketimi görebiliyorsun.",
+    "resultText": "Ölçmek tek başına tüketimi azaltmaz; cihazların kapanması da gerekir.",
+    "whyText": ""
+  },
+  "rev-laundry-load-quarter": {
+    "title": "%25 doluluk",
+    "shortDescription": "Tambur dörtte bir dolu.",
+    "resultTitle": "Az çamaşırla çalıştırdın.",
+    "resultText": "Aynı çamaşırları bitirmek için daha çok yıkama gerekebilir.",
+    "whyText": ""
+  },
+  "rev-laundry-load-half": {
+    "title": "%50 doluluk",
+    "shortDescription": "Tambur yarı dolu.",
+    "resultTitle": "Yarım yükle çalıştırdın.",
+    "resultText": "Biraz daha biriktirmek yıkama sayısını azaltabilirdi.",
+    "whyText": ""
+  },
+  "rev-laundry-load-full": {
+    "title": "Uygun tam yük",
+    "shortDescription": "Tambur etikette önerilen kapasitede.",
+    "resultTitle": "Önerilen kapasiteyle çalıştırdın.",
+    "resultText": "Çamaşırları sıkıştırmadan biriktirmek, aynı miktar için gereken yıkama sayısını azaltır.",
+    "whyText": ""
+  },
+  "rev-laundry-program-eco": {
+    "title": "30°C / ECO",
+    "shortDescription": "Düşük sıcaklıkta yıkama.",
+    "resultTitle": "Düşük sıcaklıkta yıkadın.",
+    "resultText": "Bu günlük çamaşırlar için yüksek ısı gerekmiyordu; daha az su ısıttın.",
+    "whyText": ""
+  },
+  "rev-laundry-program-normal": {
+    "title": "40°C / NORMAL",
+    "shortDescription": "Orta sıcaklıkta standart yıkama.",
+    "resultTitle": "Normal programı seçtin.",
+    "resultText": "Bu çamaşırlar düşük sıcaklıkta da yıkanabilirdi; daha fazla su ısıttın.",
+    "whyText": ""
+  },
+  "rev-laundry-program-hot": {
+    "title": "60°C / YOĞUN",
+    "shortDescription": "Yüksek sıcaklıkta yoğun yıkama.",
+    "resultTitle": "Gerekenden yüksek ısı seçtin.",
+    "resultText": "Bu senaryoda özel hijyen ihtiyacı yoktu; yüksek ısıya gerek kalmıyordu.",
+    "whyText": ""
+  },
+  "rev-irrigation-hose": {
+    "title": "Hortum Tabancası",
+    "shortDescription": "Mevcut hortuma takılan el tabancası.",
+    "resultTitle": "Suyu her köke elle yönelttin.",
+    "resultText": "Hortumu kökte tutup geçişlerde kapattığında boş alanları sulamadın.",
+    "whyText": ""
+  },
+  "rev-irrigation-sprinkler": {
+    "title": "Fıskiye",
+    "shortDescription": "Suyu geniş alana dağıtır.",
+    "resultTitle": "Bitki dışındaki alanlar da ıslandı.",
+    "resultText": "Fıskiye suyu sebze sıralarının arasına da dağıttı.",
+    "whyText": ""
+  },
+  "rev-irrigation-drip": {
+    "title": "Damla Hattı",
+    "shortDescription": "20 metre hortum ve bağlantı parçaları.",
+    "resultTitle": "Su kök bölgesine ulaştı.",
+    "resultText": "Damla hattı suyu sıra aralarına dağıtmak yerine bitki dibine verdi.",
+    "whyText": ""
+  },
+  "rev-irrigation-time-morning": {
+    "title": "Sabah",
+    "shortDescription": "Güneş yeni doğmuşken.",
+    "resultTitle": "Serin saati seçtin.",
+    "resultText": "Güneş yükselmeden sulamak sıcak öğle saatine göre buharlaşmayı azaltır.",
+    "whyText": ""
+  },
+  "rev-irrigation-time-noon": {
+    "title": "Öğle",
+    "shortDescription": "Gün ortasında, güneş tepedeyken.",
+    "resultTitle": "Sıcak saatte suladın.",
+    "resultText": "Bu senaryoda sıcaklık nedeniyle su daha çabuk buharlaşır.",
+    "whyText": ""
+  },
+  "rev-irrigation-time-evening": {
+    "title": "Akşam",
+    "shortDescription": "Güneş battıktan sonra.",
+    "resultTitle": "Serin saati seçtin.",
+    "resultText": "Güneşin etkisi azaldığında sulamak sıcak öğleye göre buharlaşmayı azaltır.",
+    "whyText": ""
+  },
+  "rev-irrigation-timer-timer": {
+    "title": "Sulama Zamanlayıcısı",
+    "shortDescription": "Ayarlanan sürede suyu kapatır.",
+    "resultTitle": "Sulama süresini ayarlayabilirsin.",
+    "resultText": "Zamanlayıcı unutmayı azaltır; doğru süreyi seçmek yine senin kararındır.",
+    "whyText": ""
+  },
+  "rev-pack-lentil-plastic": {
+    "title": "Plastik Paket",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Bu paketin tekrar dolum sistemi yok; her alışverişte yeni paket kullanılıyor.",
+    "whyText": ""
+  },
+  "rev-pack-lentil-paper": {
+    "title": "Kâğıt Paket",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Bu paketin tekrar dolum sistemi yok; her alışverişte yeni paket kullanılıyor.",
+    "whyText": ""
+  },
+  "rev-pack-lentil-return": {
+    "title": "İadeli Cam Kavanoz",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Kavanoz iade edilip yeniden doldurulacak; her alışverişte yeni ambalaj gerekmiyor.",
+    "whyText": ""
+  },
+  "rev-pack-apple-plastic": {
+    "title": "İnce Plastik Poşet",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Bu senaryoda torba bir kez kullanılıyor; sonraki alışverişte yenisi gerekiyor.",
+    "whyText": ""
+  },
+  "rev-pack-apple-paper": {
+    "title": "Kâğıt Torba",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Bu senaryoda torba bir kez kullanılıyor; sonraki alışverişte yenisi gerekiyor.",
+    "whyText": ""
+  },
+  "rev-pack-apple-mesh": {
+    "title": "Tekrar Kullanılabilir File",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Fileyi sonraki alışverişlerde de kullanarak yeni torba ihtiyacını azalttın.",
+    "whyText": ""
+  },
+  "rev-pack-towel-plastic": {
+    "title": "İç Paket + Taşıma Poşeti",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "İç paket ve taşıma poşetiyle aynı ürün için iki ambalaj kullandın.",
+    "whyText": ""
+  },
+  "rev-pack-towel-box": {
+    "title": "Karton Kutu",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Kargo yapılmayan bu teslimde sert kutu yerine daha az malzemeli çanta yeterliydi.",
+    "whyText": ""
+  },
+  "rev-pack-towel-kraft": {
+    "title": "Tek Kraft Çanta",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Ürünü tek ambalajla teslim ettin; ek taşıma poşetine gerek kalmadı.",
+    "whyText": ""
+  },
+  "rev-pack-scarf-plastic": {
+    "title": "İç Paket + Taşıma Poşeti",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "İç paket ve taşıma poşetiyle aynı ürün için iki ambalaj kullandın.",
+    "whyText": ""
+  },
+  "rev-pack-scarf-box": {
+    "title": "Karton Kutu",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Kargo yapılmayan bu teslimde sert kutu yerine daha az malzemeli çanta yeterliydi.",
+    "whyText": ""
+  },
+  "rev-pack-scarf-kraft": {
+    "title": "Tek Kraft Çanta",
+    "shortDescription": "Aynı ürün ve miktar, farklı ambalaj.",
+    "resultTitle": "Ürün teslim edildi.",
+    "resultText": "Ürünü tek ambalajla teslim ettin; ek taşıma poşetine gerek kalmadı.",
+    "whyText": ""
+  },
+  "rev-roof-bonus-solar": {
+    "title": "550 W Güneş Paneli",
+    "shortDescription": "Güneşten elektrik üretmek için kullanılan panel modülü.",
+    "resultTitle": "Panel yerleştirildi.",
+    "resultText": "Bu fiyat yalnız panel içindir. Tam kurulum için ek ekipman ve işçilik gerekir.",
+    "whyText": ""
+  },
+  "rev-led-strip": {
+    "title": "LED Şerit · 3 m",
+    "shortDescription": "Raf altında yardımcı veya dekoratif ışık.",
+    "resultTitle": "Rafına yardımcı ışık ekledin.",
+    "resultText": "Bu ek aydınlatma, ana ampulün yerine geçmez. İhtiyacın olmadığında kapatabilirsin.",
+    "whyText": "Ek ışık almak tek başına enerji tasarrufu değildir."
+  }
+}

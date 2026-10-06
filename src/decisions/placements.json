@@ -1,0 +1,474 @@
+{
+  "rev-tap-aerator": {
+    "sceneId": "kitchen",
+    "slotId": "faucet_outlet",
+    "x": 762,
+    "y": 346,
+    "scale": 0.047,
+    "rotation": -8,
+    "anchorX": 0.6,
+    "anchorY": 0.12,
+    "zIndex": 12,
+    "replaceExisting": true
+  },
+  "rev-tap-repair": {
+    "sceneId": "kitchen",
+    "slotId": "faucet_joint",
+    "x": 805,
+    "y": 369,
+    "scale": 1,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "render": "maintenance"
+  },
+  "rev-tap-filter": {
+    "sceneId": "kitchen",
+    "slotId": "faucet_filter",
+    "x": 762,
+    "y": 346,
+    "scale": 0.11,
+    "rotation": 0,
+    "anchorX": 0.85,
+    "anchorY": 0.68,
+    "zIndex": 12,
+    "replaceExisting": true
+  },
+  "rev-shower-compact": {
+    "sceneId": "bathroom",
+    "slotId": "shower_arm_tip",
+    "x": 1108,
+    "y": 67,
+    "scale": 0.16,
+    "rotation": 7,
+    "anchorX": 0.28,
+    "anchorY": 0.015,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "asset": "sprites/generated/shower-compact-installed"
+  },
+  "rev-shower-classic": {
+    "sceneId": "bathroom",
+    "slotId": "shower_arm_tip",
+    "x": 1108,
+    "y": 67,
+    "scale": 0.15,
+    "rotation": 7,
+    "anchorX": 0.36,
+    "anchorY": 0.015,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "asset": "sprites/generated/shower-classic-installed"
+  },
+  "rev-shower-rain": {
+    "sceneId": "bathroom",
+    "slotId": "shower_arm_tip",
+    "x": 1108,
+    "y": 67,
+    "scale": 0.16,
+    "rotation": 7,
+    "anchorX": 0.45,
+    "anchorY": 0.015,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "asset": "sprites/generated/shower-rain-installed"
+  },
+  "rev-basin-place": {
+    "sceneId": "bathroom",
+    "slotId": "basin_floor",
+    "x": 1105,
+    "y": 690,
+    "scale": 0.19,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 1105,
+      "y": 684,
+      "width": 175,
+      "height": 32,
+      "alpha": 0.12
+    }
+  },
+  "rev-light-home-incandescent": {
+    "sceneId": "home",
+    "slotId": "pendant_bulb",
+    "x": 815,
+    "y": 55,
+    "scale": 0.068,
+    "rotation": 180,
+    "anchorX": 0.5,
+    "anchorY": 0.99,
+    "zIndex": 12,
+    "replaceExisting": true
+  },
+  "rev-light-home-halogen": {
+    "sceneId": "home",
+    "slotId": "pendant_bulb",
+    "x": 815,
+    "y": 55,
+    "scale": 0.068,
+    "rotation": 180,
+    "anchorX": 0.5,
+    "anchorY": 0.99,
+    "zIndex": 12,
+    "replaceExisting": true
+  },
+  "rev-light-home-led": {
+    "sceneId": "home",
+    "slotId": "pendant_bulb",
+    "x": 815,
+    "y": 55,
+    "scale": 0.068,
+    "rotation": 180,
+    "anchorX": 0.5,
+    "anchorY": 0.99,
+    "zIndex": 12,
+    "replaceExisting": true
+  },
+  "rev-light-workshop-incandescent": {
+    "sceneId": "workshop",
+    "slotId": "office_pendant",
+    "x": 854,
+    "y": 111,
+    "scale": 0.073,
+    "rotation": 180,
+    "anchorX": 0.5,
+    "anchorY": 0.99,
+    "zIndex": 12,
+    "replaceExisting": true
+  },
+  "rev-light-workshop-halogen": {
+    "sceneId": "workshop",
+    "slotId": "office_pendant",
+    "x": 854,
+    "y": 111,
+    "scale": 0.073,
+    "rotation": 180,
+    "anchorX": 0.5,
+    "anchorY": 0.99,
+    "zIndex": 12,
+    "replaceExisting": true
+  },
+  "rev-light-workshop-led": {
+    "sceneId": "workshop",
+    "slotId": "office_pendant",
+    "x": 854,
+    "y": 111,
+    "scale": 0.073,
+    "rotation": 180,
+    "anchorX": 0.5,
+    "anchorY": 0.99,
+    "zIndex": 12,
+    "replaceExisting": true
+  },
+  "rev-irrigation-hose": {
+    "sceneId": "garden",
+    "slotId": "garden_hose",
+    "x": 834,
+    "y": 630,
+    "scale": 0.19,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 834,
+      "y": 625,
+      "width": 100,
+      "height": 18,
+      "alpha": 0.12
+    },
+    "cable": [
+      [780, 601],
+      [729, 543],
+      [693, 423],
+      [674, 260],
+      [672, 187]
+    ]
+  },
+  "rev-irrigation-sprinkler": {
+    "sceneId": "garden",
+    "slotId": "garden_sprinkler",
+    "x": 1010,
+    "y": 540,
+    "scale": 0.16,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 1010,
+      "y": 537,
+      "width": 100,
+      "height": 15,
+      "alpha": 0.12
+    },
+    "cable": [
+      [958, 531],
+      [800, 520],
+      [674, 260],
+      [672, 187]
+    ]
+  },
+  "rev-irrigation-drip": {
+    "sceneId": "garden",
+    "slotId": "garden_drip_rows",
+    "x": 902,
+    "y": 505,
+    "scale": 1,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "render": "irrigation"
+  },
+  "rev-irrigation-timer-timer": {
+    "sceneId": "garden",
+    "slotId": "garden_timer",
+    "x": 672,
+    "y": 186,
+    "scale": 0.06,
+    "rotation": 0,
+    "anchorX": 0.45,
+    "anchorY": 0.015,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "crop": [0, 433, 583, 930]
+  },
+  "rev-pack-lentil-plastic": {
+    "sceneId": "storage",
+    "slotId": "packing_lentil",
+    "x": 716,
+    "y": 542,
+    "scale": 0.2,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 716,
+      "y": 539,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-lentil-paper": {
+    "sceneId": "storage",
+    "slotId": "packing_lentil",
+    "x": 716,
+    "y": 542,
+    "scale": 0.21428571428571427,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 716,
+      "y": 539,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-lentil-return": {
+    "sceneId": "storage",
+    "slotId": "packing_lentil",
+    "x": 716,
+    "y": 542,
+    "scale": 0.2185430463576159,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 716,
+      "y": 539,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-apple-plastic": {
+    "sceneId": "storage",
+    "slotId": "packing_apple",
+    "x": 839,
+    "y": 583,
+    "scale": 0.21382289416846653,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 839,
+      "y": 580,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-apple-paper": {
+    "sceneId": "storage",
+    "slotId": "packing_apple",
+    "x": 839,
+    "y": 583,
+    "scale": 0.2129032258064516,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 839,
+      "y": 580,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-apple-mesh": {
+    "sceneId": "storage",
+    "slotId": "packing_apple",
+    "x": 839,
+    "y": 583,
+    "scale": 0.21521739130434783,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 839,
+      "y": 580,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-towel-plastic": {
+    "sceneId": "storage",
+    "slotId": "packing_towel",
+    "x": 678,
+    "y": 589,
+    "scale": 0.19642857142857142,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 678,
+      "y": 586,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-towel-box": {
+    "sceneId": "storage",
+    "slotId": "packing_towel",
+    "x": 678,
+    "y": 589,
+    "scale": 0.20842105263157895,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 678,
+      "y": 586,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-towel-kraft": {
+    "sceneId": "storage",
+    "slotId": "packing_towel",
+    "x": 678,
+    "y": 589,
+    "scale": 0.19839679358717435,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 678,
+      "y": 586,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-scarf-plastic": {
+    "sceneId": "storage",
+    "slotId": "packing_scarf",
+    "x": 802,
+    "y": 644,
+    "scale": 0.20582120582120583,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 802,
+      "y": 641,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-scarf-box": {
+    "sceneId": "storage",
+    "slotId": "packing_scarf",
+    "x": 802,
+    "y": 644,
+    "scale": 0.20245398773006135,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 802,
+      "y": 641,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  },
+  "rev-pack-scarf-kraft": {
+    "sceneId": "storage",
+    "slotId": "packing_scarf",
+    "x": 802,
+    "y": 644,
+    "scale": 0.19839679358717435,
+    "rotation": 0,
+    "anchorX": 0.5,
+    "anchorY": 0.98,
+    "zIndex": 12,
+    "replaceExisting": true,
+    "shadow": {
+      "x": 802,
+      "y": 641,
+      "width": 78,
+      "height": 12,
+      "alpha": 0.1
+    }
+  }
+}
