@@ -105,7 +105,7 @@ const base = process.env.GAME_URL || "http://127.0.0.1:4180";
   // ---- cannot afford a required purchase: it can be skipped
   await page.evaluate(() => {
     const db = JSON.parse(localStorage.getItem("yesil-donusum-v1"));
-    db.active.budget = 100;
+    db.active.budget = 10;
     db.revision += 1;
     localStorage.setItem("yesil-donusum-v1", JSON.stringify(db));
   });

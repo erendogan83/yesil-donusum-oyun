@@ -50,6 +50,22 @@ export const assets: Record<
 export const opportunityFor = (id: string) =>
   opportunities.find((o) => o.choices.includes(id));
 export const zoneFor = (o: Opportunity) => `rev-${o.id}`;
+/** A stable, per-game shuffle of an opportunity's choices: the correct one moves around. */
+export function choiceOrder(seed: string, ids: string[]): string[] {
+  let h = 2166136261;
+  for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  const next = () => {
+    h = Math.imul(h ^ (h >>> 15), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return ((h ^= h >>> 16) >>> 0) / 4294967296;
+  };
+  const out = [...ids];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(next() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
 const categoryFor = (room: RoomId): Category =>
   (
     ({

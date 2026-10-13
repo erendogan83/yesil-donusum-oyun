@@ -210,5 +210,161 @@
   "rev-basin-bucket": {
     "asset": "sprites/generated/bucket",
     "installationSlot": "basin_floor"
+  },
+  "rev-flush-twice": {
+    "asset": "",
+    "installationSlot": "flush"
+  },
+  "rev-flush-bucket": {
+    "asset": "",
+    "installationSlot": "flush"
+  },
+  "rev-toothbrush-cup": {
+    "asset": "",
+    "installationSlot": "toothbrush"
+  },
+  "rev-toothbrush-shower": {
+    "asset": "",
+    "installationSlot": "toothbrush"
+  },
+  "rev-hygiene-plastic": {
+    "asset": "",
+    "installationSlot": "hygiene"
+  },
+  "rev-hygiene-toilet": {
+    "asset": "",
+    "installationSlot": "hygiene"
+  },
+  "rev-laundry-load-twothirds": {
+    "asset": "",
+    "installationSlot": "laundry-load"
+  },
+  "rev-laundry-load-over": {
+    "asset": "",
+    "installationSlot": "laundry-load"
+  },
+  "rev-laundry-program-cold": {
+    "asset": "",
+    "installationSlot": "laundry-program"
+  },
+  "rev-laundry-program-boil": {
+    "asset": "",
+    "installationSlot": "laundry-program"
+  },
+  "rev-irrigation-time-night": {
+    "asset": "",
+    "installationSlot": "irrigation-time"
+  },
+  "rev-irrigation-time-rain": {
+    "asset": "",
+    "installationSlot": "irrigation-time"
+  },
+  "rev-tap-faucet": {
+    "asset": "sprites/generated/faucet-new",
+    "installationSlot": "faucet_joint"
+  },
+  "rev-tap-tape": {
+    "asset": "sprites/generated/tape-ptfe",
+    "installationSlot": "faucet_joint"
+  },
+  "rev-shower-aerated": {
+    "asset": "sprites/generated/shower-aerated",
+    "installationSlot": "shower_arm_tip"
+  },
+  "rev-shower-limiter": {
+    "asset": "sprites/generated/shower-limiter",
+    "installationSlot": "shower_arm_tip"
+  },
+  "rev-basin-barrel": {
+    "asset": "sprites/generated/barrel",
+    "installationSlot": "basin_floor"
+  },
+  "rev-basin-tray": {
+    "asset": "sprites/generated/tray",
+    "installationSlot": "basin_floor"
+  },
+  "rev-light-home-cfl": {
+    "asset": "sprites/generated/bulb-cfl",
+    "installationSlot": "pendant_bulb"
+  },
+  "rev-light-home-smart": {
+    "asset": "sprites/generated/bulb-smart",
+    "installationSlot": "pendant_bulb"
+  },
+  "rev-light-workshop-cfl": {
+    "asset": "sprites/generated/bulb-cfl",
+    "installationSlot": "office_pendant"
+  },
+  "rev-light-workshop-smart": {
+    "asset": "sprites/generated/bulb-smart",
+    "installationSlot": "office_pendant"
+  },
+  "rev-office-power-timer": {
+    "asset": "sprites/generated/power-timer",
+    "installationSlot": "slot_office_power_timer"
+  },
+  "rev-office-power-solar": {
+    "asset": "sprites/generated/solar-charger",
+    "installationSlot": "slot_office_power_solar"
+  },
+  "rev-irrigation-can": {
+    "asset": "sprites/generated/watering-can",
+    "installationSlot": "garden_hose"
+  },
+  "rev-irrigation-rain": {
+    "asset": "sprites/generated/rain-tank",
+    "installationSlot": "slot_irrigation_rain"
+  },
+  "rev-irrigation-timer-moisture": {
+    "asset": "sprites/generated/sensor-moisture",
+    "installationSlot": "slot_irrigation_timer_moisture"
+  },
+  "rev-irrigation-timer-rain": {
+    "asset": "sprites/generated/sensor-rain",
+    "installationSlot": "slot_irrigation_timer_rain"
+  },
+  "rev-irrigation-timer-mech": {
+    "asset": "sprites/generated/timer-mechanical",
+    "installationSlot": "slot_irrigation_timer_mech"
+  },
+  "rev-pack-lentil-cloth": {
+    "asset": "sprites/generated/lentil-cloth",
+    "installationSlot": "packing_lentil"
+  },
+  "rev-pack-apple-basket": {
+    "asset": "sprites/generated/apple-basket",
+    "installationSlot": "packing_apple"
+  },
+  "rev-pack-towel-cloth": {
+    "asset": "sprites/generated/towel-cloth",
+    "installationSlot": "packing_towel"
+  },
+  "rev-pack-scarf-envelope": {
+    "asset": "sprites/generated/scarf-envelope",
+    "installationSlot": "packing_scarf"
+  },
+  "rev-roof-bonus-balcony": {
+    "asset": "sprites/generated/panel-balcony",
+    "installationSlot": "slot_roof_bonus_balcony"
+  },
+  "rev-roof-bonus-heater": {
+    "asset": "sprites/generated/solar-heater",
+    "installationSlot": "slot_roof_bonus_heater"
+  },
+  "rev-roof-bonus-wind": {
+    "asset": "sprites/generated/wind-turbine",
+    "installationSlot": "slot_roof_bonus_wind"
+  },
+  "rev-led-strip-battery": {
+    "asset": "sprites/generated/lamp-battery",
+    "installationSlot": "slot_led_strip_battery"
+  },
+  "rev-led-strip-desk": {
+    "asset": "sprites/generated/lamp-desk",
+    "installationSlot": "slot_led_strip_desk"
+  },
+  "rev-led-strip-motion": {
+    "asset": "sprites/generated/lamp-motion",
+    "installationSlot": "slot_led_strip_motion"
   }
 }

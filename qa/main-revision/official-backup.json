@@ -3,7 +3,7 @@
   "revision": 26,
   "active": {
     "version": 2,
-    "id": "a3c40a91-588f-46a4-8ca4-b6746fd01185",
+    "id": "09cf74bf-9135-4596-b21d-b0558608bdaa",
     "team": {
       "organization": "",
       "first": "QA Deniz",
@@ -126,7 +126,7 @@
     "timePenalty": 0,
     "clock": {
       "kitchen@1": {
-        "ms": 2663,
+        "ms": 3973,
         "charged": 0
       }
     },
@@ -140,7 +140,7 @@
   },
   "results": [
     {
-      "id": "a3c40a91-588f-46a4-8ca4-b6746fd01185",
+      "id": "09cf74bf-9135-4596-b21d-b0558608bdaa",
       "team": {
         "organization": "",
         "first": "QA Deniz",
@@ -151,7 +151,7 @@
       "budget": 9705,
       "savingPercent": 0,
       "score": 20,
-      "completedAt": "2026-10-13T10:26:17.141Z",
+      "completedAt": "2026-10-13T12:11:56.854Z",
       "rulesVersion": 1,
       "realLifePledges": [
         "Evde damlayan muslukları kontrol edeceğiz.",

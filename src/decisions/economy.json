@@ -210,5 +210,161 @@
   "rev-basin-bucket": {
     "billImpact": 0,
     "impactStatus": "simulation"
+  },
+  "rev-flush-twice": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-flush-bucket": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-toothbrush-cup": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-toothbrush-shower": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-hygiene-plastic": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-hygiene-toilet": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-load-twothirds": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-load-over": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-program-cold": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-laundry-program-boil": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-time-night": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-time-rain": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-tap-faucet": {
+    "billImpact": -200,
+    "impactStatus": "simulation"
+  },
+  "rev-tap-tape": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-shower-aerated": {
+    "billImpact": -220,
+    "impactStatus": "simulation"
+  },
+  "rev-shower-limiter": {
+    "billImpact": -100,
+    "impactStatus": "simulation"
+  },
+  "rev-basin-barrel": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-basin-tray": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-light-home-cfl": {
+    "billImpact": -120,
+    "impactStatus": "simulation"
+  },
+  "rev-light-home-smart": {
+    "billImpact": -210,
+    "impactStatus": "simulation"
+  },
+  "rev-light-workshop-cfl": {
+    "billImpact": -120,
+    "impactStatus": "simulation"
+  },
+  "rev-light-workshop-smart": {
+    "billImpact": -210,
+    "impactStatus": "simulation"
+  },
+  "rev-office-power-timer": {
+    "billImpact": -190,
+    "impactStatus": "simulation"
+  },
+  "rev-office-power-solar": {
+    "billImpact": -50,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-can": {
+    "billImpact": -120,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-rain": {
+    "billImpact": -150,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-timer-moisture": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-timer-rain": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-irrigation-timer-mech": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-lentil-cloth": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-apple-basket": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-towel-cloth": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-pack-scarf-envelope": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-roof-bonus-balcony": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-roof-bonus-heater": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-roof-bonus-wind": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-led-strip-battery": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-led-strip-desk": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
+  },
+  "rev-led-strip-motion": {
+    "billImpact": 0,
+    "impactStatus": "simulation"
   }
 }

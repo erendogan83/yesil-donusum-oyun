@@ -282,7 +282,11 @@ export function renderPlaced(scene: Phaser.Scene, s: State, room: RoomId) {
         ? [1105, 596, 150, 57]
         : id === "rev-basin-bucket"
           ? [1105, 569, 98, 22]
-          : undefined;
+          : id === "rev-basin-barrel"
+            ? [1105, 584, 66, 15]
+            : id === "rev-basin-tray"
+              ? [1105, 624, 150, 28]
+              : undefined;
     if (surface) {
       const water = scene.add
         .ellipse(...surface, 0x8fcbd0, 0.55)

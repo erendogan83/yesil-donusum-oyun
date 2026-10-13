@@ -78,7 +78,7 @@ test("all core decisions offer at least three choices or sorting destinations; n
       if (o.kind === "product") assert(assets[id].asset && placements[id], id);
     }
   }
-  assert.equal(decisionProducts.length, 35);
+  assert.equal(decisionProducts.length, 62);
 });
 test("every offered choice applies once with deterministic points, valid persisted state and unchanged old rules", () => {
   let s = fresh();
@@ -220,4 +220,26 @@ test("finishing now skips the remaining periods but keeps earned points", () => 
     );
   }
   assert.equal(finishNow(finishNow(fresh())).phase, "finished", "idempotent");
+});
+
+test("every decision offers four or more options, none worth more than the best answer", () => {
+  for (const o of opportunities) {
+    if (o.kind === "sorting") continue;
+    assert(
+      o.choices.length >= 4,
+      `${o.id} has only ${o.choices.length} options`,
+    );
+    for (const id of o.choices)
+      assert(points[id].decisionScore <= 100, `${id} scores above 100`);
+  }
+  // Behaviour questions got five answers each.
+  for (const id of [
+    "flush",
+    "toothbrush",
+    "hygiene",
+    "laundry-load",
+    "laundry-program",
+    "irrigation-time",
+  ])
+    assert.equal(opportunities.find((o) => o.id === id)!.choices.length, 5, id);
 });

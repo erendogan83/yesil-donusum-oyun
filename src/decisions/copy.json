@@ -369,5 +369,278 @@
     "resultTitle": "Su kovada birikti.",
     "resultText": "Kova daha çok su alır. Bu suyu temizlikte veya bitkileri sulamada yeniden kullanabilirsin.",
     "whyText": ""
+  },
+  "rev-flush-twice": {
+    "title": "Üst üste iki kez çek",
+    "shortDescription": "Aynı kullanımda sifonu iki kere basarsın.",
+    "resultTitle": "İki kez çektin.",
+    "resultText": "Tek sifon yeterliydi; ikinci çekiş suyu boşuna harcadı.",
+    "whyText": ""
+  },
+  "rev-flush-bucket": {
+    "title": "Biriktirdiğin suyla boşalt",
+    "shortDescription": "Duşta biriken suyu kovayla klozete dökersin.",
+    "resultTitle": "Biriken suyu kullandın.",
+    "resultText": "Duşta biriken su klozette ikinci bir iş gördü; her evde mümkün olmayabilir.",
+    "whyText": ""
+  },
+  "rev-toothbrush-cup": {
+    "title": "Bardakla durula",
+    "shortDescription": "Durulamak için bir bardak su doldurursun.",
+    "resultTitle": "Bardakla durulayarak az su kullandın.",
+    "resultText": "Suyu yalnızca ihtiyacın kadar aldın.",
+    "whyText": ""
+  },
+  "rev-toothbrush-shower": {
+    "title": "Duşta fırçala",
+    "shortDescription": "Duş akarken dişlerini fırçalarsın.",
+    "resultTitle": "Duş boşuna aktı.",
+    "resultText": "Fırçalarken akan duş suyunun çoğu kullanılmadan gitti.",
+    "whyText": ""
+  },
+  "rev-hygiene-plastic": {
+    "title": "Plastik kutu",
+    "shortDescription": "Plastik ambalajlar için kutu.",
+    "resultTitle": "Kirli peçete plastik kutuya uygun değil.",
+    "resultText": "Kirli peçete diğer atıktır; plastik ambalaj kutusunu kirletir.",
+    "whyText": ""
+  },
+  "rev-hygiene-toilet": {
+    "title": "Tuvalete at",
+    "shortDescription": "Peçete klozete atılır.",
+    "resultTitle": "Peçeteyi klozete attın.",
+    "resultText": "Peçete ve ıslak mendil tıkanıklığa yol açar; çöpe atılmalıdır.",
+    "whyText": ""
+  },
+  "rev-laundry-load-twothirds": {
+    "title": "%65 doluluk",
+    "shortDescription": "Tambur üçte iki dolu.",
+    "resultTitle": "Üçte iki yükle çalıştırdın.",
+    "resultText": "Neredeyse tam yük: biraz daha biriktirmek mümkündü.",
+    "whyText": ""
+  },
+  "rev-laundry-load-over": {
+    "title": "Tamburu tıka basa doldur",
+    "shortDescription": "Çamaşırlar sıkışır.",
+    "resultTitle": "Tamburu aşırı doldurdun.",
+    "resultText": "Sıkışan çamaşır iyi yıkanmaz, tekrar yıkamak gerekebilir.",
+    "whyText": ""
+  },
+  "rev-laundry-program-cold": {
+    "title": "20°C / SOĞUK",
+    "shortDescription": "Soğuk suyla kısa yıkama.",
+    "resultTitle": "Soğuk suyla yıkadın.",
+    "resultText": "Az kirli çamaşırlarda enerji tasarrufu sağlar; leke varsa yetmeyebilir.",
+    "whyText": ""
+  },
+  "rev-laundry-program-boil": {
+    "title": "90°C / KAYNATMA",
+    "shortDescription": "En yüksek sıcaklıkta yıkama.",
+    "resultTitle": "En yüksek ısıyı seçtin.",
+    "resultText": "Günlük çamaşırlar için gereksiz; çok enerji harcar ve kumaşı yıpratır.",
+    "whyText": ""
+  },
+  "rev-irrigation-time-night": {
+    "title": "Gece yarısı",
+    "shortDescription": "Bitkiler uyurken, gece.",
+    "resultTitle": "Geceleyin suladın.",
+    "resultText": "Buharlaşma az olur ama toprak uzun süre ıslak kalıp küfe yol açabilir.",
+    "whyText": ""
+  },
+  "rev-irrigation-time-rain": {
+    "title": "Yağmur yağarken",
+    "shortDescription": "Yağış sırasında bile.",
+    "resultTitle": "Yağmurda suladın.",
+    "resultText": "Yağmur zaten suluyordu; verdiğin su boşuna harcandı.",
+    "whyText": ""
+  },
+  "rev-tap-faucet": {
+    "title": "Yeni Musluk Bataryası",
+    "shortDescription": "Eski musluğun tamamı yenilenir.",
+    "resultTitle": "Damlama durdu.",
+    "resultText": "Yeni batarya sızdırmıyor; ama tamir seti çok daha ucuza aynı sonucu verirdi.",
+    "whyText": ""
+  },
+  "rev-tap-tape": {
+    "title": "Teflon Bant",
+    "shortDescription": "Dişlere sarılan ince bant.",
+    "resultTitle": "Damlama sürüyor.",
+    "resultText": "Bant dişi sızdırmaz yapar; içerideki aşınmış conta ise yerinde kaldı.",
+    "whyText": ""
+  },
+  "rev-shower-aerated": {
+    "title": "Hava Karışımlı Başlık",
+    "shortDescription": "Suyu havayla karıştırır.",
+    "resultTitle": "Su havayla karıştı.",
+    "resultText": "Aynı rahatlıkta daha az su harcandı.",
+    "whyText": ""
+  },
+  "rev-shower-limiter": {
+    "title": "Debi Sınırlayıcı Conta",
+    "shortDescription": "Başlığın ucuna takılan küçük halka.",
+    "resultTitle": "Akış sınırlandı.",
+    "resultText": "Küçük bir parça akışı azalttı; başlık aynı kaldı.",
+    "whyText": ""
+  },
+  "rev-basin-barrel": {
+    "title": "Bidon (20 L)",
+    "shortDescription": "Büyük hacimli kapaklı bidon.",
+    "resultTitle": "Su bidonda birikti.",
+    "resultText": "Kapaklı bidon suyu temiz tutar ve çok taşır.",
+    "whyText": ""
+  },
+  "rev-basin-tray": {
+    "title": "Geniş Tepsi",
+    "shortDescription": "Alçak ve geniş bir tepsi.",
+    "resultTitle": "Su tepside birikti.",
+    "resultText": "Az su alır; taşmaması için dikkat gerekir.",
+    "whyText": ""
+  },
+  "rev-light-home-cfl": {
+    "title": "Tasarruf Ampulü (CFL)",
+    "shortDescription": "Spiral floresan ampul.",
+    "resultTitle": "Tasarruflu ampul takıldı.",
+    "resultText": "Akkor ampulden az, LED'den çok enerji harcar.",
+    "whyText": ""
+  },
+  "rev-light-home-smart": {
+    "title": "Akıllı LED Ampul",
+    "shortDescription": "Uygulamayla kontrol edilen LED.",
+    "resultTitle": "Akıllı LED takıldı.",
+    "resultText": "Çok az enerji harcar; ek özellikler için daha fazla ödedin.",
+    "whyText": ""
+  },
+  "rev-light-workshop-cfl": {
+    "title": "Tasarruf Ampulü (CFL)",
+    "shortDescription": "Spiral floresan ampul.",
+    "resultTitle": "Tasarruflu ampul takıldı.",
+    "resultText": "Akkor ampulden az, LED'den çok enerji harcar.",
+    "whyText": ""
+  },
+  "rev-light-workshop-smart": {
+    "title": "Akıllı LED Ampul",
+    "shortDescription": "Uygulamayla kontrol edilen LED.",
+    "resultTitle": "Akıllı LED takıldı.",
+    "resultText": "Çok az enerji harcar; ek özellikler için daha fazla ödedin.",
+    "whyText": ""
+  },
+  "rev-office-power-timer": {
+    "title": "Zaman Ayarlı Priz",
+    "shortDescription": "Belirlediğin saatte elektriği keser.",
+    "resultTitle": "Elektrik zamanında kesildi.",
+    "resultText": "Cihazlar mesai bitince bekleme modunda kalmaz.",
+    "whyText": ""
+  },
+  "rev-office-power-solar": {
+    "title": "Güneş Enerjili Şarj Ünitesi",
+    "shortDescription": "Küçük paneli olan şarj ünitesi.",
+    "resultTitle": "Küçük bir katkı sağladı.",
+    "resultText": "Yalnızca küçük cihazları şarj eder; masadaki asıl bekleme tüketimi sürüyor.",
+    "whyText": ""
+  },
+  "rev-irrigation-can": {
+    "title": "Sulama Kovası (Elle)",
+    "shortDescription": "Kökün dibine elle su verirsin.",
+    "resultTitle": "Su köke verildi.",
+    "resultText": "Elle sulama su israfını azaltır ama zaman alır.",
+    "whyText": ""
+  },
+  "rev-irrigation-rain": {
+    "title": "Yağmur Suyu Tankı",
+    "shortDescription": "Yağan suyu biriktiren tank.",
+    "resultTitle": "Yağmur suyu biriktirilebilir.",
+    "resultText": "Şebeke suyu yerine biriken yağmur suyu kullanılır; yağış gerekir.",
+    "whyText": ""
+  },
+  "rev-irrigation-timer-moisture": {
+    "title": "Nem Sensörü",
+    "shortDescription": "Toprak kuruyunca sulamayı başlatır.",
+    "resultTitle": "Sulama toprağa göre ayarlandı.",
+    "resultText": "Sensör yalnızca gerektiğinde sulatır.",
+    "whyText": ""
+  },
+  "rev-irrigation-timer-rain": {
+    "title": "Yağmur Sensörü",
+    "shortDescription": "Yağmur yağınca sulamayı durdurur.",
+    "resultTitle": "Yağmurda sulama durur.",
+    "resultText": "Gereksiz sulamayı önler; toprağın kuruluğunu ölçmez.",
+    "whyText": ""
+  },
+  "rev-irrigation-timer-mech": {
+    "title": "Mekanik Zamanlayıcı",
+    "shortDescription": "Saat kurmalı basit zamanlayıcı.",
+    "resultTitle": "Sulama süresi ayarlanabilir.",
+    "resultText": "Basit ve ucuz; hava durumuna uyum sağlamaz.",
+    "whyText": ""
+  },
+  "rev-pack-lentil-cloth": {
+    "title": "Bez Torba",
+    "shortDescription": "Yıkanıp tekrar kullanılan bez torba.",
+    "resultTitle": "Ürün bez torbayla teslim edildi.",
+    "resultText": "Bez torba tekrar tekrar kullanılabilir.",
+    "whyText": ""
+  },
+  "rev-pack-apple-basket": {
+    "title": "Hasır Sepet",
+    "shortDescription": "Evden getirdiğin sepet.",
+    "resultTitle": "Elmalar sepetle teslim edildi.",
+    "resultText": "Sepet tekrar tekrar kullanılır; tek kullanımlık ambalaj gerekmez.",
+    "whyText": ""
+  },
+  "rev-pack-towel-cloth": {
+    "title": "Kumaş Çanta",
+    "shortDescription": "Tekrar kullanılan kumaş çanta.",
+    "resultTitle": "Havlu kumaş çantayla teslim edildi.",
+    "resultText": "Çanta tekrar kullanılabilir; ilk alımda kraft çantadan pahalı.",
+    "whyText": ""
+  },
+  "rev-pack-scarf-envelope": {
+    "title": "Geri Dönüşümlü Zarf",
+    "shortDescription": "Kâğıt, geri dönüşüme uygun zarf.",
+    "resultTitle": "Eşarp zarfla teslim edildi.",
+    "resultText": "Tek malzemeli kâğıt zarf geri dönüştürülebilir.",
+    "whyText": ""
+  },
+  "rev-roof-bonus-balcony": {
+    "title": "Balkon Paneli (250 W)",
+    "shortDescription": "Küçük, hazır balkon paneli.",
+    "resultTitle": "Panel yerleştirildi.",
+    "resultText": "Küçük panel daha uygun fiyatlı ama az enerji üretir.",
+    "whyText": ""
+  },
+  "rev-roof-bonus-heater": {
+    "title": "Güneş Enerjili Su Isıtıcı",
+    "shortDescription": "Güneşle suyu ısıtan kolektör.",
+    "resultTitle": "Su ısıtıcı yerleştirildi.",
+    "resultText": "Sıcak su için elektrik ya da doğalgaz ihtiyacını azaltır.",
+    "whyText": ""
+  },
+  "rev-roof-bonus-wind": {
+    "title": "Mini Rüzgâr Türbini",
+    "shortDescription": "Rüzgârdan elektrik üreten küçük türbin.",
+    "resultTitle": "Türbin yerleştirildi.",
+    "resultText": "Rüzgâr az olduğunda üretim düşük kalır.",
+    "whyText": ""
+  },
+  "rev-led-strip-battery": {
+    "title": "Pilli Raf Lambası",
+    "shortDescription": "Pille çalışan küçük lamba.",
+    "resultTitle": "Raf lambası yerleştirildi.",
+    "resultText": "Kurulumu kolay; pilleri zamanla değiştirmek gerekir.",
+    "whyText": ""
+  },
+  "rev-led-strip-desk": {
+    "title": "LED Masa Lambası",
+    "shortDescription": "Esnek kollu LED lamba.",
+    "resultTitle": "Masa lambası yerleştirildi.",
+    "resultText": "Işığı tam ihtiyacın olan yere verir.",
+    "whyText": ""
+  },
+  "rev-led-strip-motion": {
+    "title": "Hareket Sensörlü Lamba",
+    "shortDescription": "Hareket görünce yanan lamba.",
+    "resultTitle": "Sensörlü lamba yerleştirildi.",
+    "resultText": "Yalnızca birisi geçerken yanar; sürekli aydınlatma vermez.",
+    "whyText": ""
   }
 }

@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "revision": 116,
+  "revision": 119,
   "active": {
     "version": 2,
-    "id": "0b1254fc-1246-4e4c-8378-65dc73056198",
+    "id": "7b5655db-8dd7-484d-88ea-4c18906d4868",
     "team": {
       "organization": "",
       "first": "Ayşe",
@@ -612,6 +612,11 @@
         "round": 2
       },
       {
+        "opportunityId": "led-strip",
+        "choiceId": "skip",
+        "round": 2
+      },
+      {
         "opportunityId": "irrigation",
         "choiceId": "rev-irrigation-hose",
         "round": 3
@@ -619,6 +624,11 @@
       {
         "opportunityId": "irrigation-time",
         "choiceId": "rev-irrigation-time-morning",
+        "round": 3
+      },
+      {
+        "opportunityId": "irrigation-timer",
+        "choiceId": "skip",
         "round": 3
       },
       {
@@ -639,6 +649,11 @@
       {
         "opportunityId": "pack-scarf",
         "choiceId": "rev-pack-scarf-kraft",
+        "round": 4
+      },
+      {
+        "opportunityId": "roof-bonus",
+        "choiceId": "skip",
         "round": 4
       }
     ],

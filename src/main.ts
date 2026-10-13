@@ -14,6 +14,7 @@ import {
   skipOptional,
   skipUnaffordable,
   opportunityFor,
+  choiceOrder,
 } from "./decisions";
 import {
   activeOpportunity,
@@ -806,8 +807,15 @@ function marketScreen() {
           `aria-label="${esc(p.name)}, ${priceLabel(p.id, p.price)}. İncele."`,
         ),
       )
-      .join(""),
-    ps.length === 2 ? "two" : "three",
+      .join("") +
+      (existing
+        ? btn(
+            "Eski ampulle devam et · ₺0",
+            `keep-existing:${existing}`,
+            "market-card keep",
+          )
+        : ""),
+    `market ${ps.length === 2 ? "two" : ps.length === 4 ? "four" : "three"}`,
     stuckOp
       ? btn(
           "Bütçem yetmiyor, bu adımı geç",
@@ -2156,7 +2164,9 @@ function contextIds() {
   const op = decisionOpportunities.find((o) => zoneFor(o) === zone);
   const ps =
     s.decisionVersion === 1
-      ? (op?.choices || []).map(productById).filter(Boolean)
+      ? choiceOrder(s.id, op?.choices || [])
+          .map(productById)
+          .filter(Boolean)
       : zone
         ? solutions(room, zone, s.round).slice(0, 3)
         : [];
@@ -2265,6 +2275,24 @@ const choiceIcons: Record<string, string> = {
   "rev-irrigation-time-morning": "🌅",
   "rev-irrigation-time-noon": "☀️",
   "rev-irrigation-time-evening": "🌇",
+  "rev-flush-twice": "🔁",
+  "rev-flush-bucket": "🪣",
+  "rev-toothbrush-cup": "🥛",
+  "rev-toothbrush-shower": "🚿",
+  "rev-hygiene-plastic": "🧴",
+  "rev-hygiene-toilet": "🚽",
+  "rev-laundry-program-cold": "🧊",
+  "rev-laundry-program-boil": "♨️",
+  "rev-irrigation-time-night": "🌙",
+  "rev-irrigation-time-rain": "🌧️",
+};
+// How full the drum looks for each laundry-load choice.
+const loadFill: Record<string, number> = {
+  "rev-laundry-load-quarter": 25,
+  "rev-laundry-load-half": 50,
+  "rev-laundry-load-twothirds": 65,
+  "rev-laundry-load-full": 80,
+  "rev-laundry-load-over": 100,
 };
 let selectedSortItem = "",
   activeSort = "",
@@ -2449,7 +2477,20 @@ function openDecision(id: string) {
     if (waste) dialog.classList.add("waste-sorting-dialog");
   } else {
     showModal(
-      `<p class="eyebrow">${esc(roomById(o.roomId).name)}</p><h2 id="dialog-title">${esc(o.title)}</h2><p>${esc(o.scenario)}</p><div class="decision-options">${o.choices.map((id, i) => btn(`${choiceIcons[id] ? `<span class="decision-icon" aria-hidden="true">${choiceIcons[id]}</span>` : ""}${o.kind === "load" ? `<span class="load-drum" style="--fill:${[25, 50, 80][i]}%" aria-hidden="true"></span>` : ""}<b>${esc(decisionCopy[id].title)}</b><span>${esc(decisionCopy[id].shortDescription)}</span>`, `${o.kind === "load" ? "load-select" : "choose"}:${id}`, `decision-option ${selectedLoad === id ? "selected" : ""}`)).join("")}</div>${o.kind === "load" ? btn("BU YÜKLE ÇALIŞTIR", `choose:${selectedLoad}`, "primary", o.choices.includes(selectedLoad) ? "" : "disabled") : ""}${btn("Bir daha bak", "close", "ghost")}`,
+      `<p class="eyebrow">${esc(roomById(o.roomId).name)}</p><h2 id="dialog-title">${esc(o.title)}</h2><p>${esc(o.scenario)}</p><div class="decision-options">${choiceOrder(
+        db.active!.id,
+        o.choices,
+      )
+        .map((id) =>
+          btn(
+            `${choiceIcons[id] ? `<span class="decision-icon" aria-hidden="true">${choiceIcons[id]}</span>` : ""}${o.kind === "load" ? `<span class="load-drum" style="--fill:${loadFill[id] ?? 50}%" aria-hidden="true"></span>` : ""}<b>${esc(decisionCopy[id].title)}</b><span>${esc(decisionCopy[id].shortDescription)}</span>`,
+            `${o.kind === "load" ? "load-select" : "choose"}:${id}`,
+            `decision-option ${selectedLoad === id ? "selected" : ""}`,
+          ),
+        )
+        .join(
+          "",
+        )}</div>${o.kind === "load" ? btn("BU YÜKLE ÇALIŞTIR", `choose:${selectedLoad}`, "primary", o.choices.includes(selectedLoad) ? "" : "disabled") : ""}${btn("Bir daha bak", "close", "ghost")}`,
     );
   }
 }

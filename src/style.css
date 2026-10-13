@@ -3715,3 +3715,113 @@ dialog .actions {
     display: none;
   }
 }
+
+/* Up to six options per decision. */
+.decision-options {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+@media (max-aspect-ratio: 1/1) {
+  .mobile-picks.four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .market-card.keep {
+    grid-column: 1 / -1;
+    min-height: 52px;
+    flex-direction: row;
+    background: #3a3f2c;
+  }
+  .existing-choice {
+    display: none !important;
+  }
+}
+
+/* Short landscape phones: shelf hit areas of 4-6 options would overlap, so the products are
+   a compact strip of cards above the back button (the map keeps its labels). */
+@media (min-aspect-ratio: 1/1) and (max-height: 520px) {
+  .market-product {
+    display: none !important;
+  }
+  .nav-footer:has(.mobile-picks.market) {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .mobile-picks.market {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 6px;
+    width: min(94vw, 780px);
+  }
+  .mobile-picks.market .market-card {
+    min-height: 54px;
+    padding: 4px 8px;
+    flex-direction: row;
+    gap: 8px;
+    font-size: 12px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    background: #2b3a25f2;
+  }
+  .mobile-picks.market .market-card img {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    object-fit: contain;
+  }
+  .mobile-picks.market .market-card small {
+    display: block;
+    font-size: 12px;
+    color: var(--gold);
+  }
+  .mobile-picks.market .market-card.keep {
+    grid-column: 1 / -1;
+    min-height: 40px;
+    justify-content: center;
+  }
+  .existing-choice {
+    display: none !important;
+  }
+  .contextual-action p {
+    display: none;
+  }
+}
+
+@media (min-aspect-ratio: 1/1) and (max-height: 520px) {
+  .mobile-picks.market {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: min(94vw, 640px);
+  }
+  .mobile-picks.market .market-card {
+    min-width: 0;
+    min-height: 44px;
+    padding: 3px 8px;
+    gap: 6px;
+    font-size: 11px;
+    line-height: 1.15;
+  }
+  .mobile-picks.market .market-card b {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .mobile-picks.market .market-card img {
+    width: 30px;
+    height: 30px;
+  }
+  .mobile-picks.market .market-card small {
+    font-size: 11px;
+    flex: none;
+  }
+}
+
+@media (min-aspect-ratio: 1/1) and (max-height: 520px) {
+  .mobile-picks.market {
+    width: 100%;
+    max-width: 640px;
+  }
+}

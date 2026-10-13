@@ -697,6 +697,152 @@ placements["rev-led-strip"] = {
   },
 };
 
+// Alternatives added to the optional and required choices (hand placed).
+placements["rev-office-power-timer"] = {
+  sceneId: "workshop",
+  slotId: "slot_office_power_timer",
+  x: 1040,
+  y: 346,
+  scale: 0.2069,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.95,
+  zIndex: 14,
+  replaceExisting: true,
+};
+placements["rev-office-power-solar"] = {
+  sceneId: "workshop",
+  slotId: "slot_office_power_solar",
+  x: 1040,
+  y: 346,
+  scale: 0.1897,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.95,
+  zIndex: 14,
+  replaceExisting: true,
+};
+placements["rev-irrigation-rain"] = {
+  sceneId: "garden",
+  slotId: "slot_irrigation_rain",
+  x: 722,
+  y: 238,
+  scale: 0.2791,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.98,
+  zIndex: 12,
+  replaceExisting: true,
+};
+placements["rev-irrigation-timer-moisture"] = {
+  sceneId: "garden",
+  slotId: "slot_irrigation_timer_moisture",
+  x: 672,
+  y: 214,
+  scale: 0.1679,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.98,
+  zIndex: 12,
+  replaceExisting: true,
+};
+placements["rev-irrigation-timer-rain"] = {
+  sceneId: "garden",
+  slotId: "slot_irrigation_timer_rain",
+  x: 672,
+  y: 214,
+  scale: 0.1498,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.98,
+  zIndex: 12,
+  replaceExisting: true,
+};
+placements["rev-irrigation-timer-mech"] = {
+  sceneId: "garden",
+  slotId: "slot_irrigation_timer_mech",
+  x: 672,
+  y: 214,
+  scale: 0.1532,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.98,
+  zIndex: 12,
+  replaceExisting: true,
+};
+placements["rev-roof-bonus-balcony"] = {
+  sceneId: "roof",
+  slotId: "slot_roof_bonus_balcony",
+  x: 1043,
+  y: 480,
+  scale: 0.4028,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.97,
+  zIndex: 13,
+  replaceExisting: true,
+};
+placements["rev-roof-bonus-heater"] = {
+  sceneId: "roof",
+  slotId: "slot_roof_bonus_heater",
+  x: 1043,
+  y: 480,
+  scale: 0.4784,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.97,
+  zIndex: 13,
+  replaceExisting: true,
+};
+placements["rev-roof-bonus-wind"] = {
+  sceneId: "roof",
+  slotId: "slot_roof_bonus_wind",
+  x: 1043,
+  y: 480,
+  scale: 0.5159,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.97,
+  zIndex: 13,
+  replaceExisting: true,
+};
+placements["rev-led-strip-battery"] = {
+  sceneId: "home",
+  slotId: "slot_led_strip_battery",
+  x: 1100,
+  y: 337,
+  scale: 0.2113,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.08,
+  zIndex: 14,
+  replaceExisting: true,
+};
+placements["rev-led-strip-desk"] = {
+  sceneId: "home",
+  slotId: "slot_led_strip_desk",
+  x: 1170,
+  y: 332,
+  scale: 0.1711,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.98,
+  zIndex: 14,
+  replaceExisting: true,
+};
+placements["rev-led-strip-motion"] = {
+  sceneId: "home",
+  slotId: "slot_led_strip_motion",
+  x: 1100,
+  y: 337,
+  scale: 0.1005,
+  rotation: 0,
+  anchorX: 0.5,
+  anchorY: 0.5,
+  zIndex: 14,
+  replaceExisting: true,
+};
+
 problemSources.kitchen!["rev-tap"] = [762, 347];
 problemSources.bathroom!["rev-shower"] = [1108, 110];
 problemSources.home!["rev-light-home"] = [815, 76];

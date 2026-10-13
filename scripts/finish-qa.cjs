@@ -55,7 +55,7 @@ const token = process.env.ADMIN_TOKEN || "secret123";
   await click("place-ready");
   await click("lesson-ack");
   await click("solve:bathroom:rev-basin");
-  assert.equal(await page.locator(".market-product").count(), 2);
+  assert.equal(await page.locator(".market-product").count(), 4);
   await click("product:rev-basin-bucket");
   await click("inspect:rev-basin-bucket");
   await click("buy:rev-basin-bucket");

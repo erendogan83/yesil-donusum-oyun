@@ -14,8 +14,9 @@ Alternatif: `node serve.mjs`. `dist/` depoda tutulmaz; ilk çalıştırmada BASL
 
 ## Güncel oyun
 
-- 8 görünür alan, 4 dönem; 18 temel karar ve 3 puansız isteğe bağlı fırsat.
-- 51 karar seçeneği; 33 kurulabilir ürün. Temel seçimlerin hepsinde en az 3 alternatif/hedef.
+- 8 görünür alan, 4 dönem; 18 temel karar ve 4 puansız isteğe bağlı fırsat.
+- 92 karar seçeneği; 62 kurulabilir ürün. Her seçim noktasında en az 4 seçenek var (davranış sorularında 5); seçeneklerin sırası her oyunda karışık gösterilir, doğru cevap hep aynı yerde olmaz.
+- Eklenen seçeneklerin görselleri vektörle çizilmiş basit ikonlardır (`scripts/build_vector_sprites.cjs`); fiyatları tahminidir.
 - Ürün: sorunu gör → markette incele → satın al → otomatik odaya dön → yerleştir → ANLADIM.
 - Atık ve çamaşır ayırma: nesneyi hedefe sürükleyip bırak (ya da nesneye, sonra hedefe dokun). Yanlış hedef bırakılabilir:
   ilk yanlış eşleştirme ₺50 krediden götürür ve o nesnenin puanını da götürür; tekrar denemek ücretsizdir ama puan getirmez.

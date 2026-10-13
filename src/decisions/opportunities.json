@@ -9,7 +9,13 @@
     "kind": "product",
     "core": true,
     "round": 1,
-    "choices": ["rev-tap-aerator", "rev-tap-repair", "rev-tap-filter"]
+    "choices": [
+      "rev-tap-aerator",
+      "rev-tap-repair",
+      "rev-tap-filter",
+      "rev-tap-faucet",
+      "rev-tap-tape"
+    ]
   },
   {
     "id": "waste-sort",
@@ -108,7 +114,13 @@
     "kind": "product",
     "core": true,
     "round": 1,
-    "choices": ["rev-shower-compact", "rev-shower-classic", "rev-shower-rain"]
+    "choices": [
+      "rev-shower-compact",
+      "rev-shower-classic",
+      "rev-shower-rain",
+      "rev-shower-aerated",
+      "rev-shower-limiter"
+    ]
   },
   {
     "id": "basin",
@@ -120,7 +132,12 @@
     "kind": "product",
     "core": false,
     "round": 1,
-    "choices": ["rev-basin-place", "rev-basin-bucket"]
+    "choices": [
+      "rev-basin-place",
+      "rev-basin-bucket",
+      "rev-basin-barrel",
+      "rev-basin-tray"
+    ]
   },
   {
     "id": "flush",
@@ -132,7 +149,13 @@
     "kind": "behavior",
     "core": true,
     "round": 1,
-    "choices": ["rev-flush-half", "rev-flush-full", "rev-flush-hold"]
+    "choices": [
+      "rev-flush-half",
+      "rev-flush-full",
+      "rev-flush-hold",
+      "rev-flush-twice",
+      "rev-flush-bucket"
+    ]
   },
   {
     "id": "toothbrush",
@@ -147,7 +170,9 @@
     "choices": [
       "rev-toothbrush-open",
       "rev-toothbrush-closed",
-      "rev-toothbrush-brief"
+      "rev-toothbrush-brief",
+      "rev-toothbrush-cup",
+      "rev-toothbrush-shower"
     ]
   },
   {
@@ -160,7 +185,13 @@
     "kind": "behavior",
     "core": true,
     "round": 1,
-    "choices": ["rev-hygiene-paper", "rev-hygiene-other", "rev-hygiene-organic"]
+    "choices": [
+      "rev-hygiene-paper",
+      "rev-hygiene-other",
+      "rev-hygiene-organic",
+      "rev-hygiene-plastic",
+      "rev-hygiene-toilet"
+    ]
   },
   {
     "id": "light-home",
@@ -175,7 +206,9 @@
     "choices": [
       "rev-light-home-incandescent",
       "rev-light-home-halogen",
-      "rev-light-home-led"
+      "rev-light-home-led",
+      "rev-light-home-cfl",
+      "rev-light-home-smart"
     ]
   },
   {
@@ -191,7 +224,9 @@
     "choices": [
       "rev-light-workshop-incandescent",
       "rev-light-workshop-halogen",
-      "rev-light-workshop-led"
+      "rev-light-workshop-led",
+      "rev-light-workshop-cfl",
+      "rev-light-workshop-smart"
     ]
   },
   {
@@ -207,7 +242,9 @@
     "choices": [
       "rev-office-power-strip",
       "rev-office-power-smart",
-      "rev-office-power-meter"
+      "rev-office-power-meter",
+      "rev-office-power-timer",
+      "rev-office-power-solar"
     ]
   },
   {
@@ -277,7 +314,9 @@
     "choices": [
       "rev-laundry-load-quarter",
       "rev-laundry-load-half",
-      "rev-laundry-load-full"
+      "rev-laundry-load-full",
+      "rev-laundry-load-twothirds",
+      "rev-laundry-load-over"
     ]
   },
   {
@@ -293,7 +332,9 @@
     "choices": [
       "rev-laundry-program-eco",
       "rev-laundry-program-normal",
-      "rev-laundry-program-hot"
+      "rev-laundry-program-hot",
+      "rev-laundry-program-cold",
+      "rev-laundry-program-boil"
     ]
   },
   {
@@ -309,7 +350,9 @@
     "choices": [
       "rev-irrigation-hose",
       "rev-irrigation-sprinkler",
-      "rev-irrigation-drip"
+      "rev-irrigation-drip",
+      "rev-irrigation-can",
+      "rev-irrigation-rain"
     ]
   },
   {
@@ -325,7 +368,9 @@
     "choices": [
       "rev-irrigation-time-morning",
       "rev-irrigation-time-noon",
-      "rev-irrigation-time-evening"
+      "rev-irrigation-time-evening",
+      "rev-irrigation-time-night",
+      "rev-irrigation-time-rain"
     ]
   },
   {
@@ -338,7 +383,12 @@
     "kind": "product",
     "core": false,
     "round": 3,
-    "choices": ["rev-irrigation-timer-timer"]
+    "choices": [
+      "rev-irrigation-timer-timer",
+      "rev-irrigation-timer-moisture",
+      "rev-irrigation-timer-rain",
+      "rev-irrigation-timer-mech"
+    ]
   },
   {
     "id": "pack-lentil",
@@ -353,7 +403,8 @@
     "choices": [
       "rev-pack-lentil-plastic",
       "rev-pack-lentil-paper",
-      "rev-pack-lentil-return"
+      "rev-pack-lentil-return",
+      "rev-pack-lentil-cloth"
     ]
   },
   {
@@ -369,7 +420,8 @@
     "choices": [
       "rev-pack-apple-plastic",
       "rev-pack-apple-paper",
-      "rev-pack-apple-mesh"
+      "rev-pack-apple-mesh",
+      "rev-pack-apple-basket"
     ]
   },
   {
@@ -385,7 +437,8 @@
     "choices": [
       "rev-pack-towel-plastic",
       "rev-pack-towel-box",
-      "rev-pack-towel-kraft"
+      "rev-pack-towel-kraft",
+      "rev-pack-towel-cloth"
     ]
   },
   {
@@ -401,7 +454,8 @@
     "choices": [
       "rev-pack-scarf-plastic",
       "rev-pack-scarf-box",
-      "rev-pack-scarf-kraft"
+      "rev-pack-scarf-kraft",
+      "rev-pack-scarf-envelope"
     ]
   },
   {
@@ -414,7 +468,12 @@
     "kind": "product",
     "core": false,
     "round": 4,
-    "choices": ["rev-roof-bonus-solar"]
+    "choices": [
+      "rev-roof-bonus-solar",
+      "rev-roof-bonus-balcony",
+      "rev-roof-bonus-heater",
+      "rev-roof-bonus-wind"
+    ]
   },
   {
     "id": "led-strip",
@@ -426,6 +485,11 @@
     "kind": "product",
     "core": false,
     "round": 2,
-    "choices": ["rev-led-strip"]
+    "choices": [
+      "rev-led-strip",
+      "rev-led-strip-battery",
+      "rev-led-strip-desk",
+      "rev-led-strip-motion"
+    ]
   }
 ]

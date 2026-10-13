@@ -97,7 +97,7 @@ test("clockView counts down and then reports overtime", () => {
 });
 
 test("a required purchase can be skipped only when nothing is affordable", () => {
-  const poor = { ...game(), budget: 100 };
+  const poor = { ...game(), budget: 10 };
   const next = skipUnaffordable(poor, "tap");
   assert.equal(next.decisions!.at(-1)!.choiceId, "skip-budget");
   assert(validDatabase({ ...emptyDatabase(), active: next }));

@@ -218,5 +218,161 @@
   "rev-basin-bucket": {
     "decisionScore": 0,
     "reason": "Biriktirilen suyu yeniden kullanmak istediğin kadar kapasite seçersin."
+  },
+  "rev-flush-twice": {
+    "decisionScore": 0,
+    "reason": "Tek sifon yeterliydi; ikinci çekiş suyu boşuna harcadı."
+  },
+  "rev-flush-bucket": {
+    "decisionScore": 80,
+    "reason": "Duşta biriken su klozette ikinci bir iş gördü; her evde mümkün olmayabilir."
+  },
+  "rev-toothbrush-cup": {
+    "decisionScore": 100,
+    "reason": "Suyu yalnızca ihtiyacın kadar aldın."
+  },
+  "rev-toothbrush-shower": {
+    "decisionScore": 0,
+    "reason": "Fırçalarken akan duş suyunun çoğu kullanılmadan gitti."
+  },
+  "rev-hygiene-plastic": {
+    "decisionScore": 20,
+    "reason": "Kirli peçete diğer atıktır; plastik ambalaj kutusunu kirletir."
+  },
+  "rev-hygiene-toilet": {
+    "decisionScore": 0,
+    "reason": "Peçete ve ıslak mendil tıkanıklığa yol açar; çöpe atılmalıdır."
+  },
+  "rev-laundry-load-twothirds": {
+    "decisionScore": 80,
+    "reason": "Neredeyse tam yük: biraz daha biriktirmek mümkündü."
+  },
+  "rev-laundry-load-over": {
+    "decisionScore": 40,
+    "reason": "Sıkışan çamaşır iyi yıkanmaz, tekrar yıkamak gerekebilir."
+  },
+  "rev-laundry-program-cold": {
+    "decisionScore": 80,
+    "reason": "Az kirli çamaşırlarda enerji tasarrufu sağlar; leke varsa yetmeyebilir."
+  },
+  "rev-laundry-program-boil": {
+    "decisionScore": 0,
+    "reason": "Günlük çamaşırlar için gereksiz; çok enerji harcar ve kumaşı yıpratır."
+  },
+  "rev-irrigation-time-night": {
+    "decisionScore": 60,
+    "reason": "Buharlaşma az olur ama toprak uzun süre ıslak kalıp küfe yol açabilir."
+  },
+  "rev-irrigation-time-rain": {
+    "decisionScore": 0,
+    "reason": "Yağmur zaten suluyordu; verdiğin su boşuna harcandı."
+  },
+  "rev-tap-faucet": {
+    "decisionScore": 80,
+    "reason": "Yeni batarya sızdırmıyor; ama tamir seti çok daha ucuza aynı sonucu verirdi."
+  },
+  "rev-tap-tape": {
+    "decisionScore": 20,
+    "reason": "Bant dişi sızdırmaz yapar; içerideki aşınmış conta ise yerinde kaldı."
+  },
+  "rev-shower-aerated": {
+    "decisionScore": 90,
+    "reason": "Aynı rahatlıkta daha az su harcandı."
+  },
+  "rev-shower-limiter": {
+    "decisionScore": 70,
+    "reason": "Küçük bir parça akışı azalttı; başlık aynı kaldı."
+  },
+  "rev-basin-barrel": {
+    "decisionScore": 0,
+    "reason": "Kapaklı bidon suyu temiz tutar ve çok taşır."
+  },
+  "rev-basin-tray": {
+    "decisionScore": 0,
+    "reason": "Az su alır; taşmaması için dikkat gerekir."
+  },
+  "rev-light-home-cfl": {
+    "decisionScore": 70,
+    "reason": "Akkor ampulden az, LED'den çok enerji harcar."
+  },
+  "rev-light-home-smart": {
+    "decisionScore": 90,
+    "reason": "Çok az enerji harcar; ek özellikler için daha fazla ödedin."
+  },
+  "rev-light-workshop-cfl": {
+    "decisionScore": 70,
+    "reason": "Akkor ampulden az, LED'den çok enerji harcar."
+  },
+  "rev-light-workshop-smart": {
+    "decisionScore": 90,
+    "reason": "Çok az enerji harcar; ek özellikler için daha fazla ödedin."
+  },
+  "rev-office-power-timer": {
+    "decisionScore": 90,
+    "reason": "Cihazlar mesai bitince bekleme modunda kalmaz."
+  },
+  "rev-office-power-solar": {
+    "decisionScore": 40,
+    "reason": "Yalnızca küçük cihazları şarj eder; masadaki asıl bekleme tüketimi sürüyor."
+  },
+  "rev-irrigation-can": {
+    "decisionScore": 80,
+    "reason": "Elle sulama su israfını azaltır ama zaman alır."
+  },
+  "rev-irrigation-rain": {
+    "decisionScore": 90,
+    "reason": "Şebeke suyu yerine biriken yağmur suyu kullanılır; yağış gerekir."
+  },
+  "rev-irrigation-timer-moisture": {
+    "decisionScore": 0,
+    "reason": "Sensör yalnızca gerektiğinde sulatır."
+  },
+  "rev-irrigation-timer-rain": {
+    "decisionScore": 0,
+    "reason": "Gereksiz sulamayı önler; toprağın kuruluğunu ölçmez."
+  },
+  "rev-irrigation-timer-mech": {
+    "decisionScore": 0,
+    "reason": "Basit ve ucuz; hava durumuna uyum sağlamaz."
+  },
+  "rev-pack-lentil-cloth": {
+    "decisionScore": 90,
+    "reason": "Bez torba tekrar tekrar kullanılabilir."
+  },
+  "rev-pack-apple-basket": {
+    "decisionScore": 90,
+    "reason": "Sepet tekrar tekrar kullanılır; tek kullanımlık ambalaj gerekmez."
+  },
+  "rev-pack-towel-cloth": {
+    "decisionScore": 80,
+    "reason": "Çanta tekrar kullanılabilir; ilk alımda kraft çantadan pahalı."
+  },
+  "rev-pack-scarf-envelope": {
+    "decisionScore": 80,
+    "reason": "Tek malzemeli kâğıt zarf geri dönüştürülebilir."
+  },
+  "rev-roof-bonus-balcony": {
+    "decisionScore": 0,
+    "reason": "Küçük panel daha uygun fiyatlı ama az enerji üretir."
+  },
+  "rev-roof-bonus-heater": {
+    "decisionScore": 0,
+    "reason": "Sıcak su için elektrik ya da doğalgaz ihtiyacını azaltır."
+  },
+  "rev-roof-bonus-wind": {
+    "decisionScore": 0,
+    "reason": "Rüzgâr az olduğunda üretim düşük kalır."
+  },
+  "rev-led-strip-battery": {
+    "decisionScore": 0,
+    "reason": "Kurulumu kolay; pilleri zamanla değiştirmek gerekir."
+  },
+  "rev-led-strip-desk": {
+    "decisionScore": 0,
+    "reason": "Işığı tam ihtiyacın olan yere verir."
+  },
+  "rev-led-strip-motion": {
+    "decisionScore": 0,
+    "reason": "Yalnızca birisi geçerken yanar; sürekli aydınlatma vermez."
   }
 }

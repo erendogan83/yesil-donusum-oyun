@@ -202,14 +202,18 @@ export class World extends Phaser.Scene {
     if (!reduced()) this.cameras.main.fadeIn(250, 40, 33, 23);
   }
   stock(category: Category, round: number, page: number, ids?: string[]) {
-    return products
-      .filter(
-        (p) =>
-          offeredProduct(p) &&
-          (ids ? ids.includes(p.id) : p.category === category) &&
-          roomById(p.room).round <= round,
-      )
-      .slice(page * 6, page * 6 + 6);
+    return (
+      products
+        .filter(
+          (p) =>
+            offeredProduct(p) &&
+            (ids ? ids.includes(p.id) : p.category === category) &&
+            roomById(p.room).round <= round,
+        )
+        // The caller's order wins (it is shuffled per game).
+        .sort((a, b) => (ids ? ids.indexOf(a.id) - ids.indexOf(b.id) : 0))
+        .slice(page * 6, page * 6 + 6)
+    );
   }
   private room(s: State) {
     const r = roomById(s.room as RoomId);
