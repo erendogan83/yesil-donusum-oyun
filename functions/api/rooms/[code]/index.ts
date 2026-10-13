@@ -4,6 +4,7 @@ import {
   json,
   roomState,
   ROOM_PATTERN,
+  roomFromParam,
   type Env,
 } from "../../_lib";
 
@@ -11,8 +12,8 @@ import {
 export const onRequestGet: PagesFunction = async ({ request, env, params }) => {
   const e = env as Env;
   if (!e.DB) return fail(503, "Veritabanı bağlı değil.");
-  const code = String(params.code).toUpperCase();
-  if (!ROOM_PATTERN.test(code)) return fail(400, "Oda kodu geçersiz.");
+  const code = roomFromParam(params.code);
+  if (!ROOM_PATTERN.test(code)) return fail(400, "Oda adı geçersiz.");
   await ensureSchema(e.DB);
   // ?p=<player id> marks that player as still present in the room.
   const viewer = new URL(request.url).searchParams.get("p");

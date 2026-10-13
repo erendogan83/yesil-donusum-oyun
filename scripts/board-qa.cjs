@@ -61,7 +61,7 @@ const row = (i, over = {}) => ({
   await click("leaderboard");
   await page.locator(".podium").waitFor();
   const tab = (id) => page.locator(`[data-action="board:${id}"]`).innerText();
-  assert.equal((await tab("official")).trim(), "Resmî (40)");
+  assert.equal((await tab("official")).trim(), "Süreli (40)");
   assert.equal((await tab("practice")).trim(), "Serbest (20)");
   assert.equal(
     await page.locator(".ranks li").count(),

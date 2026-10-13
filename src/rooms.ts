@@ -12,7 +12,10 @@ export interface RoomPlayer {
   present: boolean;
 }
 export interface RoomState {
+  /** The normalized room name used in URLs. */
   code: string;
+  /** The name the creator gave the room. */
+  title: string;
   hostId: string;
   status: "lobby" | "playing" | "finished";
   /** When the current host got the role (server ms) and how long they have to start. */
@@ -86,11 +89,33 @@ const post = (path: string, body: unknown) =>
     body: JSON.stringify(body),
   });
 
-export const createRoom = async (name: string) =>
-  fromResponse(await post("./api/rooms", { playerId: playerId(), name }));
-export const joinRoom = async (code: string, name: string) =>
+/** "Muhasebe 3" and "muhasebe3" name the same room. Mirrors roomSlug in functions/api/_lib.ts. */
+const TURKISH: Record<string, string> = {
+  ç: "C",
+  Ç: "C",
+  ğ: "G",
+  Ğ: "G",
+  ı: "I",
+  İ: "I",
+  ö: "O",
+  Ö: "O",
+  ş: "S",
+  Ş: "S",
+  ü: "U",
+  Ü: "U",
+};
+export const roomSlug = (name: string) =>
+  name
+    .replace(/[çÇğĞıİöÖşŞüÜ]/g, (c) => TURKISH[c] ?? c)
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 24);
+
+export const createRoom = async (room: string, name: string) =>
+  fromResponse(await post("./api/rooms", { playerId: playerId(), name, room }));
+export const joinRoom = async (room: string, name: string) =>
   fromResponse(
-    await post(`./api/rooms/${code.trim().toUpperCase()}/join`, {
+    await post(`./api/rooms/${roomSlug(room)}/join`, {
       playerId: playerId(),
       name,
     }),

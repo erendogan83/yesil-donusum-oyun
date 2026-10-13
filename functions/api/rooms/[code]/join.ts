@@ -7,6 +7,7 @@ import {
   readJson,
   roomState,
   ROOM_PATTERN,
+  roomFromParam,
   type Env,
 } from "../../_lib";
 
@@ -20,8 +21,8 @@ export const onRequestPost: PagesFunction = async ({
 }) => {
   const e = env as Env;
   if (!e.DB) return fail(503, "Veritabanı bağlı değil.");
-  const code = String(params.code).toUpperCase();
-  if (!ROOM_PATTERN.test(code)) return fail(400, "Oda kodu geçersiz.");
+  const code = roomFromParam(params.code);
+  if (!ROOM_PATTERN.test(code)) return fail(400, "Oda adı geçersiz.");
   const read = await readJson(request);
   if (read.error) return read.error;
   const playerId = cleanPlayerId(read.body.playerId);
@@ -29,7 +30,8 @@ export const onRequestPost: PagesFunction = async ({
   if (!playerId || !name) return fail(400, "Adınızı yazın.");
   await ensureSchema(e.DB);
   const room = await roomState(e.DB, code, e, playerId);
-  if (!room) return fail(404, "Oda bulunamadı. Kodu kontrol edin.");
+  if (!room)
+    return fail(404, "Bu adla bir oda bulunamadı. Oda adını kontrol edin.");
   const known = room.players.some((p) => p.id === playerId);
   if (!known) {
     if (room.status !== "lobby")

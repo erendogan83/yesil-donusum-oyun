@@ -1,4 +1,4 @@
-// Rooms: one player creates a room, others join with the code, the host starts and everybody
+// Rooms: one player creates a room, others join by typing its name, the host starts and everybody
 // plays the same timed game at once with a live ranking. When the host leaves, the role moves
 // to the next player. Needs HOST_START_MS=12000 and PRESENT_MS=6000 in .dev.vars.
 const { chromium } = require("playwright");
@@ -45,11 +45,19 @@ const token = process.env.ADMIN_TOKEN || "secret123";
 
   // ---- create and join
   await leaver.click("room-create");
+  const title = "Şükrü'nün Odası " + Date.now().toString(36);
+  await leaver.page.locator("#room-title").fill(title);
   await leaver.page.locator("#room-name").fill("Ayrılan");
   await leaver.page.locator('[type="submit"]').click();
   await leaver.page.locator(".room-code").waitFor();
   const code = (await leaver.page.locator(".room-code").innerText()).trim();
-  assert.match(code, /^[A-Z0-9]{5}$/);
+  assert.equal(code, title, "the lobby shows the room's name");
+  const slug = title
+    .replace(/[şŞ]/g, "S")
+    .replace(/[üÜ]/g, "U")
+    .replace(/ı/g, "I")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
   assert.equal(
     await leaver.page.locator('[data-action="room-start"]').count(),
     1,
@@ -60,7 +68,7 @@ const token = process.env.ADMIN_TOKEN || "secret123";
     /başlatmak için/,
   );
   await host.click("room-join");
-  await host.page.locator("#room-code").fill(code);
+  await host.page.locator("#room-title").fill(title.toUpperCase());
   await host.page.locator("#room-name").fill("Kurucu");
   await host.page.locator('[type="submit"]').click();
   await host.page.locator(".room-code").waitFor();
@@ -70,9 +78,9 @@ const token = process.env.ADMIN_TOKEN || "secret123";
     "the second player is not the host yet",
   );
 
-  // A wrong code is explained, not silently ignored.
+  // A wrong room name is explained, not silently ignored.
   await guest.click("room-join");
-  await guest.page.locator("#room-code").fill("ZZZZZ");
+  await guest.page.locator("#room-title").fill("Olmayan oda");
   await guest.page.locator("#room-name").fill("Misafir");
   await guest.page.locator('[type="submit"]').click();
   await guest.page.locator("#room-error:not(:empty)").waitFor();
@@ -80,7 +88,7 @@ const token = process.env.ADMIN_TOKEN || "secret123";
     await guest.page.locator("#room-error").innerText(),
     /bulunamadı/,
   );
-  await guest.page.locator("#room-code").fill(code.toLowerCase());
+  await guest.page.locator("#room-title").fill(title.toLowerCase());
   await guest.page.locator('[type="submit"]').click();
   await guest.page.locator(".room-code").waitFor();
   assert.equal(
@@ -127,7 +135,7 @@ const token = process.env.ADMIN_TOKEN || "secret123";
     await p.page.locator(".hud").waitFor({ timeout: 15000 });
     const s = await p.state();
     assert.equal(s.team.mode, "room");
-    assert.equal(s.team.room, code);
+    assert.equal(s.team.room, slug);
     assert.equal(s.tutorial, false, "rooms skip the intro dialog");
     assert.equal(
       await p.page.locator("#clock-meter").count(),
@@ -138,7 +146,7 @@ const token = process.env.ADMIN_TOKEN || "secret123";
 
   // Nobody can join once the game runs.
   await late.click("room-join");
-  await late.page.locator("#room-code").fill(code);
+  await late.page.locator("#room-title").fill(title);
   await late.page.locator("#room-name").fill("Geç");
   await late.page.locator('[type="submit"]').click();
   await late.page.locator("#room-error:not(:empty)").waitFor();
@@ -155,7 +163,7 @@ const token = process.env.ADMIN_TOKEN || "secret123";
   await host.click("lesson-ack");
   await guest.page.waitForFunction(
     () =>
-      /Oda [A-Z0-9]{5} · 2\. \/ 2 · lider Kurucu 100/.test(
+      /Oda .+ · 2\. \/ 2 · lider Kurucu 100/.test(
         document.querySelector("#room-bar")?.textContent ?? "",
       ),
     null,
@@ -196,12 +204,12 @@ const token = process.env.ADMIN_TOKEN || "secret123";
       (await (await fetch("./api/results")).json()).results.filter(
         (r) => r.room === c,
       ).length === 2,
-    code,
+    slug,
     { timeout: 10000 },
   );
   const stored = (
     await (await fetch(`${base}/api/results`)).json()
-  ).results.filter((r) => r.room === code);
+  ).results.filter((r) => r.room === slug);
   assert.deepEqual(
     stored.map((r) => r.mode),
     ["room", "room"],

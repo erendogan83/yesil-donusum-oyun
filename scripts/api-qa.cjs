@@ -175,18 +175,44 @@ const pid = (n) => `player-${String(n).padStart(4, "0")}-xxxx`;
   const host = pid(1);
   const guest = pid(2);
   const late = pid(3);
-  let created = await post("/api/rooms", { playerId: host, name: "Kurucu" });
+  const run = Date.now().toString(36).toUpperCase();
+  const title = `Çalışma Odası ${run}`;
+  let created = await post("/api/rooms", {
+    playerId: host,
+    name: "Kurucu",
+    room: title,
+  });
   assert.equal(created.status, 201);
   let room = (await created.json()).room;
-  assert.match(room.code, /^[A-Z0-9]{5}$/);
+  assert.equal(room.title, title, "the room keeps the name it was given");
+  assert.equal(room.code, `CALISMAODASI${run}`, "found by its normalized name");
+  assert.equal(
+    (
+      await post("/api/rooms", {
+        playerId: guest,
+        name: "X",
+        room: title.toLowerCase(),
+      })
+    ).status,
+    409,
+    "an open room's name is taken",
+  );
+  assert.equal(
+    (await post("/api/rooms", { playerId: guest, name: "X", room: "!" }))
+      .status,
+    400,
+    "a name needs letters or digits",
+  );
   assert.equal(room.status, "lobby");
   assert.equal(room.hostId, host);
   assert.equal(
-    (await post("/api/rooms", { playerId: host, name: "" })).status,
+    (await post("/api/rooms", { playerId: host, name: "", room: "Oda X" }))
+      .status,
     400,
   );
   assert.equal(
-    (await post("/api/rooms", { playerId: "x", name: "A" })).status,
+    (await post("/api/rooms", { playerId: "x", name: "A", room: "Oda X" }))
+      .status,
     400,
   );
 
@@ -314,9 +340,16 @@ const pid = (n) => `player-${String(n).padStart(4, "0")}-xxxx`;
         await fetch(`${base}/api/rooms/${code}${as ? "?p=" + as : ""}`)
       ).json()
     ).room;
+  let n = 0;
   const newRoom = async (h, g) => {
     const created = (
-      await (await post("/api/rooms", { playerId: h, name: "A" })).json()
+      await (
+        await post("/api/rooms", {
+          playerId: h,
+          name: "A",
+          room: `Oda ${run} ${++n}`,
+        })
+      ).json()
     ).room;
     await post(`/api/rooms/${created.code}/join`, { playerId: g, name: "B" });
     return created.code;

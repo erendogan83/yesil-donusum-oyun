@@ -5,6 +5,7 @@ import {
   json,
   readJson,
   ROOM_PATTERN,
+  roomFromParam,
   type Env,
 } from "../../_lib";
 
@@ -16,8 +17,8 @@ export const onRequestPost: PagesFunction = async ({
 }) => {
   const e = env as Env;
   if (!e.DB) return fail(503, "Veritabanı bağlı değil.");
-  const code = String(params.code).toUpperCase();
-  if (!ROOM_PATTERN.test(code)) return fail(400, "Oda kodu geçersiz.");
+  const code = roomFromParam(params.code);
+  if (!ROOM_PATTERN.test(code)) return fail(400, "Oda adı geçersiz.");
   const read = await readJson(request);
   if (read.error) return read.error;
   const playerId = cleanPlayerId(read.body.playerId);

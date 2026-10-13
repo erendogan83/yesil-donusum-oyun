@@ -716,7 +716,7 @@ export function csv(results: Result[]): string {
         r.budget,
         r.completedAt,
         r.rulesVersion === 1 ? "Karar puanı v1" : "Eski ekonomi puanı",
-        { official: "Resmî", room: "Oda", practice: "Serbest" }[r.team.mode],
+        { official: "Süreli", room: "Oda", practice: "Serbest" }[r.team.mode],
       ]),
     ]
       .map((row) => row.map(cell).join(";"))

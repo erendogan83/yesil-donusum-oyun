@@ -162,7 +162,7 @@ export function gamesCsv(list: RemoteResult[]): string {
       .replace(/^[=+@\-\t\r]/, "'$&")
       .replaceAll('"', '""') +
     '"';
-  const kind = { official: "Resmî", practice: "Serbest", room: "Oda" };
+  const kind = { official: "Süreli", practice: "Serbest", room: "Oda" };
   const rows: (string | number)[][] = [
     [
       "Tür",

@@ -49,13 +49,14 @@ export async function ensureSchema(db: D1) {
     "CREATE TABLE IF NOT EXISTS games (id TEXT PRIMARY KEY, name TEXT NOT NULL, mode TEXT NOT NULL, room TEXT, score INTEGER NOT NULL, bill REAL NOT NULL, budget REAL NOT NULL, saving_percent REAL NOT NULL, rules_version INTEGER NOT NULL, completed_at TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)",
     "CREATE INDEX IF NOT EXISTS ix_games_rank ON games(mode, score DESC)",
     "CREATE INDEX IF NOT EXISTS ix_games_room ON games(room)",
-    "CREATE TABLE IF NOT EXISTS rooms (code TEXT PRIMARY KEY, host_id TEXT NOT NULL, status TEXT NOT NULL, created_at INTEGER NOT NULL, started_at INTEGER, host_since INTEGER NOT NULL DEFAULT 0)",
+    "CREATE TABLE IF NOT EXISTS rooms (code TEXT PRIMARY KEY, title TEXT NOT NULL DEFAULT '', host_id TEXT NOT NULL, status TEXT NOT NULL, created_at INTEGER NOT NULL, started_at INTEGER, host_since INTEGER NOT NULL DEFAULT 0)",
     "CREATE TABLE IF NOT EXISTS room_players (room_code TEXT NOT NULL, player_id TEXT NOT NULL, name TEXT NOT NULL, joined_at INTEGER NOT NULL, score INTEGER NOT NULL DEFAULT 0, round INTEGER NOT NULL DEFAULT 1, finished INTEGER NOT NULL DEFAULT 0, finished_at INTEGER, last_seen INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (room_code, player_id))",
   ])
     await db.prepare(sql).run();
   // Tables created by an earlier deployment lack the newer columns.
   for (const sql of [
     "ALTER TABLE rooms ADD COLUMN host_since INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE rooms ADD COLUMN title TEXT NOT NULL DEFAULT ''",
     "ALTER TABLE room_players ADD COLUMN last_seen INTEGER NOT NULL DEFAULT 0",
   ])
     try {
@@ -73,7 +74,28 @@ const num = (v: unknown, min: number, max: number) =>
     ? v
     : null;
 export const ID_PATTERN = /^[\w-]{8,64}$/;
-export const ROOM_PATTERN = /^[A-Z0-9]{4,8}$/;
+export const ROOM_PATTERN = /^[A-Z0-9]{2,24}$/;
+const TURKISH: Record<string, string> = {
+  ç: "C",
+  Ç: "C",
+  ğ: "G",
+  Ğ: "G",
+  ı: "I",
+  İ: "I",
+  ö: "O",
+  Ö: "O",
+  ş: "S",
+  Ş: "S",
+  ü: "U",
+  Ü: "U",
+};
+/** A room is found by its name: "Muhasebe 3" and "muhasebe3" are the same room. */
+export const roomSlug = (name: string) =>
+  name
+    .replace(/[çÇğĞıİöÖşŞüÜ]/g, (c) => TURKISH[c] ?? c)
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 24);
 
 /** Validates a finished game sent by a client; returns the clean row or an error. */
 export function parseGame(body: unknown): GameRow | string {
@@ -159,10 +181,13 @@ export function isAdmin(request: Request, env: Env) {
 }
 
 // ---- rooms
-const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-export const newRoomCode = () => {
-  const bytes = crypto.getRandomValues(new Uint8Array(5));
-  return Array.from(bytes, (b) => ALPHABET[b % ALPHABET.length]).join("");
+/** The room named in a URL path; "" when it cannot be decoded. */
+export const roomFromParam = (value: unknown) => {
+  try {
+    return roomSlug(decodeURIComponent(String(value)));
+  } catch {
+    return "";
+  }
 };
 export interface RoomPlayerRow {
   player_id: string;
@@ -185,6 +210,7 @@ const ms = (value: string | undefined, fallback: number) => {
 
 interface RoomRow {
   code: string;
+  title: string;
   host_id: string;
   status: string;
   created_at: number;
@@ -258,6 +284,7 @@ export async function roomState(
   );
   return {
     code: room.code,
+    title: room.title || room.code,
     hostId,
     hostSince,
     hostStartMs,

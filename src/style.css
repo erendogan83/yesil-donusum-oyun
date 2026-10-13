@@ -3591,8 +3591,9 @@ dialog .actions {
   text-align: center;
 }
 .room-code {
-  font-size: clamp(44px, 12vw, 84px);
-  letter-spacing: 0.18em;
+  font-size: clamp(28px, 7vw, 48px);
+  letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
   margin: 4px 0 8px;
   color: var(--gold);
 }

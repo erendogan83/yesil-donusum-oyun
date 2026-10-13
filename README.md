@@ -20,11 +20,11 @@ Alternatif: `node serve.mjs`. `dist/` depoda tutulmaz; ilk çalıştırmada BASL
 - Ürün: sorunu gör → markette incele → satın al → otomatik odaya dön → yerleştir → ANLADIM.
 - Atık ve çamaşır ayırma: nesneyi hedefe sürükleyip bırak (ya da nesneye, sonra hedefe dokun). Yanlış hedef bırakılabilir:
   ilk yanlış eşleştirme ₺50 krediden götürür ve o nesnenin puanını da götürür; tekrar denemek ücretsizdir ama puan getirmez.
-- **Süreli yarışma (Resmî):** her odada 60 saniye vardır. Odayı erken bitirene her artan saniye için ₺5 bonus yazılır
+- **Süreli yarışma:** her odada 60 saniye vardır. Odayı erken bitirene her artan saniye için ₺5 bonus yazılır
   (10 sn erken = ₺50). Süre dolduğunda oda bitmemişse her saniye bütçeden ₺5 düşer (bütçe sıfırın altına inmez). Süre yalnızca oda/market içinde işler; haritada ve öğrenme kartı açıkken durur.
   Bütçe artık hiçbir seçeneğe yetmiyorsa gerekli satın alma adımı "Bütçem yetmiyor, bu adımı geç" ile atlanır (puan getirmez).
   Serbest denemede süre yoktur.
-- **Odalar:** "ODA OLUŞTUR" 5 karakterli bir kod verir, "ODAYA GİR" kodla katılır. Kurucu "OYUNU BAŞLAT" der, herkes aynı anda
+- **Odalar:** "ODA OLUŞTUR" ile kendi koyduğun oda adıyla oda açarsın (örn. "Muhasebe 3"), "ODAYA GİR" ile aynı oda adını yazan katılır; büyük/küçük harf ve Türkçe karakter farkı önemsizdir. Açık bir odanın adı başkası tarafından alınamaz. Kurucu "OYUNU BAŞLAT" der, herkes aynı anda
   (5 sn geri sayımla) süreli oyuna başlar; üstte canlı sıralama görünür, final ekranı odanın sıralamasını gösterir.
   Kurucu odadan ayrılırsa ya da 60 sn içinde başlatmazsa (ya da sekmeyi kapatırsa) kuruculuk, katılış sırasına göre bir sonraki oyuncuya geçer;
   odadan ayrılan oyuncu sıralamada “ayrıldı” görünür ve bitiş bekleyen oyuncu sayılmaz.
@@ -52,7 +52,7 @@ Dönem ödülü mevcut kuralla korunur: yeni gider azalmasının %50'si, en çok
 ## Kayıtlar ve kurumlar
 
 Oyun tekli: yalnızca oyuncu adı gerekir. Kooperatif/kurum listesi kaldırıldı.
-Serbest deneme sonuçları liderlik tablosunun Serbest sekmesinde, resmî (süreli) sonuçlar Resmî sekmesinde görünür.
+Serbest deneme sonuçları liderlik tablosunun Serbest sekmesinde, süreli sonuçlar Süreli sekmesinde görünür.
 Otomatik kayıt anahtarı `yesil-donusum-v1`, veritabanı biçimi v2 olarak korunur.
 
 Eski oyunlar eski karar/ekonomi kurallarıyla devam eder; eski sonuçlar yeniden puanlanmaz.
@@ -104,10 +104,10 @@ Yerelde denemek için: `npm run build && npm run dev:cf` (`http://127.0.0.1:8788
 `npm run test:api` ve `npm run test:board` bu sunucuya karşı çalışır.
 
 - **Kim görür:** Tüm cihazların sonuçları aynı tabloda toplanır; tablo 15 sn'de bir kendini yeniler.
-  _Resmî_ ve _Serbest_ sekmeleri vardır.
-- **Tablo:** Tüm oyuncuların sonuçları puana göre sıralanır (Resmî ve Serbest sekmeleri). Oda oyunları yalnızca odanın kendi sıralamasında görünür.
+  _Süreli_ ve _Serbest_ sekmeleri vardır.
+- **Tablo:** Tüm oyuncuların sonuçları puana göre sıralanır (Süreli ve Serbest sekmeleri). Oda oyunları yalnızca odanın kendi sıralamasında görünür.
 - **Bağlantı yoksa:** Biten oyun cihazda bekler ve bağlantı gelince otomatik gönderilir. Sunucu yoksa (yerel
-  `node serve.mjs`) tablo bu cihazdaki resmî sonuçları gösterir.
+  `node serve.mjs`) tablo bu cihazdaki süreli sonuçları gösterir.
 - **Yönetim (`/#admin`):** Anahtarla giriş yapınca tek tek sonuç silme, serbest denemeleri toplu silme, tüm kayıtları
   silme (etkinlik öncesi sıfırlama) ve CSV indirme (tüm sonuçlar / kooperatif toplamları) açılır. Anahtar yalnız o sekmede tutulur.
 - **Güvenlik sınırı:** Oyun tarayıcıda çalıştığı için sunucu puanın gerçekten oynanarak kazanıldığını doğrulayamaz;
@@ -135,7 +135,7 @@ Chrome kurulu olmalıdır. Tam akış `pnpm run test:e2e` (varsayılan 5175).
 `pnpm run test:mobile` telefon kullanılabilirliğini sınar: 6 cihaz profilinde (iPhone/Android, dikey/yatay, en küçük SE dahil)
 her düğmenin ulaşılabilir, örtülmemiş ve çakışmamış olduğunu denetler ve oyunu **gerçek dokunuşlarla** (ekran koordinatı) baştan oynar.
 Seçici ile `click()` kullanmaz: Playwright öğeyi kendisi kaydırıp ortasına tıkladığı için telefon sorunlarını gizler.
-`pnpm run test:offline` internet kapalı açılış, dokunmatik, resmî sonuç, CSV/JSON ve erişilebilirlik testidir.
+`pnpm run test:offline` internet kapalı açılış, dokunmatik, süreli sonuç, CSV/JSON ve erişilebilirlik testidir.
 `pnpm run test:placements` 33 ürünün kurulu sahne görüntülerini üretir (4180).
 `qa/main-revision/` test raporları ve ekran görüntülerini içerir.
 Önceki `scripts/e2e.cjs`, `full-flow.cjs`, `tl.cjs`, `meaning.cjs`, `ux.cjs` eski akışın tarihsel testleridir;

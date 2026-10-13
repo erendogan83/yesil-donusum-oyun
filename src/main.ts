@@ -45,6 +45,7 @@ import {
   joinRoom,
   fetchRoom,
   startRoom,
+  roomSlug,
   reportScore,
   leaveRoomApi,
   msUntilStart,
@@ -734,7 +735,7 @@ function startScreen() {
   return `<section class="title-screen"><div class="eyebrow">BİRLİKTE ÜRET • BİRLİKTE DÖNÜŞTÜR</div><h1>YEŞİL<br/><span>DÖNÜŞÜM</span></h1><p>Bütçeni yönet.<br/>Doğru seçimleri yap.<br/>Aylık gideri düşür.</p>${db.active && db.active.phase !== "finished" ? `<p class="subtle">Yarım kalan oyununuz var.</p>${btn("DEVAM ET", "resume", "primary")}` : btn("OYUNA BAŞLA", "new", "primary")}${db.active && db.active.phase !== "finished" ? btn("Yeni oyun", "new", "ghost", 'style="margin-top:12px"') : ""}<div class="room-buttons">${btn("ODA OLUŞTUR", "room-create", "gold")}${btn("ODAYA GİR", "room-join", "ghost")}</div><div class="seal"><small>BİR YERLEŞKE</small><b>4</b><small>DÖNEM • BİRLİKTE</small></div><footer class="start-footer"><span>Tek başına ya da bir odada rakiplerinle: boşa gideni önce kim bulacak?</span>${btn("Liderlik tablosu ↗", "leaderboard", "ghost")}</footer></section>`;
 }
 function registration() {
-  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Boşa gideni<br/>sen bulacaksın.</h2><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme · süre yok</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""}/> Resmî yarışma · süreli</label></fieldset><p class="subtle timed-note">Resmî yarışmada her odada <b>${TIME_LIMIT_S} saniyen</b> var. Erken bitirirsen her saniye için <b>${fmtMoney(EARLY_BONUS)}</b> kazanırsın; süre dolarsa her saniye bütçenden <b>${fmtMoney(OVERTIME_COST)}</b> düşer.</p><label class="field" for="first"><span>Oyuncu adı</span><input id="first" name="first" required autocomplete="given-name" maxlength="40" aria-describedby="form-error"/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Sonuçlar liderlik tablosunda "Resmî" ve "Serbest" sekmelerinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Boşa gideni<br/>sen bulacaksın.</h2><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme · süre yok</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""}/> Süreli yarışma · ${TIME_LIMIT_S} sn</label></fieldset><p class="subtle timed-note">Süreli yarışmada her odada <b>${TIME_LIMIT_S} saniyen</b> var. Erken bitirirsen her saniye için <b>${fmtMoney(EARLY_BONUS)}</b> kazanırsın; süre dolarsa her saniye bütçenden <b>${fmtMoney(OVERTIME_COST)}</b> düşer.</p><label class="field" for="first"><span>Oyuncu adı</span><input id="first" name="first" required autocomplete="given-name" maxlength="40" aria-describedby="form-error"/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Sonuçlar liderlik tablosunda "Süreli" ve "Serbest" sekmelerinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
 }
 function roomEntryScreen() {
   const creating = roomIntent === "create";
@@ -744,7 +745,7 @@ function roomEntryScreen() {
   } catch {
     /* Optional convenience. */
   }
-  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">${creating ? "YENİ ODA" : "ODAYA KATIL"}</p><h2>${creating ? "Rakiplerini<br/>odana çağır." : "Oda kodunu yaz,<br/>yarışa katıl."}</h2><p class="muted">Odadaki herkes aynı anda, süreli oynar: her odada ${TIME_LIMIT_S} sn. Erken bitirene saniye başına ${fmtMoney(EARLY_BONUS)}, geç kalana saniye başına ${fmtMoney(-OVERTIME_COST)}.</p><form id="room-form" novalidate>${creating ? "" : '<label class="field" for="room-code"><span>Oda kodu</span><input id="room-code" name="code" autocomplete="off" autocapitalize="characters" maxlength="8" style="text-transform:uppercase;letter-spacing:.2em" aria-describedby="room-error"/></label>'}<label class="field" for="room-name"><span>Oyuncu adı</span><input id="room-name" name="name" required autocomplete="given-name" maxlength="40" value="${esc(lastName)}" aria-describedby="room-error"/></label><p class="error" id="room-error" role="alert">${esc(roomError)}</p><button type="submit" class="primary">${creating ? "ODAYI OLUŞTUR →" : "ODAYA GİR →"}</button></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">${creating ? "YENİ ODA" : "ODAYA KATIL"}</p><h2>${creating ? "Rakiplerini<br/>odana çağır." : "Oda adını yaz,<br/>yarışa katıl."}</h2><p class="muted">Odadaki herkes aynı anda, süreli oynar: her odada ${TIME_LIMIT_S} sn. Erken bitirene saniye başına ${fmtMoney(EARLY_BONUS)}, geç kalana saniye başına ${fmtMoney(-OVERTIME_COST)}.</p><form id="room-form" novalidate><label class="field" for="room-title"><span>Oda adı</span><input id="room-title" name="room" required autocomplete="off" maxlength="30" placeholder="${creating ? "örn. Muhasebe 3" : "Arkadaşının verdiği oda adı"}" aria-describedby="room-error"/></label><label class="field" for="room-name"><span>Oyuncu adı</span><input id="room-name" name="name" required autocomplete="given-name" maxlength="40" value="${esc(lastName)}" aria-describedby="room-error"/></label><p class="error" id="room-error" role="alert">${esc(roomError)}</p><button type="submit" class="primary">${creating ? "ODAYI OLUŞTUR →" : "ODAYA GİR →"}</button></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
 }
 function lobbyScreen() {
   const info = roomInfo;
@@ -753,7 +754,7 @@ function lobbyScreen() {
   const host = info.hostId === roomSession.playerId;
   const remaining = msUntilStart(info, roomReceivedAt);
   const counting = info.status === "playing" && remaining !== null;
-  return `<section class="panel-screen"><div class="register-panel lobby"><p class="eyebrow">ODA KODU</p><h2 class="room-code" aria-label="Oda kodu ${esc(info.code.split("").join(" "))}">${esc(info.code)}</h2><p class="muted">Bu kodu arkadaşlarına ver; <b>ODAYA GİR</b> ile katılsınlar.</p><ul class="player-list" aria-label="Odadaki oyuncular">${info.players.map((p) => `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}>${esc(p.name)}${p.id === info.hostId ? " <small>kurucu</small>" : ""}</li>`).join("")}</ul><p class="subtle">${info.players.length} oyuncu</p>${info.status === "lobby" ? `<p class="subtle host-timer" id="host-timer">${host ? "Oyunu başlatmak için" : `Kurucu ${esc(info.players.find((p) => p.id === info.hostId)?.name ?? "")}; başlatması için`} <b id="host-left">…</b> var. Başlatılmazsa kuruculuk sıradaki oyuncuya geçer.</p>` : ""}${counting ? `<p class="room-countdown" id="room-countdown" role="status">Başlıyor… ${Math.max(0, Math.ceil(remaining / 1000))}</p>` : host ? btn("OYUNU BAŞLAT", "room-start", "gold") : '<p class="subtle" role="status">Kurucunun başlatması bekleniyor…</p>'}<p class="error" id="room-error" role="alert">${esc(roomError)}</p>${btn("Odadan çık", "room-leave", "ghost")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel lobby"><p class="eyebrow">ODA</p><h2 class="room-code">${esc(info.title)}</h2><p class="muted">Bu oda adını arkadaşlarına ver; <b>ODAYA GİR</b> ile adı yazıp katılsınlar.</p><ul class="player-list" aria-label="Odadaki oyuncular">${info.players.map((p) => `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}>${esc(p.name)}${p.id === info.hostId ? " <small>kurucu</small>" : ""}</li>`).join("")}</ul><p class="subtle">${info.players.length} oyuncu</p>${info.status === "lobby" ? `<p class="subtle host-timer" id="host-timer">${host ? "Oyunu başlatmak için" : `Kurucu ${esc(info.players.find((p) => p.id === info.hostId)?.name ?? "")}; başlatması için`} <b id="host-left">…</b> var. Başlatılmazsa kuruculuk sıradaki oyuncuya geçer.</p>` : ""}${counting ? `<p class="room-countdown" id="room-countdown" role="status">Başlıyor… ${Math.max(0, Math.ceil(remaining / 1000))}</p>` : host ? btn("OYUNU BAŞLAT", "room-start", "gold") : '<p class="subtle" role="status">Kurucunun başlatması bekleniyor…</p>'}<p class="error" id="room-error" role="alert">${esc(roomError)}</p>${btn("Odadan çık", "room-leave", "ghost")}</div></section>`;
 }
 function mapScreen() {
   const s = db.active!;
@@ -887,7 +888,7 @@ function finalScreen() {
       )}</div><p id="pledge-count" role="status">${pledgeDraft.length} / 3 seçildi</p><div class="row">${btn("Sonucumuza dön", "final-result", "ghost")}${btn("3 YEŞİL HAMLEMİZİ KAYDET", "pledges-save", "gold", pledgeDraft.length === 3 ? "" : "disabled")}</div><p class="subtle">Bu seçimler yarışma skorunu ve sıralamayı değiştirmez.</p></section>`;
   if (finalStep === "card" && s.realLifePledges)
     return `<section class="summary-screen pledge-finale"><div class="pledge-keepsake"><p class="eyebrow">BİZİM 3 YEŞİL HAMLEMİZ</p><h2>${names}</h2><p class="team-signature">${names}</p><ol>${s.realLifePledges.map((p) => `<li>${esc(p)}</li>`).join("")}</ol><p class="closing-line">Küçük başlayın. Birlikte sürdürün.</p></div><div class="row">${btn("LİDERLİK TABLOSUNU GÖR", "leaderboard", "gold")}${btn("Seçimlerimizi değiştir", "pledges", "ghost")}${btn("Sonucumuz", "final-result", "ghost")}</div></section>`;
-  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${names}</h2><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div>${s.decisionVersion === 1 ? `<p class="submit-status" role="status">${esc(submitText(s)) || "Sonuç henüz liderlik tablosuna gönderilmedi."}</p>${submitInfo === "sending" || submitInfo === "sent" || submitInfo === "downgraded" ? "" : btn(submitInfo === "" ? "SONUCU LİDERLİK TABLOSUNA GÖNDER" : "TEKRAR GÖNDER", "resubmit", "ghost")}` : ""}<p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Resmî sonuç liderlik tablosuna gönderildi."}</p>${s.team.mode === "room" && roomInfo ? `<div class="room-final"><h3>Odadaki sıralama</h3>${rankingMarkup()}<p class="subtle">${roomInfo.status === "finished" ? "Herkes bitirdi." : "Rakipler hâlâ oynuyor; sıralama canlı güncellenir."}</p>${btn("Odadan çık", "room-leave", "ghost")}</div>` : ""}<p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
+  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${names}</h2><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div>${s.decisionVersion === 1 ? `<p class="submit-status" role="status">${esc(submitText(s)) || "Sonuç henüz liderlik tablosuna gönderilmedi."}</p>${submitInfo === "sending" || submitInfo === "sent" || submitInfo === "downgraded" ? "" : btn(submitInfo === "" ? "SONUCU LİDERLİK TABLOSUNA GÖNDER" : "TEKRAR GÖNDER", "resubmit", "ghost")}` : ""}<p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Süreli sonuç liderlik tablosuna gönderildi."}</p>${s.team.mode === "room" && roomInfo ? `<div class="room-final"><h3>Odadaki sıralama</h3>${rankingMarkup()}<p class="subtle">${roomInfo.status === "finished" ? "Herkes bitirdi." : "Rakipler hâlâ oynuyor; sıralama canlı güncellenir."}</p>${btn("Odadan çık", "room-leave", "ghost")}</div>` : ""}<p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
 }
 interface BoardRow {
   name: string;
@@ -896,7 +897,7 @@ interface BoardRow {
 }
 function boardMarkup(rows: BoardRow[]) {
   if (!rows.length)
-    return `<div class="empty-result"><h3>İlk başarı hikâyesi sizi bekliyor.</h3><p>${boardMode === "official" ? "Resmî yarışma tamamlandığında sonuç burada görünür." : "Serbest deneme tamamlandığında sonuç burada görünür."}</p></div>`;
+    return `<div class="empty-result"><h3>İlk başarı hikâyesi sizi bekliyor.</h3><p>${boardMode === "official" ? "Süreli yarışma tamamlandığında sonuç burada görünür." : "Serbest deneme tamamlandığında sonuç burada görünür."}</p></div>`;
   return `<div class="podium">${rows
     .slice(0, 3)
     .map(
@@ -944,7 +945,7 @@ function leaderboard() {
       `ghost board-tab ${boardMode === id ? "active" : ""}`,
       `role="tab" aria-selected="${boardMode === id}"`,
     );
-  return `<section class="leaderboard"><div class="center"><p class="eyebrow">KİM DAHA ÇOK BOŞA GİDENİ BULDU?</p><h2>Liderlik tablosu</h2><p class="muted">Resmî: süreli yarışma · Serbest: süresiz deneme · ${live ? "tüm cihazlardan gelen sonuçlar, kendiliğinden güncellenir" : "ortak tabloya ulaşılamadı; bu cihazdaki resmî sonuçlar gösteriliyor"}</p><div class="board-tabs" role="tablist">${tab("official", "Resmî", official.length)}${tab("practice", "Serbest", practice.length)}</div></div>${boardMarkup(boardMode === "official" ? official : practice)}<div class="row" style="justify-content:center;margin-top:25px">${btn("← Açılışa dön", "start", "ghost")}${db.active?.phase === "finished" ? btn("Sonucuma dön", "final", "primary") : ""}</div></section>`;
+  return `<section class="leaderboard"><div class="center"><p class="eyebrow">KİM DAHA ÇOK BOŞA GİDENİ BULDU?</p><h2>Liderlik tablosu</h2><p class="muted">Süreli: süre ve bonuslu yarışma · Serbest: süresiz deneme · ${live ? "tüm cihazlardan gelen sonuçlar, kendiliğinden güncellenir" : "ortak tabloya ulaşılamadı; bu cihazdaki süreli sonuçlar gösteriliyor"}</p><div class="board-tabs" role="tablist">${tab("official", "Süreli", official.length)}${tab("practice", "Serbest", practice.length)}</div></div>${boardMarkup(boardMode === "official" ? official : practice)}<div class="row" style="justify-content:center;margin-top:25px">${btn("← Açılışa dön", "start", "ghost")}${db.active?.phase === "finished" ? btn("Sonucuma dön", "final", "primary") : ""}</div></section>`;
 }
 function adminRemote() {
   const pending = pendingCount();
@@ -959,12 +960,12 @@ function adminRemote() {
   const login = adminAuthed
     ? `<p class="subtle">Yönetim anahtarı doğrulandı: silme açık.</p><div class="row">${btn("Serbest denemeleri sil", "rbulk:practice", "danger")}${btn("Tüm sunucu kayıtlarını sil", "rbulk:all", "danger")}${btn("Çıkış", "admin-logout", "ghost")}</div>`
     : `<label class="field"><span>Yönetim anahtarı (silmek için)</span><input type="password" id="admin-token" autocomplete="off" aria-describedby="admin-login-hint"/></label><div class="row">${btn("Giriş", "admin-login", "primary")}${btn("Göster / gizle", "admin-reveal", "ghost")}</div><p class="subtle" id="admin-login-hint">Anahtar Cloudflare'de ADMIN_TOKEN olarak tanımlanır.</p>`;
-  return `<div class="admin-remote"><h3>Ortak liderlik tablosu · ${remote.length} kayıt</h3><p class="subtle">Resmî: ${remote.filter((r) => r.mode === "official").length} · Oda: ${remote.filter((r) => r.mode === "room").length} · Serbest: ${remote.filter((r) => r.mode === "practice").length} · Bu cihazda bekleyen: ${pending}</p>${login}<div class="row">${btn("CSV indir (tüm cihazlar)", "csv-remote", "primary")}${btn("Bu cihazdaki sonuçları sunucuya gönder", "push-local", "ghost")}${btn("Yenile", "admin-refresh", "ghost")}</div><div class="results">${
+  return `<div class="admin-remote"><h3>Ortak liderlik tablosu · ${remote.length} kayıt</h3><p class="subtle">Süreli: ${remote.filter((r) => r.mode === "official").length} · Oda: ${remote.filter((r) => r.mode === "room").length} · Serbest: ${remote.filter((r) => r.mode === "practice").length} · Bu cihazda bekleyen: ${pending}</p>${login}<div class="row">${btn("CSV indir (tüm cihazlar)", "csv-remote", "primary")}${btn("Bu cihazdaki sonuçları sunucuya gönder", "push-local", "ghost")}${btn("Yenile", "admin-refresh", "ghost")}</div><div class="results">${
     rows
       .slice(remotePage * perPage, (remotePage + 1) * perPage)
       .map(
         (r) =>
-          `<article><div class="row spread"><strong>${esc(r.name)}</strong><span>${{ official: "Resmî", practice: "Serbest", room: "Oda " + (r.room ?? "") }[r.mode]} · ${fmt(r.score)} puan</span></div><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${adminAuthed ? btn("Bu sonucu sil", `rdelete:${r.id}`, "danger") : ""}</article>`,
+          `<article><div class="row spread"><strong>${esc(r.name)}</strong><span>${{ official: "Süreli", practice: "Serbest", room: "Oda " + (r.room ?? "") }[r.mode]} · ${fmt(r.score)} puan</span></div><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${adminAuthed ? btn("Bu sonucu sil", `rdelete:${r.id}`, "danger") : ""}</article>`,
       )
       .join("") || "<p>Henüz kayıt yok.</p>"
   }</div><div class="row">${btn("← Önceki", "rpage:-1", "ghost", remotePage === 0 ? "disabled" : "")}<span>Sayfa ${remotePage + 1} / ${pages}</span>${btn("Sonraki →", "rpage:1", "ghost", remotePage + 1 >= pages ? "disabled" : "")}</div></div>`;
@@ -983,7 +984,7 @@ function admin() {
         (r) =>
           `<article><div class="row spread"><strong>${esc(r.team.first)}</strong><span>%${fmt(r.savingPercent)} · ${fmt(r.score)} puan</span></div><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${btn("Hatalı sonucu sil", `delete:${r.id}`, "danger")}</article>`,
       )
-      .join("") || "<p>Henüz resmî sonuç yok.</p>"
+      .join("") || "<p>Henüz süreli sonuç yok.</p>"
   }</div><div class="row">${btn("← Önceki", "admin-page:-1", "ghost", adminPage === 0 ? "disabled" : "")}<span>Sayfa ${adminPage + 1} / ${Math.max(1, Math.ceil(all.length / perPage))}</span>${btn("Sonraki →", "admin-page:1", "ghost", (adminPage + 1) * perPage >= all.length ? "disabled" : "")}</div></section>`;
 }
 function render() {
@@ -1069,9 +1070,7 @@ function attachRoomForm() {
     e.preventDefault();
     const data = new FormData(form);
     const name = String(data.get("name") ?? "").trim();
-    const code = String(data.get("code") ?? "")
-      .trim()
-      .toUpperCase();
+    const room = String(data.get("room") ?? "").trim();
     const button = form.querySelector<HTMLButtonElement>(
       "button[type=submit]",
     )!;
@@ -1080,15 +1079,15 @@ function attachRoomForm() {
       document.querySelector("#room-error")!.textContent = message;
       button.disabled = false;
     };
+    if (roomSlug(room).length < 2)
+      return fail("Oda adını yazın (en az 2 harf ya da rakam).");
     if (!name) return fail("Oyuncu adını yazın.");
-    if (roomIntent === "join" && code.length < 4)
-      return fail("Oda kodunu yazın (4-8 karakter).");
     button.disabled = true;
     roomError = "";
     const result =
       roomIntent === "create"
-        ? await createRoom(name)
-        : await joinRoom(code, name);
+        ? await createRoom(room, name)
+        : await joinRoom(room, name);
     if ("error" in result) return fail(result.error);
     try {
       localStorage.setItem("yesil-last-name", name);
@@ -1139,7 +1138,7 @@ function updateRoomBar() {
   const ranked = rankPlayers(roomInfo.players);
   const place = ranked.findIndex((p) => p.id === roomSession!.playerId) + 1;
   const leader = ranked[0];
-  roomBar.textContent = `Oda ${roomInfo.code} · ${place}. / ${ranked.length}${leader ? ` · lider ${leader.name} ${fmt(leader.score)}` : ""}`;
+  roomBar.textContent = `Oda ${roomInfo.title} · ${place}. / ${ranked.length}${leader ? ` · lider ${leader.name} ${fmt(leader.score)}` : ""}`;
 }
 function rankingMarkup(): string {
   if (!roomInfo || !roomSession) return "";
@@ -1909,7 +1908,7 @@ async function action(action: string) {
       break;
     case "room-ranking":
       showModal(
-        `<p class="eyebrow">ODA ${esc(roomInfo?.code ?? "")}</p><h2 id="dialog-title">Canlı sıralama</h2>${rankingMarkup()}${btn("KAPAT", "close", "primary")}`,
+        `<p class="eyebrow">ODA ${esc(roomInfo?.title ?? "")}</p><h2 id="dialog-title">Canlı sıralama</h2>${rankingMarkup()}${btn("KAPAT", "close", "primary")}`,
       );
       break;
     case "board":
@@ -1983,8 +1982,8 @@ async function action(action: string) {
           ? "Tüm sunucu kayıtları silinsin mi?"
           : "Serbest denemeler silinsin mi?",
         arg === "all"
-          ? "Resmî ve serbest tüm sonuçlar ortak tablodan silinir. Geri alınamaz; önce CSV indirin."
-          : "Serbest deneme sonuçlarının hepsi ortak tablodan silinir. Resmî sonuçlar kalır.",
+          ? "Süreli ve serbest tüm sonuçlar ortak tablodan silinir. Geri alınamaz; önce CSV indirin."
+          : "Serbest deneme sonuçlarının hepsi ortak tablodan silinir. Süreli sonuçlar kalır.",
         `rbulk-confirm:${arg}`,
         "SİL",
       );
