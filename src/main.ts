@@ -539,7 +539,7 @@ function confirmAction(
 
 function hud() {
   const s = db.active!;
-  return `<header class="hud simple-hud"><div class="hud-brand"><small>DÖNEM</small><b>${s.round} / 4</b></div><div class="meters"><div class="meter cash"><small>KALAN PARA</small><strong id="budget-value">${fmtMoney(s.budget)}</strong></div><div class="meter score"><small>SKOR</small><strong id="score-value">${fmt(score(s))}</strong></div></div>${btn(soundEnabled() ? "Ses açık" : "Ses kapalı", "sound", "ghost sound-toggle")}${btn("?", "help", "ghost help-button", 'aria-label="Oyun rehberi"')}</header>`;
+  return `<header class="hud simple-hud"><div class="hud-brand"><small>DÖNEM</small><b>${s.round} / 4</b></div><div class="meters"><div class="meter cash"><small>KALAN PARA</small><strong id="budget-value">${fmtMoney(s.budget)}</strong></div><div class="meter score"><small>SKOR</small><strong id="score-value">${fmt(score(s))}</strong></div></div>${view === "map" && s.decisionVersion === 1 ? btn("Oyunu bitir ve kaydet", "finish-now", "ghost hud-finish") : ""}${btn(soundEnabled() ? "Ses açık" : "Ses kapalı", "sound", "ghost sound-toggle")}${btn("?", "help", "ghost help-button", 'aria-label="Oyun rehberi"')}</header>`;
 }
 function readyProduct() {
   const s = db.active!;
@@ -547,7 +547,7 @@ function readyProduct() {
     .map(productById)
     .find((p) => p.room === s.room && offeredProduct(p));
 }
-function footer() {
+function footer(picks = "", picksClass = "") {
   const s = db.active!;
   let label = "DEVAM ET",
     action = "end",
@@ -601,8 +601,12 @@ function footer() {
   }
   // On the map the player can also end the whole game and save the score.
   if (view === "map" && s.decisionVersion === 1)
-    secondary += btn("Oyunu bitir ve kaydet", "finish-now", "ghost quiet-end");
-  return `<nav class="nav-footer contextual-footer" aria-label="Sonraki adım"><div class="contextual-action">${hint ? `<p>${esc(hint)}</p>` : ""}<div class="actions">${btn(label, action, "primary")}${secondary}</div></div></nav>`;
+    secondary += btn(
+      "Oyunu bitir ve kaydet",
+      "finish-now",
+      "ghost quiet-end portrait-only",
+    );
+  return `<nav class="nav-footer contextual-footer" aria-label="Sonraki adım">${picks ? `<div class="mobile-picks ${picksClass}" role="group" aria-label="Seçenekler">${picks}</div>` : ""}<div class="contextual-action">${hint ? `<p>${esc(hint)}</p>` : ""}<div class="actions">${btn(label, action, "primary")}${secondary}</div></div></nav>`;
 }
 function inventory() {
   const s = db.active!;
@@ -644,7 +648,19 @@ function mapScreen() {
     )
     .join(
       "",
-    )}<div class="map-hint">Bir odaya dokunun, birlikte başlayalım.</div></section>${footer()}${inventoryOpen ? inventory() : ""}`;
+    )}<div class="map-hint">Bir odaya dokunun, birlikte başlayalım.</div></section>${footer(
+    rooms
+      .filter((r) => r.id !== "waste")
+      .map((r) =>
+        btn(
+          `${r.zones.some((z) => zoneResolved(s, r.id, z.id)) ? "✓ " : ""}${r.name}${r.round > s.round ? `<small>${r.round}. dönemde açılır</small>` : ""}`,
+          `room:${r.id}`,
+          `room-card ${r.round > s.round ? "locked" : ""}`,
+        ),
+      )
+      .join(""),
+    "rooms",
+  )}${inventoryOpen ? inventory() : ""}`;
 }
 function roomScreen() {
   const s = db.active!,
@@ -664,7 +680,19 @@ function marketScreen() {
     })
     .join(
       "",
-    )}${existing ? `<aside class="existing-choice"><b>Odadaki eski ampul hâlâ çalışıyor.</b><p>Yeni ürün almadan kullanmaya devam edebilirsin.</p>${btn("ESKİ AMPULLE DEVAM ET · ₺0", `keep-existing:${existing}`, "ghost")}</aside>` : ""}${!ps.length ? '<div class="market-empty"><p>Burada bekleyen bir seçim yok. Odaya dönebilirsin.</p></div>' : ""}</section>${footer()}`;
+    )}${existing ? `<aside class="existing-choice"><b>Odadaki eski ampul hâlâ çalışıyor.</b><p>Yeni ürün almadan kullanmaya devam edebilirsin.</p>${btn("ESKİ AMPULLE DEVAM ET · ₺0", `keep-existing:${existing}`, "ghost")}</aside>` : ""}${!ps.length ? '<div class="market-empty"><p>Burada bekleyen bir seçim yok. Odaya dönebilirsin.</p></div>' : ""}</section>${footer(
+    ps
+      .map((p) =>
+        btn(
+          `${art(p.asset)}<b>${esc(p.name)}</b><small>${priceLabel(p.id, p.price)}</small>`,
+          `inspect:${p.id}`,
+          "market-card",
+          `aria-label="${esc(p.name)}, ${priceLabel(p.id, p.price)}. İncele."`,
+        ),
+      )
+      .join(""),
+    ps.length === 2 ? "two" : "three",
+  )}`;
 }
 function summaryScreen() {
   const s = db.active!,
@@ -2043,13 +2071,17 @@ function attachSortDrag() {
           dialog.append(ghost);
           piece.classList.add("dragging");
         }
-        // Near the dialog edge, scroll so every bag stays reachable.
-        const edge = dialog.getBoundingClientRect();
-        if (ev.clientY > edge.bottom - 50) dialog.scrollTop += 14;
-        else if (ev.clientY < edge.top + 50) dialog.scrollTop -= 14;
         ghost.style.left = `${ev.clientX}px`;
         ghost.style.top = `${ev.clientY}px`;
-        hover(targetAt(ev.clientX, ev.clientY));
+        const under = targetAt(ev.clientX, ev.clientY);
+        hover(under);
+        // Scroll only while no bag is under the finger, otherwise the bag would
+        // slide away just as it is being aimed at.
+        if (!under) {
+          const edge = dialog.getBoundingClientRect();
+          if (ev.clientY > edge.bottom - 40) dialog.scrollTop += 10;
+          else if (ev.clientY < edge.top + 40) dialog.scrollTop -= 10;
+        }
       };
       const end = async (ev: PointerEvent) => {
         if (ev.pointerId !== e.pointerId) return;

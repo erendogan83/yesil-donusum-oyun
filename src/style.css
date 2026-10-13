@@ -1219,7 +1219,7 @@ dialog .actions {
     width: 100vw;
     height: 100dvh;
     aspect-ratio: auto;
-    min-height: 600px;
+    min-height: 520px;
   }
   #game {
     top: 16%;
@@ -3329,4 +3329,240 @@ dialog .actions {
 .submit-status {
   margin: 10px 0 4px;
   font-weight: 700;
+}
+
+/* Portrait phones: rooms and shelf products become big cards above the footer buttons.
+   The picture-anchored hit areas stay for landscape/desktop only. */
+.mobile-picks {
+  display: none;
+}
+@media (max-aspect-ratio: 1/1) {
+  .hotspot,
+  .market-product,
+  .map-hint {
+    display: none !important;
+  }
+  .nav-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    bottom: 2%;
+  }
+  .nav-footer > * {
+    pointer-events: auto;
+  }
+  .mobile-picks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .mobile-picks.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .room-card {
+    min-height: 46px;
+    padding: 6px 8px;
+    font-size: 14px;
+    line-height: 1.2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #2b3a25f2;
+  }
+  .room-card small {
+    font-size: 11px;
+    color: #ddd4bc;
+  }
+  .room-card.locked {
+    opacity: 0.7;
+  }
+  .market-card {
+    min-height: 116px;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 13px;
+    line-height: 1.2;
+    background: #2b3a25f2;
+  }
+  .market-card img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
+  .market-card small {
+    font-size: 14px;
+    color: var(--gold);
+  }
+  .contextual-action .actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .contextual-action .quiet-end {
+    font-size: 13px;
+    min-height: 40px;
+    padding: 0.5em 0.9em;
+  }
+}
+
+/* "Finish and save": in the footer on portrait, in the top bar otherwise (the footer
+   would sit on top of the Depo label on the landscape map). */
+.portrait-only {
+  display: none;
+}
+.hud-finish {
+  min-height: 40px;
+  font-size: 13px;
+  padding: 0.4em 0.9em;
+}
+@media (max-aspect-ratio: 1/1) {
+  .portrait-only {
+    display: inline-flex;
+  }
+  .hud-finish {
+    display: none;
+  }
+}
+
+/* Short landscape phones: keep the map labels from overlapping. */
+@media (min-aspect-ratio: 1/1) and (max-height: 520px) {
+  .hotspot {
+    font-size: 11px;
+    padding: 4px 8px;
+    min-height: 36px;
+    white-space: normal;
+    max-width: 16%;
+    line-height: 1.15;
+  }
+  .hotspot small {
+    display: block;
+    margin: 0;
+    font-size: 9px;
+  }
+  .hotspot .dot {
+    display: none;
+  }
+}
+
+/* Very small portrait screens: shrink the cards so the footer buttons stay on screen. */
+@media (max-aspect-ratio: 1/1) and (max-height: 700px) {
+  .contextual-action p {
+    display: none;
+  }
+  .nav-footer {
+    gap: 6px;
+    bottom: 1.5%;
+  }
+  .mobile-picks {
+    gap: 6px;
+  }
+  .room-card {
+    min-height: 38px;
+    font-size: 13px;
+    padding: 4px 6px;
+  }
+  .room-card small {
+    display: none;
+  }
+  .room-card.locked::after {
+    content: "🔒";
+    font-size: 11px;
+  }
+  .market-card {
+    min-height: 92px;
+  }
+  .market-card img {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Narrow portrait: the sorting dialog is a tidy grid and drops the long intro text. */
+@media (max-aspect-ratio: 1/1) and (max-width: 480px) {
+  .sorting-dialog .eyebrow,
+  .sorting-dialog h2 + p,
+  .sorting-dialog .subtle {
+    display: none;
+  }
+  .sorting-dialog {
+    padding: 14px;
+  }
+  .sorting-dialog h2 {
+    font-size: 22px;
+    margin: 0 0 6px;
+  }
+  .waste-sorting-dialog .sorting-items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    height: auto;
+    gap: 6px;
+    padding: 8px;
+  }
+  .waste-sorting-dialog .sorting-piece {
+    position: static;
+    transform: none;
+    width: auto;
+    min-height: 92px;
+  }
+}
+
+/* Keep the finish button at the right edge, next to sound/help. */
+.hud-finish {
+  margin-left: auto;
+}
+.hud-finish + .sound-toggle {
+  margin-left: 0;
+}
+/* Very short portrait screens (iPhone SE): three columns, no extra footer button. */
+@media (max-aspect-ratio: 1/1) and (max-height: 640px) {
+  .mobile-picks.rooms {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .room-card {
+    font-size: 12px;
+  }
+  .portrait-only {
+    display: none;
+  }
+}
+
+@media (max-aspect-ratio: 1/1) and (max-height: 640px) {
+  .room-card {
+    min-height: 34px;
+    padding: 2px 4px;
+  }
+  .contextual-action .primary {
+    min-height: 44px;
+    padding: 0.4em 1.2em;
+  }
+  .contextual-action .quiet-end {
+    min-height: 36px;
+  }
+  .nav-footer {
+    bottom: 1%;
+  }
+}
+
+@media (max-aspect-ratio: 1/1) and (max-height: 640px) {
+  .room-card {
+    flex-direction: row;
+    gap: 4px;
+  }
+}
+
+/* Narrow portrait: keep the bags on screen after feedback appears (the feedback line stays). */
+@media (max-aspect-ratio: 1/1) and (max-width: 480px) {
+  .sorting-dialog .sort-mistakes,
+  .sorting-dialog .sort-instruction {
+    display: none;
+  }
+  .sorting-dialog .sort-feedback {
+    margin: 4px 0;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
 }
