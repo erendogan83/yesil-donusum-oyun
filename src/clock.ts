@@ -1,12 +1,17 @@
-// Timed play: 30 seconds per room and period. After that every second costs money while the
-// room still has required steps. Pure functions on State so they are easy to test.
-import { OVERTIME_COST, TIME_LIMIT_S } from "./economy";
+// Timed play: a minute per room and period (TIME_LIMIT_S), with a bonus for finishing early. After the limit
+// every second costs money while the room still has required steps. Pure functions on State.
+import { EARLY_BONUS, OVERTIME_COST, TIME_LIMIT_S } from "./economy";
 import { pendingRooms } from "./navigation";
 import type { State } from "./model";
 
 /** A single settle never credits more than this, so a sleeping tab cannot ruin a game. */
 const MAX_GAP_MS = 60_000;
 const key = (room: string, round: number) => `${room}@${round}`;
+/** The limit in seconds. Browser tests may shorten it with ?qa&limit=N (see main.ts). */
+export const limitSeconds = () => {
+  const v = (globalThis as { __timeLimit?: unknown }).__timeLimit;
+  return typeof v === "number" && v > 0 ? v : TIME_LIMIT_S;
+};
 
 export const isTimed = (s: State) =>
   s.decisionVersion === 1 && s.team.mode !== "practice";
@@ -18,7 +23,8 @@ export function settle(s: State, now: number): State {
   const k = key(run.room, s.round);
   const entry = s.clock?.[k] ?? { ms: 0, charged: 0 };
   const ms = entry.ms + Math.max(0, Math.min(now - run.at, MAX_GAP_MS));
-  const due = Math.max(0, Math.floor(ms / 1000) - TIME_LIMIT_S) - entry.charged;
+  const due =
+    Math.max(0, Math.floor(ms / 1000) - limitSeconds()) - entry.charged;
   const penalty = due > 0 ? Math.min(s.budget, due * OVERTIME_COST) : 0;
   return {
     ...s,
@@ -47,11 +53,18 @@ export function reconcile(s: State, now: number, wanted: string | null): State {
   const run = next.clockRunning;
   if (run && roomIsDone(next, run.room)) {
     const k = key(run.room, next.round);
+    const entry = next.clock?.[k] ?? { ms: 0, charged: 0 };
+    // Finishing early pays for every second left, like a quiz: 10 s early = 10 x 5 = 50 TL.
+    const bonus = entry.done
+      ? 0
+      : Math.max(0, limitSeconds() - Math.floor(entry.ms / 1000)) * EARLY_BONUS;
     next = {
       ...next,
+      budget: next.budget + bonus,
+      timeBonus: (next.timeBonus ?? 0) + bonus,
       clock: {
         ...next.clock,
-        [k]: { ...(next.clock?.[k] ?? { ms: 0, charged: 0 }), done: true },
+        [k]: { ...entry, done: true, bonus },
       },
       clockRunning: null,
     };
@@ -72,6 +85,6 @@ export function clockView(s: State, now: number) {
   const entry = s.clock?.[key(run.room, s.round)] ?? { ms: 0, charged: 0 };
   const ms = entry.ms + Math.max(0, Math.min(now - run.at, MAX_GAP_MS));
   const used = Math.floor(ms / 1000);
-  const left = TIME_LIMIT_S - used;
+  const left = limitSeconds() - used;
   return { left, overtime: Math.max(0, -left), cost: OVERTIME_COST };
 }

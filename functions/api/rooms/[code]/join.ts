@@ -28,7 +28,7 @@ export const onRequestPost: PagesFunction = async ({
   const name = cleanName(read.body.name);
   if (!playerId || !name) return fail(400, "Adınızı yazın.");
   await ensureSchema(e.DB);
-  const room = await roomState(e.DB, code);
+  const room = await roomState(e.DB, code, e, playerId);
   if (!room) return fail(404, "Oda bulunamadı. Kodu kontrol edin.");
   const known = room.players.some((p) => p.id === playerId);
   if (!known) {
@@ -36,9 +36,9 @@ export const onRequestPost: PagesFunction = async ({
       return fail(409, "Bu odada oyun başladı; yeni oyuncu katılamaz.");
     if (room.players.length >= MAX_PLAYERS) return fail(409, "Oda dolu.");
     await e.DB.prepare(
-      "INSERT INTO room_players (room_code, player_id, name, joined_at) VALUES (?, ?, ?, ?)",
+      "INSERT INTO room_players (room_code, player_id, name, joined_at, last_seen) VALUES (?, ?, ?, ?, ?)",
     )
-      .bind(code, playerId, name, Date.now())
+      .bind(code, playerId, name, Date.now(), Date.now())
       .run();
   } else {
     await e.DB.prepare(
@@ -47,5 +47,5 @@ export const onRequestPost: PagesFunction = async ({
       .bind(name, code, playerId)
       .run();
   }
-  return json({ ok: true, room: await roomState(e.DB, code) });
+  return json({ ok: true, room: await roomState(e.DB, code, e, playerId) });
 };

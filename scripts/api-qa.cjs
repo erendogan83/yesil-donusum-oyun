@@ -307,6 +307,123 @@ const pid = (n) => `player-${String(n).padStart(4, "0")}-xxxx`;
     "finished",
   );
 
+  // ---- host hand-over (needs HOST_START_MS=12000 and PRESENT_MS=6000 in .dev.vars)
+  const get = async (code, as) =>
+    (
+      await (
+        await fetch(`${base}/api/rooms/${code}${as ? "?p=" + as : ""}`)
+      ).json()
+    ).room;
+  const newRoom = async (h, g) => {
+    const created = (
+      await (await post("/api/rooms", { playerId: h, name: "A" })).json()
+    ).room;
+    await post(`/api/rooms/${created.code}/join`, { playerId: g, name: "B" });
+    return created.code;
+  };
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const [a, b, c] = [pid(11), pid(12), pid(13)];
+
+  // Leaving the lobby: the host role moves to the next player in join order.
+  let code = await newRoom(a, b);
+  await post(`/api/rooms/${code}/join`, { playerId: c, name: "C" });
+  assert.equal((await get(code)).hostId, a);
+  assert.equal(
+    (await (await post(`/api/rooms/${code}/leave`, { playerId: a })).json())
+      .room.hostId,
+    b,
+  );
+  let state = await get(code, b);
+  assert.deepEqual(
+    state.players.map((p) => p.id).sort(),
+    [b, c].sort(),
+    "the seat is freed in the lobby",
+  );
+  assert.equal(
+    (await post(`/api/rooms/${code}/start`, { playerId: a })).status,
+    403,
+    "the old host cannot start",
+  );
+  await post(`/api/rooms/${code}/leave`, { playerId: b });
+  assert.equal((await get(code, c)).hostId, c, "and on to the next one");
+  await post(`/api/rooms/${code}/leave`, { playerId: c });
+  assert.equal(
+    (await fetch(`${base}/api/rooms/${code}`)).status,
+    404,
+    "an empty room is deleted",
+  );
+
+  // A host who does not start in time loses the role (HOST_START_MS = 12 s).
+  code = await newRoom(a, b);
+  await sleep(6_500);
+  state = await get(code, a);
+  assert.equal(state.hostId, a, "still the host before the deadline");
+  await get(code, b);
+  await sleep(6_000); // now more than 12 s since the host took over
+  await get(code, a); // both players are present (they polled just now)
+  await get(code, b);
+  state = await get(code, b);
+  assert.equal(
+    state.hostId,
+    b,
+    "the next player became host after the deadline",
+  );
+  assert(state.hostSince > Date.now() - 3_000, "and gets a fresh deadline");
+  assert.equal(
+    (await post(`/api/rooms/${code}/start`, { playerId: a })).status,
+    403,
+  );
+  assert.equal(
+    (await post(`/api/rooms/${code}/start`, { playerId: b })).status,
+    200,
+  );
+
+  // A silent host (closed the tab) also loses the role, after PRESENT_MS = 6 s.
+  code = await newRoom(a, b);
+  for (let i = 0; i < 4; i++) {
+    await sleep(2_000);
+    await get(code, b); // only the guest keeps polling
+  }
+  state = await get(code, b);
+  assert.equal(state.hostId, b, "a silent host is replaced");
+  assert.equal(state.players.find((p) => p.id === a).present, false);
+
+  // During a game, a player who disappeared does not keep the room "running".
+  code = await newRoom(a, b);
+  await post(`/api/rooms/${code}/start`, { playerId: a });
+  await post(`/api/rooms/${code}/score`, {
+    playerId: b,
+    score: 700,
+    round: 4,
+    finished: true,
+  });
+  await post(`/api/rooms/${code}/score`, {
+    playerId: a,
+    score: 100,
+    round: 1,
+    finished: false,
+  });
+  assert.equal(
+    (await get(code, b)).status,
+    "playing",
+    "a is present and still playing",
+  );
+  for (let i = 0; i < 4; i++) {
+    await sleep(2_000);
+    await get(code, b);
+  }
+  state = await get(code, b);
+  assert.equal(
+    state.status,
+    "finished",
+    "the missing player no longer blocks the result",
+  );
+  assert.deepEqual(
+    state.players.map((p) => p.id),
+    [b, a],
+    "but stays in the ranking",
+  );
+
   // A full reset also removes rooms.
   await fetch(`${base}/api/results?mode=all`, {
     method: "DELETE",

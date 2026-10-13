@@ -26,7 +26,8 @@ export const onRequestPost: PagesFunction = async ({
   if (read.error) return read.error;
   const playerId = cleanPlayerId(read.body.playerId);
   await ensureSchema(e.DB);
-  const room = await roomState(e.DB, code);
+  // Reading the state first hands the host role on if the host was too slow or is gone.
+  const room = await roomState(e.DB, code, e, playerId);
   if (!room) return fail(404, "Oda bulunamadı.");
   if (!playerId || room.hostId !== playerId)
     return fail(403, "Oyunu yalnızca odayı kuran başlatabilir.");
@@ -36,5 +37,5 @@ export const onRequestPost: PagesFunction = async ({
     )
       .bind(Date.now() + COUNTDOWN_MS, code)
       .run();
-  return json({ ok: true, room: await roomState(e.DB, code) });
+  return json({ ok: true, room: await roomState(e.DB, code, e, playerId) });
 };

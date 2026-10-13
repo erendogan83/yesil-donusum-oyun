@@ -28,16 +28,19 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
     if (taken) continue;
     const now = Date.now();
     await e.DB.prepare(
-      "INSERT INTO rooms (code, host_id, status, created_at) VALUES (?, ?, 'lobby', ?)",
+      "INSERT INTO rooms (code, host_id, status, created_at, host_since) VALUES (?, ?, 'lobby', ?, ?)",
     )
-      .bind(code, playerId, now)
+      .bind(code, playerId, now, now)
       .run();
     await e.DB.prepare(
-      "INSERT INTO room_players (room_code, player_id, name, joined_at) VALUES (?, ?, ?, ?)",
+      "INSERT INTO room_players (room_code, player_id, name, joined_at, last_seen) VALUES (?, ?, ?, ?, ?)",
     )
-      .bind(code, playerId, name, now)
+      .bind(code, playerId, name, now, now)
       .run();
-    return json({ ok: true, room: await roomState(e.DB, code) }, 201);
+    return json(
+      { ok: true, room: await roomState(e.DB, code, e, playerId) },
+      201,
+    );
   }
   return fail(503, "Oda kodu üretilemedi, tekrar deneyin.");
 };

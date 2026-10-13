@@ -1,5 +1,6 @@
 // Rooms: one player creates a room, others join with the code, the host starts and everybody
-// plays the same timed game at once with a live ranking. Run against `npm run dev:cf`.
+// plays the same timed game at once with a live ranking. When the host leaves, the role moves
+// to the next player. Needs HOST_START_MS=12000 and PRESENT_MS=6000 in .dev.vars.
 const { chromium } = require("playwright");
 const assert = require("node:assert/strict");
 const base = process.env.API_URL || "http://127.0.0.1:8788";
@@ -37,21 +38,36 @@ const token = process.env.ADMIN_TOKEN || "secret123";
     await page.goto(base);
     return { name, page, click, state };
   };
+  const leaver = await player("Ayrılan");
   const host = await player("Kurucu");
   const guest = await player("Misafir");
   const late = await player("Geç");
 
   // ---- create and join
-  await host.click("room-create");
+  await leaver.click("room-create");
+  await leaver.page.locator("#room-name").fill("Ayrılan");
+  await leaver.page.locator('[type="submit"]').click();
+  await leaver.page.locator(".room-code").waitFor();
+  const code = (await leaver.page.locator(".room-code").innerText()).trim();
+  assert.match(code, /^[A-Z0-9]{5}$/);
+  assert.equal(
+    await leaver.page.locator('[data-action="room-start"]').count(),
+    1,
+    "the creator sees the start button",
+  );
+  assert.match(
+    await leaver.page.locator("#host-timer").innerText(),
+    /başlatmak için/,
+  );
+  await host.click("room-join");
+  await host.page.locator("#room-code").fill(code);
   await host.page.locator("#room-name").fill("Kurucu");
   await host.page.locator('[type="submit"]').click();
   await host.page.locator(".room-code").waitFor();
-  const code = (await host.page.locator(".room-code").innerText()).trim();
-  assert.match(code, /^[A-Z0-9]{5}$/);
   assert.equal(
     await host.page.locator('[data-action="room-start"]').count(),
-    1,
-    "host sees the start button",
+    0,
+    "the second player is not the host yet",
   );
 
   // A wrong code is explained, not silently ignored.
@@ -78,11 +94,30 @@ const token = process.env.ADMIN_TOKEN || "secret123";
   );
   assert.match(await guest.page.locator(".lobby").innerText(), /bekleniyor/);
 
-  // The host's lobby fills in by itself.
+  // The creator leaves: the next player in line becomes the host.
+  await host.page.waitForFunction(
+    () => document.querySelectorAll(".player-list li").length === 3,
+    null,
+    { timeout: 8000 },
+  );
+  await leaver.click("room-leave");
+  await host.page
+    .locator('[data-action="room-start"]')
+    .waitFor({ timeout: 8000 });
+  assert.match(
+    await host.page.locator("#status").innerText(),
+    /kurucu/i,
+    "the new host is told",
+  );
   await host.page.waitForFunction(
     () => document.querySelectorAll(".player-list li").length === 2,
     null,
     { timeout: 8000 },
+  );
+  assert.equal(
+    await guest.page.locator('[data-action="room-start"]').count(),
+    0,
+    "guests still cannot start",
   );
 
   // ---- start: everyone gets the same countdown, then the game

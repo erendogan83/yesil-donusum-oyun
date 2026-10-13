@@ -25,7 +25,6 @@ const base = process.env.GAME_URL || "http://127.0.0.1:5174";
   };
   await page.goto(base);
   await click(page, "new");
-  await page.locator("#organization").fill("Dayanıklılık Testi");
   await page.locator("#first").fill("Deneme");
   await page.evaluate(() => {
     window.originalSetItem = Storage.prototype.setItem;
@@ -33,9 +32,7 @@ const base = process.env.GAME_URL || "http://127.0.0.1:5174";
       throw new DOMException("quota", "QuotaExceededError");
     };
   });
-  if (!(await page.locator("#second").inputValue()))
-    await page.locator("#second").fill("Test 2");
-  await page.getByRole("button", { name: "BİRLİKTE BAŞLAYALIM →" }).click();
+  await page.getByRole("button", { name: "BAŞLAYALIM →" }).click();
   await page
     .getByText("Kayıt için yer açılamadı. Son işlem uygulanmadı.", {
       exact: true,
@@ -49,9 +46,7 @@ const base = process.env.GAME_URL || "http://127.0.0.1:5174";
   await page.evaluate(() => {
     Storage.prototype.setItem = window.originalSetItem;
   });
-  if (!(await page.locator("#second").inputValue()))
-    await page.locator("#second").fill("Test 2");
-  await page.getByRole("button", { name: "BİRLİKTE BAŞLAYALIM →" }).click();
+  await page.getByRole("button", { name: "BAŞLAYALIM →" }).click();
   await click(page, "tutorial-done");
   const peer = await context.newPage();
   await peer.goto(base);

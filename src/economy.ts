@@ -7,7 +7,9 @@ export const FINAL_SALES_INCOME = 7_500;
 export const ROUND_REWARD_CAP = 500;
 export const LARGE_PURCHASE_SHARE = 0.3;
 /** Timed play (official and room games): seconds allowed per room and period. */
-export const TIME_LIMIT_S = 30;
+export const TIME_LIMIT_S = 60;
+/** Earned for every second left on the clock when a room is finished early. */
+export const EARLY_BONUS = 5;
 /** Charged for every second beyond the limit while the room is still unfinished. */
 export const OVERTIME_COST = 5;
 /** Charged once per item whose first sorting answer is wrong. */

@@ -12,6 +12,9 @@ export interface D1 {
 export interface Env {
   DB?: D1;
   ADMIN_TOKEN?: string;
+  /** Test overrides (milliseconds) for the host start deadline and the "still here" window. */
+  HOST_START_MS?: string;
+  PRESENT_MS?: string;
 }
 export type Mode = "official" | "practice" | "room";
 export interface GameRow {
@@ -46,10 +49,20 @@ export async function ensureSchema(db: D1) {
     "CREATE TABLE IF NOT EXISTS games (id TEXT PRIMARY KEY, name TEXT NOT NULL, mode TEXT NOT NULL, room TEXT, score INTEGER NOT NULL, bill REAL NOT NULL, budget REAL NOT NULL, saving_percent REAL NOT NULL, rules_version INTEGER NOT NULL, completed_at TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)",
     "CREATE INDEX IF NOT EXISTS ix_games_rank ON games(mode, score DESC)",
     "CREATE INDEX IF NOT EXISTS ix_games_room ON games(room)",
-    "CREATE TABLE IF NOT EXISTS rooms (code TEXT PRIMARY KEY, host_id TEXT NOT NULL, status TEXT NOT NULL, created_at INTEGER NOT NULL, started_at INTEGER)",
-    "CREATE TABLE IF NOT EXISTS room_players (room_code TEXT NOT NULL, player_id TEXT NOT NULL, name TEXT NOT NULL, joined_at INTEGER NOT NULL, score INTEGER NOT NULL DEFAULT 0, round INTEGER NOT NULL DEFAULT 1, finished INTEGER NOT NULL DEFAULT 0, finished_at INTEGER, PRIMARY KEY (room_code, player_id))",
+    "CREATE TABLE IF NOT EXISTS rooms (code TEXT PRIMARY KEY, host_id TEXT NOT NULL, status TEXT NOT NULL, created_at INTEGER NOT NULL, started_at INTEGER, host_since INTEGER NOT NULL DEFAULT 0)",
+    "CREATE TABLE IF NOT EXISTS room_players (room_code TEXT NOT NULL, player_id TEXT NOT NULL, name TEXT NOT NULL, joined_at INTEGER NOT NULL, score INTEGER NOT NULL DEFAULT 0, round INTEGER NOT NULL DEFAULT 1, finished INTEGER NOT NULL DEFAULT 0, finished_at INTEGER, last_seen INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (room_code, player_id))",
   ])
     await db.prepare(sql).run();
+  // Tables created by an earlier deployment lack the newer columns.
+  for (const sql of [
+    "ALTER TABLE rooms ADD COLUMN host_since INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE room_players ADD COLUMN last_seen INTEGER NOT NULL DEFAULT 0",
+  ])
+    try {
+      await db.prepare(sql).run();
+    } catch {
+      /* The column already exists. */
+    }
   ready = true;
 }
 
@@ -157,42 +170,108 @@ export interface RoomPlayerRow {
   score: number;
   round: number;
   finished: number;
+  joined_at: number;
+  last_seen: number;
 }
 export const STALE_ROOM_MS = 24 * 3600 * 1000;
+/** A host who has not started the game within a minute loses the role to the next player. */
+export const DEFAULT_HOST_START_MS = 60_000;
+/** A player who has not been heard from for this long is treated as gone. */
+export const DEFAULT_PRESENT_MS = 20_000;
+const ms = (value: string | undefined, fallback: number) => {
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+};
 
-/** Public view of a room; "finished" once every player has finished. */
-export async function roomState(db: D1, code: string) {
+interface RoomRow {
+  code: string;
+  host_id: string;
+  status: string;
+  created_at: number;
+  started_at: number | null;
+  host_since: number;
+}
+
+/**
+ * Public view of a room. Along the way it hands the host role on: when the host has left,
+ * has gone silent, or did not start the game in time, the next present player (in join
+ * order) becomes the host. "finished" once every present player has finished.
+ * `viewer` marks the asking player as present.
+ */
+export async function roomState(
+  db: D1,
+  code: string,
+  env: Env = {},
+  viewer?: string | null,
+) {
+  const now = Date.now();
+  const hostStartMs = ms(env.HOST_START_MS, DEFAULT_HOST_START_MS);
+  const presentMs = ms(env.PRESENT_MS, DEFAULT_PRESENT_MS);
   const room = await db
     .prepare("SELECT * FROM rooms WHERE code = ?")
     .bind(code)
-    .first<{
-      code: string;
-      host_id: string;
-      status: string;
-      created_at: number;
-      started_at: number | null;
-    }>();
-  if (!room || Date.now() - room.created_at > STALE_ROOM_MS) return null;
+    .first<RoomRow>();
+  if (!room || now - room.created_at > STALE_ROOM_MS) return null;
+  if (viewer)
+    await db
+      .prepare(
+        "UPDATE room_players SET last_seen = ? WHERE room_code = ? AND player_id = ?",
+      )
+      .bind(now, code, viewer)
+      .run();
   const { results } = await db
     .prepare(
-      "SELECT player_id, name, score, round, finished FROM room_players WHERE room_code = ? ORDER BY score DESC, joined_at ASC",
+      "SELECT player_id, name, score, round, finished, joined_at, last_seen FROM room_players WHERE room_code = ? ORDER BY joined_at ASC",
     )
     .bind(code)
     .all<RoomPlayerRow>();
-  const everyoneDone = results.length > 0 && results.every((p) => p.finished);
+  const present = (p: RoomPlayerRow) => now - p.last_seen <= presentMs;
+
+  let hostId = room.host_id;
+  let hostSince = room.host_since || room.created_at;
+  if (room.status === "lobby") {
+    const host = results.find((p) => p.player_id === hostId);
+    const overdue = now - hostSince > hostStartMs;
+    if (!host || !present(host) || overdue) {
+      // The next present player after the current host, wrapping around.
+      const order = results.filter((p) => present(p) && p.player_id !== hostId);
+      const after = host
+        ? order.find((p) => p.joined_at >= host.joined_at)
+        : undefined;
+      const next = after ?? order[0];
+      if (next) {
+        hostId = next.player_id;
+        hostSince = now;
+        await db
+          .prepare(
+            "UPDATE rooms SET host_id = ?, host_since = ? WHERE code = ?",
+          )
+          .bind(hostId, hostSince, code)
+          .run();
+      }
+    }
+  }
+  const waiting = results.filter((p) => !p.finished && present(p));
+  const everyoneDone = results.some((p) => p.finished) && waiting.length === 0;
+  const ranked = [...results].sort(
+    (a, b) => b.score - a.score || a.joined_at - b.joined_at,
+  );
   return {
     code: room.code,
-    hostId: room.host_id,
+    hostId,
+    hostSince,
+    hostStartMs,
     status:
       room.status === "playing" && everyoneDone ? "finished" : room.status,
     startedAt: room.started_at,
-    now: Date.now(),
-    players: results.map((p) => ({
+    now,
+    players: ranked.map((p) => ({
       id: p.player_id,
       name: p.name,
       score: p.score,
       round: p.round,
       finished: !!p.finished,
+      present: present(p),
     })),
   };
 }

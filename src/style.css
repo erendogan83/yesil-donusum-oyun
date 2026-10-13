@@ -3825,3 +3825,10 @@ dialog .actions {
     max-width: 640px;
   }
 }
+
+.room-ranks li.gone {
+  opacity: 0.55;
+}
+.host-timer b {
+  color: var(--gold);
+}

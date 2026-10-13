@@ -8,11 +8,16 @@ export interface RoomPlayer {
   score: number;
   round: number;
   finished: boolean;
+  /** False once the player left or went silent. */
+  present: boolean;
 }
 export interface RoomState {
   code: string;
   hostId: string;
   status: "lobby" | "playing" | "finished";
+  /** When the current host got the role (server ms) and how long they have to start. */
+  hostSince: number;
+  hostStartMs: number;
   /** Server time (ms) when play begins; null while in the lobby. */
   startedAt: number | null;
   /** Server time when this answer was produced, to correct for clock differences. */
@@ -91,7 +96,9 @@ export const joinRoom = async (code: string, name: string) =>
     }),
   );
 export const fetchRoom = async (code: string) =>
-  fromResponse(await call(`./api/rooms/${code}`));
+  fromResponse(await call(`./api/rooms/${code}?p=${playerId()}`));
+export const leaveRoomApi = async (code: string) =>
+  post(`./api/rooms/${code}/leave`, { playerId: playerId() });
 export const startRoom = async (code: string) =>
   fromResponse(
     await post(`./api/rooms/${code}/start`, { playerId: playerId() }),

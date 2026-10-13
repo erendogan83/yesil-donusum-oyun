@@ -76,11 +76,8 @@ const base = process.env.GAME_URL || "http://127.0.0.1:5174";
   await audit("start");
   await click("new");
   await audit("registration");
-  await page.locator("#organization").fill("Erişilebilirlik Denemesi");
   await page.locator("#first").fill("Test");
-  if (!(await page.locator("#second").inputValue()))
-    await page.locator("#second").fill("Test 2");
-  await page.getByRole("button", { name: "BİRLİKTE BAŞLAYALIM →" }).click();
+  await page.getByRole("button", { name: "BAŞLAYALIM →" }).click();
   await page.locator("#dialog[open]").waitFor();
   await audit("tutorial");
   for (let i = 0; i < 6; i++) await page.keyboard.press("Tab");

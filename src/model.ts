@@ -96,9 +96,14 @@ export interface State {
   considered?: Consideration[];
   realLifePledges?: string[];
   /** Time used per "room@round" in timed games. */
-  clock?: Record<string, { ms: number; charged: number; done?: boolean }>;
+  clock?: Record<
+    string,
+    { ms: number; charged: number; done?: boolean; bonus?: number }
+  >;
   /** The room the clock is currently running for, and since when (epoch ms). */
   clockRunning?: { room: string; at: number } | null;
+  /** Total money earned by finishing rooms early. */
+  timeBonus?: number;
   /** Total money taken for overtime. */
   timePenalty?: number;
 }

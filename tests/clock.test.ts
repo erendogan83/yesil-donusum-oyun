@@ -2,10 +2,11 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { start, validDatabase, emptyDatabase, type State } from "../src/model";
 import { reconcile, settle, isTimed, clockView } from "../src/clock";
-import { skipUnaffordable } from "../src/decisions";
-import { opportunities } from "../src/decisions";
-import { OVERTIME_COST, TIME_LIMIT_S } from "../src/economy";
+import { skipUnaffordable, opportunities } from "../src/decisions";
+import { EARLY_BONUS, OVERTIME_COST, TIME_LIMIT_S } from "../src/economy";
 
+const L = TIME_LIMIT_S;
+const sec = (n: number) => n * 1000;
 const game = (mode: "practice" | "official" | "room" = "official"): State => ({
   ...start({ organization: "", first: "Eren", second: "", mode }),
   decisionVersion: 1,
@@ -14,84 +15,133 @@ const game = (mode: "practice" | "official" | "room" = "official"): State => ({
   tutorial: false,
 });
 const T0 = 1_000_000;
+const kitchenCore = opportunities.filter(
+  (o) => o.core && o.roomId === "kitchen",
+);
+const kitchenDone = (s: State): State => ({
+  ...s,
+  decisions: kitchenCore.map((o) => ({
+    opportunityId: o.id,
+    choiceId: "x",
+    round: 1,
+  })),
+});
+
+test("the limit is a minute and early finishing pays 5 TL a second", () => {
+  assert.equal(TIME_LIMIT_S, 60);
+  assert.equal(EARLY_BONUS, 5);
+  assert.equal(OVERTIME_COST, 5);
+});
 
 test("only official and room games are timed", () => {
   assert(isTimed(game("official")));
   assert(isTimed(game("room")));
   assert(!isTimed(game("practice")));
-  // A practice game never starts a clock.
   assert.equal(
     reconcile(game("practice"), T0, "kitchen").clockRunning ?? null,
     null,
   );
 });
 
-test("30 seconds are free, then every second costs money", () => {
+test("the whole limit is free, then every second costs money", () => {
   let s = reconcile(game(), T0, "kitchen");
   assert.equal(s.clockRunning?.room, "kitchen");
-  // Check in every 10 s (a settle never credits more than a minute).
-  for (let i = 1; i <= 3; i++) s = settle(s, T0 + i * 10_000);
-  assert.equal(s.budget, 2500, "exactly 30 s: nothing charged");
-  s = settle(s, T0 + 35_000);
-  assert.equal(s.budget, 2500 - 5 * OVERTIME_COST, "5 s over the limit");
-  // Settling again at the same moment never charges twice.
-  assert.equal(settle(s, T0 + 35_000).budget, s.budget);
-  s = settle(s, T0 + 36_000);
+  // A single settle never credits more than a minute, so check in every 10 s.
+  for (let t = 10; t <= L; t += 10) s = settle(s, T0 + sec(t));
+  assert.equal(s.budget, 2500, "exactly the limit: nothing charged");
+  s = settle(s, T0 + sec(L + 5));
+  assert.equal(s.budget, 2500 - 5 * OVERTIME_COST);
+  assert.equal(
+    settle(s, T0 + sec(L + 5)).budget,
+    s.budget,
+    "never charged twice",
+  );
+  s = settle(s, T0 + sec(L + 6));
   assert.equal(s.budget, 2500 - 6 * OVERTIME_COST);
   assert.equal(s.timePenalty, 6 * OVERTIME_COST);
 });
 
+test("finishing a room early earns 5 TL for every second left", () => {
+  let s = reconcile(game(), T0, "kitchen");
+  s = reconcile(kitchenDone(s), T0 + sec(L - 10), "kitchen"); // 10 s early
+  assert.equal(s.budget, 2500 + 10 * EARLY_BONUS, "10 s early = 50 TL");
+  assert.equal(s.timeBonus, 50);
+  assert.equal(s.clockRunning ?? null, null);
+  // Checking again, or coming back, never pays twice.
+  const again = reconcile(s, T0 + sec(L + 30), "kitchen");
+  assert.equal(again.budget, s.budget);
+  assert.equal(again.timeBonus, 50);
+});
+
+test("no bonus after the limit; the fastest possible room pays the whole limit", () => {
+  let late = reconcile(game(), T0, "kitchen");
+  for (let t = 10; t <= L + 10; t += 10) late = settle(late, T0 + sec(t));
+  late = reconcile(kitchenDone(late), T0 + sec(L + 10), "kitchen");
+  assert.equal(late.timeBonus ?? 0, 0);
+  assert(late.budget < 2500, "overtime was charged");
+  const fast = reconcile(
+    kitchenDone(reconcile(game(), T0, "kitchen")),
+    T0,
+    "kitchen",
+  );
+  assert.equal(fast.timeBonus, L * EARLY_BONUS);
+});
+
+test("practice games get no bonus", () => {
+  const practice = reconcile(kitchenDone(game("practice")), T0, "kitchen");
+  assert.equal(practice.timeBonus ?? 0, 0);
+  assert.equal(practice.budget, 2500);
+});
+
 test("the clock is per room and period, and leaving a room pauses it", () => {
   let s = reconcile(game(), T0, "kitchen");
-  s = reconcile(s, T0 + 20_000, null); // went to the map
+  s = reconcile(s, T0 + sec(20), null); // went to the map
   assert.equal(s.clockRunning ?? null, null);
-  s = reconcile(s, T0 + 50_000, "kitchen"); // 30 s pass on the map without cost
+  s = reconcile(s, T0 + sec(50), "kitchen"); // time on the map is free
   assert.equal(s.budget, 2500);
-  s = reconcile(s, T0 + 60_000, "kitchen"); // 20 + 10 s used: exactly the limit
+  s = reconcile(s, T0 + sec(50 + L - 20), "kitchen"); // 20 + (L-20) s: the limit
   assert.equal(s.budget, 2500);
-  s = reconcile(s, T0 + 62_000, "kitchen");
+  s = reconcile(s, T0 + sec(50 + L - 18), "kitchen");
   assert.equal(s.budget, 2500 - 2 * OVERTIME_COST);
-  // Another room starts with a fresh 30 seconds.
-  s = reconcile(s, T0 + 62_000, "bathroom");
+  // Another room starts with a fresh limit.
+  s = reconcile(s, T0 + sec(50 + L - 18), "bathroom");
   assert.equal(s.clockRunning?.room, "bathroom");
   const before = s.budget;
-  s = reconcile(s, T0 + 80_000, "bathroom");
+  s = reconcile(s, T0 + sec(50 + L - 18 + 20), "bathroom");
   assert.equal(s.budget, before);
 });
 
 test("money never goes below zero", () => {
   let s = { ...reconcile(game(), T0, "kitchen"), budget: 12 };
-  for (let t = 1; t <= 12; t++) s = settle(s, T0 + t * 10_000);
+  for (let t = 1; t <= 20; t++) s = settle(s, T0 + t * sec(10));
   assert.equal(s.budget, 0);
   assert(validDatabase({ ...emptyDatabase(), active: s }));
 });
 
-test("a long gap (sleeping tab) is capped", () => {
+test("a long gap (sleeping tab) is capped at a minute", () => {
   const s = settle(reconcile(game(), T0, "kitchen"), T0 + 3_600_000);
-  assert(s.budget >= 2500 - 31 * OVERTIME_COST, "at most 60 s are counted");
+  assert.equal(s.budget, 2500, "a minute is still within the limit");
 });
 
 test("the clock stops once the room has no required step left", () => {
-  const core = opportunities.filter((o) => o.core && o.roomId === "kitchen");
-  const s0 = reconcile(game(), T0, "kitchen");
-  const done = {
-    ...s0,
-    decisions: core.map((o) => ({
-      opportunityId: o.id,
-      choiceId: "x",
-      round: 1,
-    })),
-  };
-  const s = reconcile(done, T0 + 10_000, "kitchen");
+  const s = reconcile(
+    kitchenDone(reconcile(game(), T0, "kitchen")),
+    T0 + sec(10),
+    "kitchen",
+  );
   assert.equal(s.clockRunning ?? null, null);
-  // Coming back does not restart a finished room.
-  assert.equal(reconcile(s, T0 + 20_000, "kitchen").clockRunning ?? null, null);
+  assert.equal(
+    reconcile(s, T0 + sec(20), "kitchen").clockRunning ?? null,
+    null,
+  );
 });
 
 test("clockView counts down and then reports overtime", () => {
   const s = reconcile(game(), T0, "kitchen");
-  assert.equal(clockView(s, T0 + 10_000)?.left, TIME_LIMIT_S - 10);
-  const late = clockView(s, T0 + 40_000)!;
+  assert.equal(clockView(s, T0 + sec(10))?.left, L - 10);
+  // The game settles every few seconds; a minute later the view shows overtime.
+  const later = settle(s, T0 + sec(L));
+  const late = clockView(later, T0 + sec(L + 10))!;
   assert.equal(late.left, -10);
   assert.equal(late.overtime, 10);
 });

@@ -20,12 +20,14 @@ Alternatif: `node serve.mjs`. `dist/` depoda tutulmaz; ilk çalıştırmada BASL
 - Ürün: sorunu gör → markette incele → satın al → otomatik odaya dön → yerleştir → ANLADIM.
 - Atık ve çamaşır ayırma: nesneyi hedefe sürükleyip bırak (ya da nesneye, sonra hedefe dokun). Yanlış hedef bırakılabilir:
   ilk yanlış eşleştirme ₺50 krediden götürür ve o nesnenin puanını da götürür; tekrar denemek ücretsizdir ama puan getirmez.
-- **Süreli yarışma (Resmî):** her odada 30 saniye vardır; süre dolduğunda oda bitmemişse her saniye bütçeden ₺5 düşer
-  (bütçe sıfırın altına inmez). Süre yalnızca oda/market içinde işler; haritada ve öğrenme kartı açıkken durur.
+- **Süreli yarışma (Resmî):** her odada 60 saniye vardır. Odayı erken bitirene her artan saniye için ₺5 bonus yazılır
+  (10 sn erken = ₺50). Süre dolduğunda oda bitmemişse her saniye bütçeden ₺5 düşer (bütçe sıfırın altına inmez). Süre yalnızca oda/market içinde işler; haritada ve öğrenme kartı açıkken durur.
   Bütçe artık hiçbir seçeneğe yetmiyorsa gerekli satın alma adımı "Bütçem yetmiyor, bu adımı geç" ile atlanır (puan getirmez).
   Serbest denemede süre yoktur.
 - **Odalar:** "ODA OLUŞTUR" 5 karakterli bir kod verir, "ODAYA GİR" kodla katılır. Kurucu "OYUNU BAŞLAT" der, herkes aynı anda
   (5 sn geri sayımla) süreli oyuna başlar; üstte canlı sıralama görünür, final ekranı odanın sıralamasını gösterir.
+  Kurucu odadan ayrılırsa ya da 60 sn içinde başlatmazsa (ya da sekmeyi kapatırsa) kuruculuk, katılış sırasına göre bir sonraki oyuncuya geçer;
+  odadan ayrılan oyuncu sıralamada “ayrıldı” görünür ve bitiş bekleyen oyuncu sayılmaz.
 - Oda sonu: oda bitince "BÖLÜMÜ BİTİR" haritaya döner, onay sormaz. Dönem sonu yalnız haritadadır; tamamlanmamış temel adım varsa hangi alanlar olduğunu yazan bir onay çıkar. İsteğe bağlı fırsatlar (leğen, LED şerit, zamanlayıcı, çatı) dönemi bitirmeye engel olmaz.
 - Dikey telefonlarda oda ve market ürünleri alt kısımda büyük kartlar olarak gösterilir; yatay/masaüstünde resmin üzerindeki etiketler kullanılır.
 - Kayıt: oyun her adımda bu cihaza kendiliğinden kaydolur. Sonuç, 4. dönem sonunda "Büyük finale geç" ile ya da yardım (?) penceresindeki

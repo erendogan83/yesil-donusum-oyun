@@ -38,9 +38,18 @@ export const onRequestPost: PagesFunction = async ({
   await ensureSchema(e.DB);
   const finished = read.body.finished === true ? 1 : 0;
   const res = await e.DB.prepare(
-    "UPDATE room_players SET score = ?, round = ?, finished = CASE WHEN finished = 1 THEN 1 ELSE ? END, finished_at = CASE WHEN finished = 0 AND ? = 1 THEN ? ELSE finished_at END WHERE room_code = ? AND player_id = ?",
+    "UPDATE room_players SET score = ?, round = ?, finished = CASE WHEN finished = 1 THEN 1 ELSE ? END, finished_at = CASE WHEN finished = 0 AND ? = 1 THEN ? ELSE finished_at END, last_seen = ? WHERE room_code = ? AND player_id = ?",
   )
-    .bind(score, round, finished, finished, Date.now(), code, playerId)
+    .bind(
+      score,
+      round,
+      finished,
+      finished,
+      Date.now(),
+      Date.now(),
+      code,
+      playerId,
+    )
     .run();
   return res.meta.changes
     ? json({ ok: true })

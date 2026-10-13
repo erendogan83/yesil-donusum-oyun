@@ -28,6 +28,7 @@ import {
   INITIAL_BUDGET,
   TIME_LIMIT_S,
   OVERTIME_COST,
+  EARLY_BONUS,
   LARGE_PURCHASE_SHARE,
   SORT_MISTAKE_PENALTY,
   fmtMoney,
@@ -38,13 +39,14 @@ import Phaser from "phaser";
 import { miniGoals, ideas, solutions, roundIdea } from "./journey";
 import { discover, consider, setPledges, migrateDatabase } from "./model";
 import { cueSound } from "./sound";
-import { reconcile, clockView, isTimed } from "./clock";
+import { reconcile, clockView, isTimed, limitSeconds } from "./clock";
 import {
   createRoom,
   joinRoom,
   fetchRoom,
   startRoom,
   reportScore,
+  leaveRoomApi,
   msUntilStart,
   rankPlayers,
   loadSession,
@@ -281,8 +283,12 @@ const game = new Phaser.Game({
 });
 world.onReady = () => render();
 // Test hook: lets browser QA inspect the Phaser scene (only with ?qa).
-if (new URLSearchParams(location.search).has("qa"))
+if (new URLSearchParams(location.search).has("qa")) {
   (window as unknown as { __world: World }).__world = world;
+  // ?limit=N shortens the room clock so browser tests do not have to wait a minute.
+  const limit = Number(new URLSearchParams(location.search).get("limit"));
+  if (limit > 0) (globalThis as { __timeLimit?: number }).__timeLimit = limit;
+}
 
 const gentleOverlay = document.createElement("aside");
 gentleOverlay.id = "gentle-hint";
@@ -560,7 +566,7 @@ function confirmAction(
   );
 }
 
-// ---- timed play: 30 seconds per room, then money drains every second
+// ---- timed play: a minute per room, early finish pays, then money drains every second
 const wantedRoom = (): string | null => {
   const s = db.active;
   if (!s || s.phase !== "playing" || learningDialog.open) return null;
@@ -599,7 +605,8 @@ function updateTimeUi() {
       );
     }
   } else
-    value.textContent = view === "map" ? `oda başına ${TIME_LIMIT_S} sn` : "✓";
+    value.textContent =
+      view === "map" ? `oda başına ${limitSeconds()} sn` : "✓";
 }
 function tickClock() {
   const s = db.active;
@@ -612,12 +619,20 @@ function tickClock() {
     // Persist on changes, and every few seconds so a reload cannot dodge the clock.
     if (changed || now - lastClockSave > 5000) {
       lastClockSave = now;
+      const bonusBefore = s.timeBonus ?? 0;
       transaction((d) =>
         d.active && isTimed(d.active) && d.active.phase === "playing"
           ? { ...d, active: reconcile(d.active, Date.now(), wantedRoom()) }
           : d,
       )
-        .then(updateTimeUi)
+        .then(() => {
+          const earned = (db.active?.timeBonus ?? 0) - bonusBefore;
+          if (earned > 0)
+            announce(
+              `Erken bitirdin! +${fmtMoney(earned)} (saniye başına ${fmtMoney(EARLY_BONUS)})`,
+            );
+          updateTimeUi();
+        })
         .catch(() => {});
     }
   }
@@ -719,7 +734,7 @@ function startScreen() {
   return `<section class="title-screen"><div class="eyebrow">BİRLİKTE ÜRET • BİRLİKTE DÖNÜŞTÜR</div><h1>YEŞİL<br/><span>DÖNÜŞÜM</span></h1><p>Bütçeni yönet.<br/>Doğru seçimleri yap.<br/>Aylık gideri düşür.</p>${db.active && db.active.phase !== "finished" ? `<p class="subtle">Yarım kalan oyununuz var.</p>${btn("DEVAM ET", "resume", "primary")}` : btn("OYUNA BAŞLA", "new", "primary")}${db.active && db.active.phase !== "finished" ? btn("Yeni oyun", "new", "ghost", 'style="margin-top:12px"') : ""}<div class="room-buttons">${btn("ODA OLUŞTUR", "room-create", "gold")}${btn("ODAYA GİR", "room-join", "ghost")}</div><div class="seal"><small>BİR YERLEŞKE</small><b>4</b><small>DÖNEM • BİRLİKTE</small></div><footer class="start-footer"><span>Tek başına ya da bir odada rakiplerinle: boşa gideni önce kim bulacak?</span>${btn("Liderlik tablosu ↗", "leaderboard", "ghost")}</footer></section>`;
 }
 function registration() {
-  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Boşa gideni<br/>sen bulacaksın.</h2><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme · süre yok</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""}/> Resmî yarışma · süreli</label></fieldset><p class="subtle timed-note">Resmî yarışmada her odada <b>${TIME_LIMIT_S} saniyen</b> var. Oda bitmeden süre dolarsa her saniye bütçenden <b>${fmtMoney(OVERTIME_COST)}</b> düşer.</p><label class="field" for="first"><span>Oyuncu adı</span><input id="first" name="first" required autocomplete="given-name" maxlength="40" aria-describedby="form-error"/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Sonuçlar liderlik tablosunda "Resmî" ve "Serbest" sekmelerinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Boşa gideni<br/>sen bulacaksın.</h2><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme · süre yok</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""}/> Resmî yarışma · süreli</label></fieldset><p class="subtle timed-note">Resmî yarışmada her odada <b>${TIME_LIMIT_S} saniyen</b> var. Erken bitirirsen her saniye için <b>${fmtMoney(EARLY_BONUS)}</b> kazanırsın; süre dolarsa her saniye bütçenden <b>${fmtMoney(OVERTIME_COST)}</b> düşer.</p><label class="field" for="first"><span>Oyuncu adı</span><input id="first" name="first" required autocomplete="given-name" maxlength="40" aria-describedby="form-error"/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Sonuçlar liderlik tablosunda "Resmî" ve "Serbest" sekmelerinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
 }
 function roomEntryScreen() {
   const creating = roomIntent === "create";
@@ -729,7 +744,7 @@ function roomEntryScreen() {
   } catch {
     /* Optional convenience. */
   }
-  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">${creating ? "YENİ ODA" : "ODAYA KATIL"}</p><h2>${creating ? "Rakiplerini<br/>odana çağır." : "Oda kodunu yaz,<br/>yarışa katıl."}</h2><p class="muted">Odadaki herkes aynı anda, süreli oynar: her odada ${TIME_LIMIT_S} sn, sonrasında her saniye ${fmtMoney(OVERTIME_COST)} düşer.</p><form id="room-form" novalidate>${creating ? "" : '<label class="field" for="room-code"><span>Oda kodu</span><input id="room-code" name="code" autocomplete="off" autocapitalize="characters" maxlength="8" style="text-transform:uppercase;letter-spacing:.2em" aria-describedby="room-error"/></label>'}<label class="field" for="room-name"><span>Oyuncu adı</span><input id="room-name" name="name" required autocomplete="given-name" maxlength="40" value="${esc(lastName)}" aria-describedby="room-error"/></label><p class="error" id="room-error" role="alert">${esc(roomError)}</p><button type="submit" class="primary">${creating ? "ODAYI OLUŞTUR →" : "ODAYA GİR →"}</button></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">${creating ? "YENİ ODA" : "ODAYA KATIL"}</p><h2>${creating ? "Rakiplerini<br/>odana çağır." : "Oda kodunu yaz,<br/>yarışa katıl."}</h2><p class="muted">Odadaki herkes aynı anda, süreli oynar: her odada ${TIME_LIMIT_S} sn. Erken bitirene saniye başına ${fmtMoney(EARLY_BONUS)}, geç kalana saniye başına ${fmtMoney(-OVERTIME_COST)}.</p><form id="room-form" novalidate>${creating ? "" : '<label class="field" for="room-code"><span>Oda kodu</span><input id="room-code" name="code" autocomplete="off" autocapitalize="characters" maxlength="8" style="text-transform:uppercase;letter-spacing:.2em" aria-describedby="room-error"/></label>'}<label class="field" for="room-name"><span>Oyuncu adı</span><input id="room-name" name="name" required autocomplete="given-name" maxlength="40" value="${esc(lastName)}" aria-describedby="room-error"/></label><p class="error" id="room-error" role="alert">${esc(roomError)}</p><button type="submit" class="primary">${creating ? "ODAYI OLUŞTUR →" : "ODAYA GİR →"}</button></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
 }
 function lobbyScreen() {
   const info = roomInfo;
@@ -738,7 +753,7 @@ function lobbyScreen() {
   const host = info.hostId === roomSession.playerId;
   const remaining = msUntilStart(info, roomReceivedAt);
   const counting = info.status === "playing" && remaining !== null;
-  return `<section class="panel-screen"><div class="register-panel lobby"><p class="eyebrow">ODA KODU</p><h2 class="room-code" aria-label="Oda kodu ${esc(info.code.split("").join(" "))}">${esc(info.code)}</h2><p class="muted">Bu kodu arkadaşlarına ver; <b>ODAYA GİR</b> ile katılsınlar.</p><ul class="player-list" aria-label="Odadaki oyuncular">${info.players.map((p) => `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}>${esc(p.name)}${p.id === info.hostId ? " <small>kurucu</small>" : ""}</li>`).join("")}</ul><p class="subtle">${info.players.length} oyuncu</p>${counting ? `<p class="room-countdown" id="room-countdown" role="status">Başlıyor… ${Math.max(0, Math.ceil(remaining / 1000))}</p>` : host ? btn("OYUNU BAŞLAT", "room-start", "gold") : '<p class="subtle" role="status">Kurucunun başlatması bekleniyor…</p>'}<p class="error" id="room-error" role="alert">${esc(roomError)}</p>${btn("Odadan çık", "room-leave", "ghost")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel lobby"><p class="eyebrow">ODA KODU</p><h2 class="room-code" aria-label="Oda kodu ${esc(info.code.split("").join(" "))}">${esc(info.code)}</h2><p class="muted">Bu kodu arkadaşlarına ver; <b>ODAYA GİR</b> ile katılsınlar.</p><ul class="player-list" aria-label="Odadaki oyuncular">${info.players.map((p) => `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}>${esc(p.name)}${p.id === info.hostId ? " <small>kurucu</small>" : ""}</li>`).join("")}</ul><p class="subtle">${info.players.length} oyuncu</p>${info.status === "lobby" ? `<p class="subtle host-timer" id="host-timer">${host ? "Oyunu başlatmak için" : `Kurucu ${esc(info.players.find((p) => p.id === info.hostId)?.name ?? "")}; başlatması için`} <b id="host-left">…</b> var. Başlatılmazsa kuruculuk sıradaki oyuncuya geçer.</p>` : ""}${counting ? `<p class="room-countdown" id="room-countdown" role="status">Başlıyor… ${Math.max(0, Math.ceil(remaining / 1000))}</p>` : host ? btn("OYUNU BAŞLAT", "room-start", "gold") : '<p class="subtle" role="status">Kurucunun başlatması bekleniyor…</p>'}<p class="error" id="room-error" role="alert">${esc(roomError)}</p>${btn("Odadan çık", "room-leave", "ghost")}</div></section>`;
 }
 function mapScreen() {
   const s = db.active!;
@@ -1131,7 +1146,7 @@ function rankingMarkup(): string {
   return `<ol class="room-ranks">${rankPlayers(roomInfo.players)
     .map(
       (p, i) =>
-        `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}><span>${i + 1}</span><b>${esc(p.name)}</b><em>${p.finished ? "bitirdi" : `${p.round}. dönem`}</em><strong>${fmt(p.score)}</strong></li>`,
+        `<li class="${p.id === roomSession!.playerId ? "me" : ""} ${p.present || p.finished ? "" : "gone"}"><span>${i + 1}</span><b>${esc(p.name)}</b><em>${p.finished ? "bitirdi" : !p.present ? "ayrıldı" : `${p.round}. dönem`}</em><strong>${fmt(p.score)}</strong></li>`,
     )
     .join("")}</ol>`;
 }
@@ -1146,10 +1161,23 @@ async function pollRoom() {
     }
     return;
   }
-  const before = JSON.stringify(roomInfo?.players) + roomInfo?.status;
+  const before =
+    JSON.stringify(roomInfo?.players) + roomInfo?.status + roomInfo?.hostId;
+  const hostBefore = roomInfo?.hostId;
   applyRoom(result.room);
+  if (
+    hostBefore &&
+    hostBefore !== result.room.hostId &&
+    result.room.status === "lobby"
+  ) {
+    if (result.room.hostId === roomSession.playerId)
+      announce("Artık oda kurucususun: oyunu sen başlatabilirsin.");
+    else if (hostBefore === roomSession.playerId)
+      announce("Süre doldu: kuruculuk sıradaki oyuncuya geçti.", true);
+  }
   const changed =
-    before !== JSON.stringify(roomInfo?.players) + roomInfo?.status;
+    before !==
+    JSON.stringify(roomInfo?.players) + roomInfo?.status + roomInfo?.hostId;
   const remaining = msUntilStart(result.room, roomReceivedAt);
   if (view === "lobby") {
     if (result.room.status !== "lobby" && remaining !== null && remaining <= 0)
@@ -1170,6 +1198,15 @@ function startRoomPolling() {
 }
 // Countdown text between polls.
 window.setInterval(() => {
+  const left = document.querySelector("#host-left");
+  if (left && roomInfo) {
+    const serverNow = Date.now() + (roomInfo.now - roomReceivedAt);
+    const s = Math.max(
+      0,
+      Math.ceil((roomInfo.hostSince + roomInfo.hostStartMs - serverNow) / 1000),
+    );
+    left.textContent = `${s} sn`;
+  }
   const el = document.querySelector("#room-countdown");
   if (!el || !roomInfo) return;
   const ms = msUntilStart(roomInfo, roomReceivedAt);
@@ -1866,6 +1903,7 @@ async function action(action: string) {
       break;
     }
     case "room-leave":
+      if (roomSession) await leaveRoomApi(roomSession.code);
       leaveRoom();
       switchView("start");
       break;
