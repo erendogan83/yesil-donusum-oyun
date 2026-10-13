@@ -1,4 +1,4 @@
-// Shared helpers for the leaderboard API (Cloudflare Pages Functions + D1).
+// Shared helpers for the API (Cloudflare Pages Functions + D1): shared leaderboard and rooms.
 // Minimal structural types keep the project free of @cloudflare/workers-types.
 export interface D1Prepared {
   bind(...values: unknown[]): D1Prepared;
@@ -12,15 +12,13 @@ export interface D1 {
 export interface Env {
   DB?: D1;
   ADMIN_TOKEN?: string;
-  ASSETS?: { fetch(request: Request | string): Promise<Response> };
 }
-export type Mode = "official" | "practice";
-export interface ResultRow {
+export type Mode = "official" | "practice" | "room";
+export interface GameRow {
   id: string;
-  organization: string;
-  first: string;
-  second: string;
+  name: string;
   mode: Mode;
+  room: string | null;
   score: number;
   bill: number;
   budget: number;
@@ -43,11 +41,13 @@ let ready = false;
 export async function ensureSchema(db: D1) {
   if (ready) return;
   for (const sql of [
-    "CREATE TABLE IF NOT EXISTS results (id TEXT PRIMARY KEY, organization TEXT NOT NULL, first_name TEXT NOT NULL, second_name TEXT NOT NULL, mode TEXT NOT NULL CHECK (mode IN ('official','practice')), score INTEGER NOT NULL, bill REAL NOT NULL, budget REAL NOT NULL, saving_percent REAL NOT NULL, rules_version INTEGER NOT NULL, completed_at TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)",
-    // Older deployments limited each cooperative to one official result.
-    "DROP INDEX IF EXISTS ux_official_org",
-    "CREATE INDEX IF NOT EXISTS ix_results_org ON results(organization)",
-    "CREATE INDEX IF NOT EXISTS ix_results_rank ON results(mode, score DESC)",
+    // Cooperatives are gone: the old table is dropped together with its data.
+    "DROP TABLE IF EXISTS results",
+    "CREATE TABLE IF NOT EXISTS games (id TEXT PRIMARY KEY, name TEXT NOT NULL, mode TEXT NOT NULL, room TEXT, score INTEGER NOT NULL, bill REAL NOT NULL, budget REAL NOT NULL, saving_percent REAL NOT NULL, rules_version INTEGER NOT NULL, completed_at TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)",
+    "CREATE INDEX IF NOT EXISTS ix_games_rank ON games(mode, score DESC)",
+    "CREATE INDEX IF NOT EXISTS ix_games_room ON games(room)",
+    "CREATE TABLE IF NOT EXISTS rooms (code TEXT PRIMARY KEY, host_id TEXT NOT NULL, status TEXT NOT NULL, created_at INTEGER NOT NULL, started_at INTEGER)",
+    "CREATE TABLE IF NOT EXISTS room_players (room_code TEXT NOT NULL, player_id TEXT NOT NULL, name TEXT NOT NULL, joined_at INTEGER NOT NULL, score INTEGER NOT NULL DEFAULT 0, round INTEGER NOT NULL DEFAULT 1, finished INTEGER NOT NULL DEFAULT 0, finished_at INTEGER, PRIMARY KEY (room_code, player_id))",
   ])
     await db.prepare(sql).run();
   ready = true;
@@ -59,23 +59,21 @@ const num = (v: unknown, min: number, max: number) =>
   typeof v === "number" && Number.isFinite(v) && v >= min && v <= max
     ? v
     : null;
+export const ID_PATTERN = /^[\w-]{8,64}$/;
+export const ROOM_PATTERN = /^[A-Z0-9]{4,8}$/;
 
-/** Validates a client submission; returns the clean row or an error message. */
-export function parseResult(body: unknown): ResultRow | string {
+/** Validates a finished game sent by a client; returns the clean row or an error. */
+export function parseGame(body: unknown): GameRow | string {
   if (!body || typeof body !== "object") return "Geçersiz veri.";
   const b = body as Record<string, unknown>;
-  const id =
-    typeof b.id === "string" && /^[\w-]{8,64}$/.test(b.id) ? b.id : null;
-  const organization = text(b.organization, 180);
-  const first = text(b.first, 80);
-  // A single player is fine: the second name may be empty.
-  const second =
-    b.second === undefined || b.second === ""
-      ? ""
-      : typeof b.second === "string" && b.second.trim().length <= 80
-        ? b.second.trim()
-        : null;
-  const mode = b.mode === "official" || b.mode === "practice" ? b.mode : null;
+  const id = typeof b.id === "string" && ID_PATTERN.test(b.id) ? b.id : null;
+  const name = text(b.name, 80);
+  const mode =
+    b.mode === "official" || b.mode === "practice" || b.mode === "room"
+      ? b.mode
+      : null;
+  const room =
+    typeof b.room === "string" && ROOM_PATTERN.test(b.room) ? b.room : null;
   const score = num(b.score, 0, 2000);
   const bill = num(b.bill, 0, 1_000_000);
   const budget = num(b.budget, 0, 10_000_000);
@@ -88,10 +86,9 @@ export function parseResult(body: unknown): ResultRow | string {
       : null;
   if (
     !id ||
-    !organization ||
-    !first ||
-    second === null ||
+    !name ||
     !mode ||
+    (mode === "room" && !room) ||
     score === null ||
     !Number.isInteger(score) ||
     bill === null ||
@@ -103,10 +100,9 @@ export function parseResult(body: unknown): ResultRow | string {
     return "Eksik veya geçersiz alan.";
   return {
     id,
-    organization,
-    first,
-    second,
+    name,
     mode,
+    room: mode === "room" ? room : null,
     score,
     bill,
     budget,
@@ -116,22 +112,18 @@ export function parseResult(body: unknown): ResultRow | string {
   };
 }
 
-export async function knownOrganization(
-  env: Env,
-  request: Request,
-  name: string,
-) {
-  if (!env.ASSETS) return true;
+export async function readJson(request: Request, limit = 2048) {
+  const raw = await request.text();
+  if (raw.length > limit) return { error: fail(413, "Veri çok büyük.") };
   try {
-    const res = await env.ASSETS.fetch(
-      new URL("/organizations.json", request.url).toString(),
-    );
-    const list: unknown = await res.json();
-    return Array.isArray(list) ? list.includes(name) : true;
+    return { body: JSON.parse(raw) as Record<string, unknown> };
   } catch {
-    return true; // Never block a result because the list could not be read.
+    return { error: fail(400, "Geçersiz JSON.") };
   }
 }
+export const cleanName = (v: unknown) => text(v, 40);
+export const cleanPlayerId = (v: unknown) =>
+  typeof v === "string" && ID_PATTERN.test(v) ? v : null;
 
 /** Bearer token check; false when ADMIN_TOKEN is not configured. */
 export function isAdmin(request: Request, env: Env) {
@@ -151,4 +143,56 @@ export function isAdmin(request: Request, env: Env) {
   for (let i = 0; i < expected.length; i++)
     diff |= expected.charCodeAt(i) ^ (given.charCodeAt(i) || 0);
   return diff === 0;
+}
+
+// ---- rooms
+const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+export const newRoomCode = () => {
+  const bytes = crypto.getRandomValues(new Uint8Array(5));
+  return Array.from(bytes, (b) => ALPHABET[b % ALPHABET.length]).join("");
+};
+export interface RoomPlayerRow {
+  player_id: string;
+  name: string;
+  score: number;
+  round: number;
+  finished: number;
+}
+export const STALE_ROOM_MS = 24 * 3600 * 1000;
+
+/** Public view of a room; "finished" once every player has finished. */
+export async function roomState(db: D1, code: string) {
+  const room = await db
+    .prepare("SELECT * FROM rooms WHERE code = ?")
+    .bind(code)
+    .first<{
+      code: string;
+      host_id: string;
+      status: string;
+      created_at: number;
+      started_at: number | null;
+    }>();
+  if (!room || Date.now() - room.created_at > STALE_ROOM_MS) return null;
+  const { results } = await db
+    .prepare(
+      "SELECT player_id, name, score, round, finished FROM room_players WHERE room_code = ? ORDER BY score DESC, joined_at ASC",
+    )
+    .bind(code)
+    .all<RoomPlayerRow>();
+  const everyoneDone = results.length > 0 && results.every((p) => p.finished);
+  return {
+    code: room.code,
+    hostId: room.host_id,
+    status:
+      room.status === "playing" && everyoneDone ? "finished" : room.status,
+    startedAt: room.started_at,
+    now: Date.now(),
+    players: results.map((p) => ({
+      id: p.player_id,
+      name: p.name,
+      score: p.score,
+      round: p.round,
+      finished: !!p.finished,
+    })),
+  };
 }

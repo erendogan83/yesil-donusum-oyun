@@ -10,7 +10,7 @@ export const onRequestDelete: PagesFunction = async ({
   if (!e.DB) return fail(503, "Veritabanı bağlı değil.");
   if (!isAdmin(request, e)) return fail(401, "Yönetim anahtarı geçersiz.");
   await ensureSchema(e.DB);
-  const res = await e.DB.prepare("DELETE FROM results WHERE id = ?")
+  const res = await e.DB.prepare("DELETE FROM games WHERE id = ?")
     .bind(String(params.id))
     .run();
   return res.meta.changes

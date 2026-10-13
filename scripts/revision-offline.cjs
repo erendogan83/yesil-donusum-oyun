@@ -43,11 +43,7 @@ const out = "qa/main-revision";
   await page.reload();
   await click("new");
   await page.locator('[value="official"]').check();
-  const orgs = JSON.parse(fs.readFileSync("public/organizations.json", "utf8"));
-  assert.equal(orgs.length, 26);
-  await page.locator("#organization").fill(orgs[0]);
   await page.locator("#first").fill("QA Deniz");
-  await page.locator("#second").fill("QA Ece");
   await page.locator('[type="submit"]').tap();
   await click("tutorial-done");
   await click("room:kitchen");
@@ -104,17 +100,13 @@ const out = "qa/main-revision";
   }
   assert.equal((await state()).results.length, 1);
   assert.equal((await state()).results[0].score, 20);
-  assert.equal((await state()).results[0].team.second, "QA Ece");
+  assert.equal((await state()).results[0].team.first, "QA Deniz");
   await click("pledges");
   for (let i = 0; i < 3; i++)
     await page.locator('input[name="pledge"]').nth(i).check();
   await click("pledges-save");
   await click("leaderboard");
-  assert(
-    (await page.locator(".podium").innerText()).includes(
-      "1 oyun · QA Deniz, QA Ece",
-    ),
-  );
+  assert((await page.locator(".podium").innerText()).includes("QA Deniz"));
   await page.screenshot({ path: `${out}/official-leaderboard.png` });
   await page.goto(base + "/#admin");
   await page.locator('[data-action="backup"]').waitFor();

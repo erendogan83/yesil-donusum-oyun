@@ -3,10 +3,11 @@
 // results stay in an outbox on this device and the old per-device board is used.
 export interface RemoteResult {
   id: string;
-  organization: string;
-  first: string;
-  second: string;
-  mode: "official" | "practice";
+  /** The player's name. */
+  name: string;
+  mode: "official" | "practice" | "room";
+  /** Room code for games played in a room. */
+  room?: string | null;
   score: number;
   bill: number;
   budget: number;
@@ -18,7 +19,7 @@ export type SubmitStatus = "sent" | "downgraded" | "queued" | "unavailable";
 const OUTBOX = "yesil-donusum-outbox";
 const TOKEN = "yesil-admin-token";
 
-async function call(
+export async function call(
   path: string,
   init: RequestInit = {},
   timeout = 7000,
@@ -51,7 +52,7 @@ export function remoteRanking(
   mode: "official" | "practice",
 ) {
   return list
-    .filter((r) => r.mode === mode && r.rulesVersion === 1)
+    .filter((x) => x.mode === mode && x.rulesVersion === 1)
     .sort(
       (a, b) =>
         b.score - a.score ||
@@ -153,64 +154,45 @@ export async function adminBulkDelete(mode: "practice" | "all", token: string) {
   throw Error(String(res?.data?.error ?? "Sunucuya ulaşılamadı."));
 }
 
-export interface CoopRow {
-  org: string;
-  games: number;
-  score: number;
-  players: string[];
-}
-/** Adds up every result of the same cooperative (case-insensitive name). */
-export function byCooperative(
-  rows: {
-    organization: string;
-    first: string;
-    second: string;
-    score: number;
-  }[],
-): CoopRow[] {
-  const map = new Map<string, CoopRow>();
-  for (const row of rows) {
-    const key = row.organization.trim().toLocaleLowerCase("tr");
-    const entry = map.get(key) ?? {
-      org: row.organization.trim(),
-      games: 0,
-      score: 0,
-      players: [],
-    };
-    entry.games++;
-    entry.score += row.score;
-    for (const name of [row.first, row.second].map((n) => n.trim()))
-      if (name && !entry.players.includes(name)) entry.players.push(name);
-    map.set(key, entry);
-  }
-  return [...map.values()].sort(
-    (a, b) => b.score - a.score || a.org.localeCompare(b.org, "tr"),
-  );
-}
-
-/** CSV of cooperative totals, official first, then free play. */
-export function totalsCsv(list: RemoteResult[]): string {
+/** CSV of every stored game, best first within each kind. */
+export function gamesCsv(list: RemoteResult[]): string {
   const cell = (v: string | number) =>
     '"' +
     String(v)
       .replace(/^[=+@\-\t\r]/, "'$&")
       .replaceAll('"', '""') +
     '"';
+  const kind = { official: "Resmî", practice: "Serbest", room: "Oda" };
   const rows: (string | number)[][] = [
-    ["Tür", "Sıra", "Kooperatif", "Oyun sayısı", "Toplam puan", "Oyuncular"],
+    [
+      "Tür",
+      "Sıra",
+      "Oyuncu",
+      "Oda",
+      "Puan",
+      "Aylık gider (TL)",
+      "Kasa (TL)",
+      "Tarih",
+    ],
   ];
-  for (const mode of ["official", "practice"] as const)
-    byCooperative(
-      list.filter((x) => x.mode === mode && x.rulesVersion === 1),
-    ).forEach((c, i) =>
-      rows.push([
-        mode === "official" ? "Resmî" : "Serbest",
-        i + 1,
-        c.org,
-        c.games,
-        c.score,
-        c.players.join(", "),
-      ]),
-    );
+  for (const mode of ["official", "room", "practice"] as const)
+    list
+      .filter((x) => x.mode === mode && x.rulesVersion === 1)
+      .sort(
+        (a, b) =>
+          b.score - a.score || a.completedAt.localeCompare(b.completedAt),
+      )
+      .forEach((g, i) =>
+        rows.push([
+          kind[mode],
+          i + 1,
+          g.name,
+          g.room ?? "",
+          g.score,
+          g.bill,
+          g.budget,
+          g.completedAt,
+        ]),
+      );
   return "\uFEFF" + rows.map((row) => row.map(cell).join(";")).join("\r\n");
 }

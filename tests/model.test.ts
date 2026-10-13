@@ -37,12 +37,22 @@ test("starts at 10000 bill / 2500 budget and retains both participant names", ()
   assert.equal(s.budget, 2500);
   assert.deepEqual(s.team, team);
 });
-test("registration rejects blanks and unknown official organizations", () => {
-  assert.throws(() => start({ ...team, first: " " }, [], []));
-  assert.throws(() => start({ ...team, organization: " " }, [], []));
-  assert.throws(() => start({ ...team, mode: "official" }, [], orgs));
-  assert.throws(() =>
-    start({ ...team, mode: "official", organization: orgs[0] }, [], []),
+test("registration needs only a player name; cooperatives no longer exist", () => {
+  assert.throws(
+    () => start({ ...team, first: " " }, [], []),
+    /Oyuncu adını yazın/,
+  );
+  const solo = start({
+    organization: "",
+    first: " Eren ",
+    second: "",
+    mode: "official",
+  });
+  assert.equal(solo.team.first, "Eren");
+  assert.equal(solo.team.organization, "");
+  assert.equal(
+    start({ ...team, mode: "room", room: "ABCDE" }).team.room,
+    "ABCDE",
   );
 });
 test("purchase charges once, creates inventory, reveals no effect", () => {
@@ -170,12 +180,13 @@ test("CSV retains names, escapes quotes and neutralizes spreadsheet formulas", (
   let s = {
     ...fresh(),
     phase: "finished" as const,
-    team: { ...team, organization: "=TEST", mode: "official" as const },
+    team: { ...team, first: "=TEST", mode: "official" as const },
   };
   const results = finish({ ...emptyDatabase(), active: s }).results;
   const out = csv(results);
   assert(out.includes("'=TEST"));
-  assert(out.includes("Ayşe"));
+  assert(out.includes("Oyuncu"));
+  assert(!out.includes("Kurum"), "no cooperative column");
   assert(out.startsWith("\uFEFF"));
 });
 test("every marketed product can be bought and installed in its named snap zone", () => {
@@ -222,17 +233,4 @@ test("period reward only uses new savings and caps at 500", () => {
   assert.equal(unchanged.history[1].reward, 0);
   assert.equal(endRound({ ...s, bill: 9500 }).history[1].reward, 0);
   assert.equal(endRound({ ...fresh(), bill: 6000 }).history[0].reward, 500);
-});
-
-test("the first participant is mandatory; the second is optional and trimmed", () => {
-  for (const names of [{ first: "" }, { first: "  " }])
-    assert.throws(
-      () => start({ ...team, ...names }, [], []),
-      /en az bir katılımcının adını yazın/,
-    );
-  assert.equal(start({ ...team, second: "  " }, [], []).team.second, "");
-  assert.equal(
-    start({ ...team, second: " Ayşe " }, [], []).team.second,
-    "Ayşe",
-  );
 });

@@ -3566,3 +3566,152 @@ dialog .actions {
     font-size: 14px;
   }
 }
+
+/* Timed play and rooms */
+.meter.clock strong {
+  font-variant-numeric: tabular-nums;
+}
+.meter.clock.overtime strong {
+  color: #ffb199;
+}
+.meter.clock.overtime {
+  border-color: #c9694a;
+  background: #4a2a22e6;
+}
+.timed-note b {
+  color: var(--gold);
+}
+.room-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.lobby {
+  text-align: center;
+}
+.room-code {
+  font-size: clamp(44px, 12vw, 84px);
+  letter-spacing: 0.18em;
+  margin: 4px 0 8px;
+  color: var(--gold);
+}
+.player-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 12px 0 4px;
+  padding: 0;
+}
+.player-list li {
+  background: #2b3a25f2;
+  border: 1px solid #a5b07b66;
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+.player-list li.me {
+  border-color: var(--gold);
+}
+.player-list small {
+  color: #ddd4bc;
+}
+.room-countdown {
+  font-size: 32px;
+  color: var(--gold);
+  margin: 12px 0;
+}
+#room-bar {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 8px;
+  transform: translateX(-50%);
+  z-index: 60;
+  min-height: 34px;
+  padding: 4px 14px;
+  font-size: 13px;
+  background: #2b3a25f2;
+  border: 1px solid var(--gold);
+  max-width: 94vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#room-bar.visible {
+  display: block;
+}
+.room-ranks {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.room-ranks li {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  background: #2b3a25f2;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.room-ranks li.me {
+  outline: 2px solid var(--gold);
+}
+.room-ranks em {
+  font-size: 12px;
+  color: #ddd4bc;
+  font-style: normal;
+}
+.room-final {
+  margin: 16px 0 4px;
+  max-width: 520px;
+  width: 100%;
+}
+
+/* Short landscape phones: the start screen now has more buttons; keep them all on screen. */
+@media (min-aspect-ratio: 1/1) and (max-height: 520px) {
+  .title-screen {
+    padding-top: 3%;
+  }
+  .title-screen h1 {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+  .title-screen .eyebrow {
+    margin-bottom: 0.4em;
+  }
+  .title-screen p {
+    margin-bottom: 0.3em;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+  .title-screen .primary {
+    padding: 0.5em 1.6em;
+    min-height: 38px;
+  }
+  .room-buttons {
+    margin-top: 6px;
+    gap: 8px;
+  }
+  .room-buttons button {
+    min-height: 36px;
+    font-size: 12px;
+    padding: 0.35em 1em;
+  }
+  .start-footer {
+    padding-top: 6px;
+  }
+  .start-footer button {
+    min-height: 36px;
+  }
+}
+
+@media (min-aspect-ratio: 1/1) and (max-height: 520px) {
+  .seal {
+    display: none;
+  }
+}

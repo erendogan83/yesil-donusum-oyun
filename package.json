@@ -30,7 +30,9 @@
     "test:api": "node scripts/api-qa.cjs",
     "test:board": "node scripts/board-qa.cjs",
     "test:finish": "node scripts/finish-qa.cjs",
-    "test:mobile": "node scripts/mobile-qa.cjs"
+    "test:mobile": "node scripts/mobile-qa.cjs",
+    "test:timed": "node scripts/timed-qa.cjs",
+    "test:rooms": "node scripts/room-qa.cjs"
   },
   "dependencies": {
     "phaser": "3.90.0"

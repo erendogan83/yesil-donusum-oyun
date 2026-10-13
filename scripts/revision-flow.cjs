@@ -54,9 +54,7 @@ fs.mkdirSync(out, { recursive: true });
   };
   await page.goto(process.env.GAME_URL || "http://127.0.0.1:5175");
   await click("new");
-  await page.locator("#organization").fill("QA Kooperatifi");
   await page.locator("#first").fill("Ayşe");
-  await page.locator("#second").fill("Nisa");
   await page.locator('[type="submit"]').click();
   await click("tutorial-done");
   assert.equal((await state()).active.room, "map");
@@ -205,7 +203,7 @@ fs.mkdirSync(out, { recursive: true });
     final.active.decisions.length,
     process.env.LEAVE_OPTIONAL ? 19 : 22,
   );
-  assert.equal(final.active.team.second, "Nisa");
+  assert.equal(final.active.team.first, "Ayşe");
   assert.deepEqual(errors, []);
   fs.writeFileSync(`${out}/state.json`, JSON.stringify(final, null, 2));
   fs.writeFileSync(

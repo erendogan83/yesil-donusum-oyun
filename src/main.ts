@@ -12,6 +12,8 @@ import {
   recordChoice,
   sortItem,
   skipOptional,
+  skipUnaffordable,
+  opportunityFor,
 } from "./decisions";
 import {
   activeOpportunity,
@@ -23,6 +25,8 @@ import { returnLabels, roomLocatives, offeredProduct } from "./navigation";
 import {
   INITIAL_BILL,
   INITIAL_BUDGET,
+  TIME_LIMIT_S,
+  OVERTIME_COST,
   LARGE_PURCHASE_SHARE,
   SORT_MISTAKE_PENALTY,
   fmtMoney,
@@ -33,10 +37,25 @@ import Phaser from "phaser";
 import { miniGoals, ideas, solutions, roundIdea } from "./journey";
 import { discover, consider, setPledges, migrateDatabase } from "./model";
 import { cueSound } from "./sound";
+import { reconcile, clockView, isTimed } from "./clock";
+import {
+  createRoom,
+  joinRoom,
+  fetchRoom,
+  startRoom,
+  reportScore,
+  msUntilStart,
+  rankPlayers,
+  loadSession,
+  saveSession,
+  playerId,
+  type RoomState,
+  type RoomSession,
+} from "./rooms";
 import {
   fetchResults,
-  byCooperative,
-  totalsCsv,
+  gamesCsv,
+  remoteRanking,
   submitResult,
   flushOutbox,
   pendingCount,
@@ -145,7 +164,6 @@ const art = (key: string, cls = "") =>
 const btn = (label: string, action: string, cls = "", extra = "") =>
   `<button type="button" class="${cls}" data-action="${action}" ${extra}>${label}</button>`;
 let db: Database = emptyDatabase(),
-  organizations: string[] = [],
   view: View = location.hash === "#admin" ? "admin" : "start",
   category: Category = "Su",
   marketPage = 0;
@@ -178,15 +196,23 @@ async function verifyAdmin() {
     storeToken("");
   }
 }
+// Room play (create / join / lobby / live ranking).
+let roomSession: RoomSession | null = loadSession(),
+  roomInfo: RoomState | null = null,
+  roomReceivedAt = 0,
+  roomIntent: "create" | "join" = "create",
+  roomError = "",
+  roomTimer = 0,
+  scoreTimer = 0,
+  lastReported = "";
 const toRemote = (
   s: State,
   local?: { score: number; savingPercent: number; completedAt: string },
 ): RemoteResult => ({
   id: s.id,
-  organization: s.team.organization,
-  first: s.team.first,
-  second: s.team.second,
+  name: s.team.first,
   mode: s.team.mode,
+  room: s.team.room ?? null,
   score: local?.score ?? score(s),
   bill: s.bill,
   budget: s.budget,
@@ -201,11 +227,12 @@ const submitText = (s: State): string =>
     "": "",
     sending: "Sonuç gönderiliyor…",
     sent:
-      s.team.mode === "official"
-        ? "✓ Sonuç liderlik tablosuna kaydedildi."
-        : "✓ Sonuç liderlik tablosunun Serbest sekmesine kaydedildi.",
-    downgraded:
-      "✓ Kaydedildi. Bu kurum için resmî sonuç zaten vardı; sonucunuz serbest deneme olarak yer aldı.",
+      s.team.mode === "practice"
+        ? "✓ Sonuç liderlik tablosunun Serbest sekmesine kaydedildi."
+        : s.team.mode === "room"
+          ? "✓ Sonuç kaydedildi; oda sıralamasında görünür."
+          : "✓ Sonuç liderlik tablosuna kaydedildi.",
+    downgraded: "✓ Kaydedildi.",
     queued: "Sonuç bu cihazda bekliyor; bağlantı gelince otomatik gönderilir.",
     unavailable:
       "Ortak tabloya ulaşılamadı. Sonuç bu cihazda kayıtlı; tekrar deneyebilirsiniz.",
@@ -213,6 +240,7 @@ const submitText = (s: State): string =>
 async function submitFinished() {
   const s = db.active;
   if (!s || s.phase !== "finished" || s.decisionVersion !== 1) return;
+  scheduleScoreReport();
   submitInfo = "sending";
   if (view === "final" && finalStep === "result") render();
   const status = await submitResult(
@@ -221,15 +249,11 @@ async function submitFinished() {
       db.results.find((r) => r.id === s.id),
     ),
   );
-  if (status === "downgraded")
+  if (status === "sent")
     announce(
-      "Bu kurum için resmî sonuç zaten vardı. Sonucunuz serbest deneme olarak kaydedildi.",
-    );
-  else if (status === "sent")
-    announce(
-      s.team.mode === "official"
-        ? "Sonucunuz liderlik tablosuna gönderildi."
-        : "Serbest sonucunuz liderlik tablosuna gönderildi.",
+      s.team.mode === "practice"
+        ? "Serbest sonucunuz liderlik tablosuna gönderildi."
+        : "Sonucunuz liderlik tablosuna gönderildi.",
     );
   else if (status === "queued")
     announce(
@@ -434,6 +458,7 @@ async function mutate(fn: (s: State) => State) {
           .map((g) => g.id)
       : [];
   if (goalFlash.length) cueSound("goal");
+  scheduleScoreReport();
 }
 window.addEventListener("storage", (e) => {
   if (e.key === STORAGE_KEY) {
@@ -444,25 +469,21 @@ window.addEventListener("storage", (e) => {
     announce("Diğer sekmedeki güncel kayıt yüklendi.");
   }
 });
-async function loadOrganizations() {
-  try {
-    const response = await fetch("./organizations.json");
-    if (!response.ok) throw Error();
-    const list: unknown = await response.json();
-    if (
-      Array.isArray(list) &&
-      list.length > 0 &&
-      list.every((x) => typeof x === "string" && x.trim()) &&
-      new Set(list).size === list.length
-    )
-      organizations = list;
-  } catch {
-    organizations = [];
-  }
-  render();
-}
-void loadOrganizations();
 void flushOutbox().then(refreshRemote);
+if (roomSession) {
+  void fetchRoom(roomSession.code).then((result) => {
+    if ("error" in result) return leaveRoom();
+    applyRoom(result.room);
+    const playing =
+      db.active?.team.mode === "room" &&
+      db.active.team.room === roomSession!.code;
+    if (result.room.status === "lobby" && !playing) {
+      switchView("lobby");
+      startRoomPolling();
+    } else if (playing) startRoomPolling();
+    else leaveRoom();
+  });
+}
 if (adminToken)
   void verifyAdmin().then(() => {
     if (view === "admin") render();
@@ -501,6 +522,7 @@ function switchView(v: View) {
   }
   inventoryOpen = false;
   selectedProduct = null;
+  if (v === "start" || v === "roomEntry") roomError = "";
   render();
 }
 function showModal(content: string) {
@@ -537,9 +559,74 @@ function confirmAction(
   );
 }
 
+// ---- timed play: 30 seconds per room, then money drains every second
+const wantedRoom = (): string | null => {
+  const s = db.active;
+  if (!s || s.phase !== "playing" || learningDialog.open) return null;
+  if (view === "room")
+    return s.room !== "map" && s.room !== "market" ? s.room : null;
+  if (view === "market") return s.originScene ?? null;
+  return null;
+};
+let lastClockSave = 0,
+  overtimeShownFor = "";
+function updateTimeUi() {
+  const s = db.active;
+  if (!s || !isTimed(s) || s.phase !== "playing") return;
+  const now = Date.now();
+  const shown = reconcile(s, now, wantedRoom());
+  const budget = document.querySelector("#budget-value");
+  if (budget && !budget.querySelector(".delta"))
+    budget.firstChild &&
+      (budget.firstChild.textContent = fmtMoney(shown.budget));
+  const clock = document.querySelector<HTMLElement>("#clock-meter");
+  const value = document.querySelector<HTMLElement>("#clock-value");
+  if (!clock || !value) return;
+  const v = clockView(shown, now);
+  clock.classList.toggle("overtime", !!v && v.left < 0);
+  if (v) {
+    value.textContent =
+      v.left >= 0
+        ? `0:${String(v.left).padStart(2, "0")}`
+        : `+${v.overtime} sn · -${fmtMoney(v.cost)}/sn`;
+    const key = `${s.id}:${s.round}:${shown.clockRunning?.room}`;
+    if (v.left < 0 && overtimeShownFor !== key) {
+      overtimeShownFor = key;
+      announce(
+        `Süre doldu! Her saniye ${fmtMoney(OVERTIME_COST)} düşüyor.`,
+        true,
+      );
+    }
+  } else
+    value.textContent = view === "map" ? `oda başına ${TIME_LIMIT_S} sn` : "✓";
+}
+function tickClock() {
+  const s = db.active;
+  if (s && isTimed(s) && s.phase === "playing" && !actionBusy) {
+    const now = Date.now();
+    const next = reconcile(s, now, wantedRoom());
+    const changed =
+      next.clockRunning?.room !== s.clockRunning?.room ||
+      next.budget !== s.budget;
+    // Persist on changes, and every few seconds so a reload cannot dodge the clock.
+    if (changed || now - lastClockSave > 5000) {
+      lastClockSave = now;
+      transaction((d) =>
+        d.active && isTimed(d.active) && d.active.phase === "playing"
+          ? { ...d, active: reconcile(d.active, Date.now(), wantedRoom()) }
+          : d,
+      )
+        .then(updateTimeUi)
+        .catch(() => {});
+    }
+  }
+  updateTimeUi();
+}
+window.setInterval(tickClock, 250);
+
 function hud() {
   const s = db.active!;
-  return `<header class="hud simple-hud"><div class="hud-brand"><small>DÖNEM</small><b>${s.round} / 4</b></div><div class="meters"><div class="meter cash"><small>KALAN PARA</small><strong id="budget-value">${fmtMoney(s.budget)}</strong></div><div class="meter score"><small>SKOR</small><strong id="score-value">${fmt(score(s))}</strong></div></div>${view === "map" && s.decisionVersion === 1 ? btn("Oyunu bitir ve kaydet", "finish-now", "ghost hud-finish") : ""}${btn(soundEnabled() ? "Ses açık" : "Ses kapalı", "sound", "ghost sound-toggle")}${btn("?", "help", "ghost help-button", 'aria-label="Oyun rehberi"')}</header>`;
+  return `<header class="hud simple-hud"><div class="hud-brand"><small>DÖNEM</small><b>${s.round} / 4</b></div><div class="meters"><div class="meter cash"><small>KALAN PARA</small><strong id="budget-value">${fmtMoney(s.budget)}</strong></div><div class="meter score"><small>SKOR</small><strong id="score-value">${fmt(score(s))}</strong></div>${isTimed(s) ? '<div class="meter clock" id="clock-meter"><small>SÜRE</small><strong id="clock-value">—</strong></div>' : ""}</div>${view === "map" && s.decisionVersion === 1 ? btn("Oyunu bitir ve kaydet", "finish-now", "ghost hud-finish") : ""}${btn(soundEnabled() ? "Ses açık" : "Ses kapalı", "sound", "ghost sound-toggle")}${btn("?", "help", "ghost help-button", 'aria-label="Oyun rehberi"')}</header>`;
 }
 function readyProduct() {
   const s = db.active!;
@@ -547,7 +634,7 @@ function readyProduct() {
     .map(productById)
     .find((p) => p.room === s.room && offeredProduct(p));
 }
-function footer(picks = "", picksClass = "") {
+function footer(picks = "", picksClass = "", marketExtra = "") {
   const s = db.active!;
   let label = "DEVAM ET",
     action = "end",
@@ -558,6 +645,7 @@ function footer(picks = "", picksClass = "") {
     label = "GERİ DÖN";
     action = `take:${origin}`;
     hint = "Bir seçeneğe dokunup inceleyebilirsin.";
+    secondary = marketExtra;
   } else if (view === "room") {
     const p = readyProduct(),
       r = roomById(s.room as RoomId),
@@ -627,10 +715,29 @@ function inventory() {
   }</section>`;
 }
 function startScreen() {
-  return `<section class="title-screen"><div class="eyebrow">BİRLİKTE ÜRET • BİRLİKTE DÖNÜŞTÜR</div><h1>YEŞİL<br/><span>DÖNÜŞÜM</span></h1><p>Bütçeni yönet.<br/>Doğru seçimleri yap.<br/>Aylık gideri düşür.</p>${db.active && db.active.phase !== "finished" ? `<p class="subtle">Yarım kalan oyununuz var.</p>${btn("DEVAM ET", "resume", "primary")}` : btn("OYUNA BAŞLA", "new", "primary")}${db.active && db.active.phase !== "finished" ? btn("Yeni oyun", "new", "ghost", 'style="margin-top:12px"') : ""}<div class="seal"><small>BİR YERLEŞKE</small><b>4</b><small>DÖNEM • BİRLİKTE</small></div><footer class="start-footer"><span>Bir kooperatif. İki oyuncu. Birlikte değişen bir gelecek.</span>${btn("Liderlik tablosu ↗", "leaderboard", "ghost")}</footer></section>`;
+  return `<section class="title-screen"><div class="eyebrow">BİRLİKTE ÜRET • BİRLİKTE DÖNÜŞTÜR</div><h1>YEŞİL<br/><span>DÖNÜŞÜM</span></h1><p>Bütçeni yönet.<br/>Doğru seçimleri yap.<br/>Aylık gideri düşür.</p>${db.active && db.active.phase !== "finished" ? `<p class="subtle">Yarım kalan oyununuz var.</p>${btn("DEVAM ET", "resume", "primary")}` : btn("OYUNA BAŞLA", "new", "primary")}${db.active && db.active.phase !== "finished" ? btn("Yeni oyun", "new", "ghost", 'style="margin-top:12px"') : ""}<div class="room-buttons">${btn("ODA OLUŞTUR", "room-create", "gold")}${btn("ODAYA GİR", "room-join", "ghost")}</div><div class="seal"><small>BİR YERLEŞKE</small><b>4</b><small>DÖNEM • BİRLİKTE</small></div><footer class="start-footer"><span>Tek başına ya da bir odada rakiplerinle: boşa gideni önce kim bulacak?</span>${btn("Liderlik tablosu ↗", "leaderboard", "ghost")}</footer></section>`;
 }
 function registration() {
-  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Bu dönüşüm<br/>sizinle başlıyor.</h2><p class="muted">Birlikte düşünün, birlikte karar verin.</p><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""} ${organizations.length > 0 ? "" : "disabled"}/> Resmî yarışma</label></fieldset>${organizations.length === 0 ? '<p class="subtle">Resmî yarışma kurum listesi yüklendiğinde açılır.</p>' : ""}<label class="field"><span>Kooperatif / Kurum</span><div class="search-row"><input id="organization" name="organization" list="organizations" autocomplete="organization" maxlength="180" placeholder="Kurum adını yazın veya arayın" aria-describedby="form-error"/><button type="button" data-action="clear-org" aria-label="Kurum aramasını temizle">×</button></div><datalist id="organizations">${organizations.map((o) => `<option value="${esc(o)}"></option>`).join("")}</datalist></label><label class="field" for="first"><span>1. Katılımcı</span><input id="first" name="first" required autocomplete="given-name" maxlength="80" aria-describedby="form-error"/></label><label class="field" for="second"><span>2. Katılımcı (isteğe bağlı)</span><input id="second" name="second" autocomplete="off" maxlength="80" aria-describedby="form-error"/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BİRLİKTE BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Deneme sonuçları liderlik tablosuna eklenmez.<br/>Serbest deneme sonuçları liderlik tablosunun "Serbest" sekmesinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Boşa gideni<br/>sen bulacaksın.</h2><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme · süre yok</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""}/> Resmî yarışma · süreli</label></fieldset><p class="subtle timed-note">Resmî yarışmada her odada <b>${TIME_LIMIT_S} saniyen</b> var. Oda bitmeden süre dolarsa her saniye bütçenden <b>${fmtMoney(OVERTIME_COST)}</b> düşer.</p><label class="field" for="first"><span>Oyuncu adı</span><input id="first" name="first" required autocomplete="given-name" maxlength="40" aria-describedby="form-error"/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Sonuçlar liderlik tablosunda "Resmî" ve "Serbest" sekmelerinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+}
+function roomEntryScreen() {
+  const creating = roomIntent === "create";
+  let lastName = "";
+  try {
+    lastName = localStorage.getItem("yesil-last-name") ?? "";
+  } catch {
+    /* Optional convenience. */
+  }
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">${creating ? "YENİ ODA" : "ODAYA KATIL"}</p><h2>${creating ? "Rakiplerini<br/>odana çağır." : "Oda kodunu yaz,<br/>yarışa katıl."}</h2><p class="muted">Odadaki herkes aynı anda, süreli oynar: her odada ${TIME_LIMIT_S} sn, sonrasında her saniye ${fmtMoney(OVERTIME_COST)} düşer.</p><form id="room-form" novalidate>${creating ? "" : '<label class="field" for="room-code"><span>Oda kodu</span><input id="room-code" name="code" autocomplete="off" autocapitalize="characters" maxlength="8" style="text-transform:uppercase;letter-spacing:.2em" aria-describedby="room-error"/></label>'}<label class="field" for="room-name"><span>Oyuncu adı</span><input id="room-name" name="name" required autocomplete="given-name" maxlength="40" value="${esc(lastName)}" aria-describedby="room-error"/></label><p class="error" id="room-error" role="alert">${esc(roomError)}</p><button type="submit" class="primary">${creating ? "ODAYI OLUŞTUR →" : "ODAYA GİR →"}</button></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+}
+function lobbyScreen() {
+  const info = roomInfo;
+  if (!info || !roomSession)
+    return `<section class="panel-screen"><div class="register-panel"><h2>Oda bulunamadı</h2>${btn("← Açılışa dön", "room-leave", "ghost")}</div></section>`;
+  const host = info.hostId === roomSession.playerId;
+  const remaining = msUntilStart(info, roomReceivedAt);
+  const counting = info.status === "playing" && remaining !== null;
+  return `<section class="panel-screen"><div class="register-panel lobby"><p class="eyebrow">ODA KODU</p><h2 class="room-code" aria-label="Oda kodu ${esc(info.code.split("").join(" "))}">${esc(info.code)}</h2><p class="muted">Bu kodu arkadaşlarına ver; <b>ODAYA GİR</b> ile katılsınlar.</p><ul class="player-list" aria-label="Odadaki oyuncular">${info.players.map((p) => `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}>${esc(p.name)}${p.id === info.hostId ? " <small>kurucu</small>" : ""}</li>`).join("")}</ul><p class="subtle">${info.players.length} oyuncu</p>${counting ? `<p class="room-countdown" id="room-countdown" role="status">Başlıyor… ${Math.max(0, Math.ceil(remaining / 1000))}</p>` : host ? btn("OYUNU BAŞLAT", "room-start", "gold") : '<p class="subtle" role="status">Kurucunun başlatması bekleniyor…</p>'}<p class="error" id="room-error" role="alert">${esc(roomError)}</p>${btn("Odadan çık", "room-leave", "ghost")}</div></section>`;
 }
 function mapScreen() {
   const s = db.active!;
@@ -673,6 +780,15 @@ function marketScreen() {
   const s = db.active!,
     ps = world.stock(category, s.round, 0, contextIds());
   const existing = contextIds()?.find(existingFixture);
+  // Time penalties can leave too little money for a required purchase: allow skipping it.
+  const firstOp = ps[0] ? opportunityFor(ps[0].id) : undefined;
+  const stuckOp =
+    firstOp &&
+    firstOp.kind === "product" &&
+    firstOp.core &&
+    ps.every((p) => !existingFixture(p.id) && p.price > s.budget)
+      ? firstOp
+      : undefined;
   return `${hud()}<section aria-label="Yeşil Market"><div class="market-sign"><h2>Yeşil Market</h2><p>${marketContext ? roomById(marketContext.room).name + " için seçenekler" : "Bir çözüm seçelim."}</p></div>${ps
     .map((p, i) => {
       const slot = shelfSlots(category)[i];
@@ -692,6 +808,13 @@ function marketScreen() {
       )
       .join(""),
     ps.length === 2 ? "two" : "three",
+    stuckOp
+      ? btn(
+          "Bütçem yetmiyor, bu adımı geç",
+          `skip-budget:${stuckOp.id}`,
+          "ghost quiet-end",
+        )
+      : "",
   )}`;
 }
 function summaryScreen() {
@@ -727,7 +850,7 @@ function awards() {
 function finalScreen() {
   const s = db.active!,
     pct = savingPercent(s),
-    names = esc([s.team.first, s.team.second].filter(Boolean).join(" & "));
+    names = esc(s.team.first);
   if (finalStep === "pledges")
     return `<section class="summary-screen pledge-screen"><p class="eyebrow">GERÇEK HAYATTA 3 HAMLEMİZ</p><h2>Peki buradan ne götürüyoruz?</h2><p>Bugün gördüğünüz fikirlerden üçünü seçin.<br/>Hangisini gerçekten denemek istersiniz?</p><div class="pledge-options" role="group" aria-label="Fikir çantamdan üç seçim">${ideas(
       s,
@@ -740,65 +863,57 @@ function finalScreen() {
         "",
       )}</div><p id="pledge-count" role="status">${pledgeDraft.length} / 3 seçildi</p><div class="row">${btn("Sonucumuza dön", "final-result", "ghost")}${btn("3 YEŞİL HAMLEMİZİ KAYDET", "pledges-save", "gold", pledgeDraft.length === 3 ? "" : "disabled")}</div><p class="subtle">Bu seçimler yarışma skorunu ve sıralamayı değiştirmez.</p></section>`;
   if (finalStep === "card" && s.realLifePledges)
-    return `<section class="summary-screen pledge-finale"><div class="pledge-keepsake"><p class="eyebrow">BİZİM 3 YEŞİL HAMLEMİZ</p><h2>${esc(s.team.organization)}</h2><p class="team-signature">${names}</p><ol>${s.realLifePledges.map((p) => `<li>${esc(p)}</li>`).join("")}</ol><p class="closing-line">Küçük başlayın. Birlikte sürdürün.</p></div><div class="row">${btn("LİDERLİK TABLOSUNU GÖR", "leaderboard", "gold")}${btn("Seçimlerimizi değiştir", "pledges", "ghost")}${btn("Sonucumuz", "final-result", "ghost")}</div></section>`;
-  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${esc(s.team.organization)}</h2><p class="final-names">${names}</p><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div>${s.decisionVersion === 1 ? `<p class="submit-status" role="status">${esc(submitText(s)) || "Sonuç henüz liderlik tablosuna gönderilmedi."}</p>${submitInfo === "sending" || submitInfo === "sent" || submitInfo === "downgraded" ? "" : btn(submitInfo === "" ? "SONUCU LİDERLİK TABLOSUNA GÖNDER" : "TEKRAR GÖNDER", "resubmit", "ghost")}` : ""}<p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Resmî sonuç liderlik tablosuna gönderildi."}</p><p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
+    return `<section class="summary-screen pledge-finale"><div class="pledge-keepsake"><p class="eyebrow">BİZİM 3 YEŞİL HAMLEMİZ</p><h2>${names}</h2><p class="team-signature">${names}</p><ol>${s.realLifePledges.map((p) => `<li>${esc(p)}</li>`).join("")}</ol><p class="closing-line">Küçük başlayın. Birlikte sürdürün.</p></div><div class="row">${btn("LİDERLİK TABLOSUNU GÖR", "leaderboard", "gold")}${btn("Seçimlerimizi değiştir", "pledges", "ghost")}${btn("Sonucumuz", "final-result", "ghost")}</div></section>`;
+  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${names}</h2><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div>${s.decisionVersion === 1 ? `<p class="submit-status" role="status">${esc(submitText(s)) || "Sonuç henüz liderlik tablosuna gönderilmedi."}</p>${submitInfo === "sending" || submitInfo === "sent" || submitInfo === "downgraded" ? "" : btn(submitInfo === "" ? "SONUCU LİDERLİK TABLOSUNA GÖNDER" : "TEKRAR GÖNDER", "resubmit", "ghost")}` : ""}<p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Resmî sonuç liderlik tablosuna gönderildi."}</p>${s.team.mode === "room" && roomInfo ? `<div class="room-final"><h3>Odadaki sıralama</h3>${rankingMarkup()}<p class="subtle">${roomInfo.status === "finished" ? "Herkes bitirdi." : "Rakipler hâlâ oynuyor; sıralama canlı güncellenir."}</p>${btn("Odadan çık", "room-leave", "ghost")}</div>` : ""}<p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
 }
 interface BoardRow {
-  org: string;
-  names: string;
+  name: string;
+  detail: string;
   score: number;
 }
 function boardMarkup(rows: BoardRow[]) {
   if (!rows.length)
-    return `<div class="empty-result"><h3>İlk başarı hikâyesi sizi bekliyor.</h3><p>${boardMode === "official" ? "Resmî oyun tamamlandığında sonuç burada görünür." : "Serbest deneme tamamlandığında sonuç burada görünür."}</p></div>`;
+    return `<div class="empty-result"><h3>İlk başarı hikâyesi sizi bekliyor.</h3><p>${boardMode === "official" ? "Resmî yarışma tamamlandığında sonuç burada görünür." : "Serbest deneme tamamlandığında sonuç burada görünür."}</p></div>`;
   return `<div class="podium">${rows
     .slice(0, 3)
     .map(
       (r, i) =>
-        `<article class="podium-place"><div class="medal">${i + 1}</div><h3>${esc(r.org)}</h3><p>${esc(r.names)}</p><strong>${fmt(r.score)}</strong><p>toplam puan</p></article>`,
+        `<article class="podium-place"><div class="medal">${i + 1}</div><h3>${esc(r.name)}</h3><p>${esc(r.detail)}</p><strong>${fmt(r.score)}</strong><p>puan</p></article>`,
     )
     .join("")}</div><ol class="ranks" start="4">${rows
     .slice(3, 300)
     .map(
       (r, i) =>
-        `<li><span class="rank-number">${i + 4}</span><div class="rank-team">${esc(r.org)}<small>${esc(r.names)}</small></div><strong>${fmt(r.score)} puan</strong></li>`,
+        `<li><span class="rank-number">${i + 4}</span><div class="rank-team">${esc(r.name)}<small>${esc(r.detail)}</small></div><strong>${fmt(r.score)} puan</strong></li>`,
     )
     .join("")}</ol>`;
 }
-function coopRows(
-  rows: {
-    organization: string;
-    first: string;
-    second: string;
-    score: number;
-  }[],
-): BoardRow[] {
-  return byCooperative(rows).map((c) => ({
-    org: c.org,
-    names: `${c.games} oyun · ${c.players.slice(0, 4).join(", ")}${c.players.length > 4 ? ` +${c.players.length - 4}` : ""}`,
-    score: c.score,
-  }));
-}
+const gameDate = (iso: string) =>
+  new Date(iso).toLocaleString("tr-TR", {
+    timeZone: "Europe/Istanbul",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 function leaderboard() {
   const live = remote !== null;
-  // Every player of a cooperative adds to the cooperative's total.
-  const official = coopRows(
+  const rows = (kind: "official" | "practice"): BoardRow[] =>
     live
-      ? remote!.filter((r) => r.mode === "official" && r.rulesVersion === 1)
-      : db.results
-          .filter((r) => r.rulesVersion === 1)
-          .map((r) => ({
-            organization: r.team.organization,
-            first: r.team.first,
-            second: r.team.second,
+      ? remoteRanking(remote!, kind).map((r) => ({
+          name: r.name,
+          detail: gameDate(r.completedAt),
+          score: r.score,
+        }))
+      : kind === "official"
+        ? ranking(db.results.filter((r) => r.rulesVersion === 1)).map((r) => ({
+            name: r.team.first,
+            detail: gameDate(r.completedAt),
             score: r.score,
-          })),
-  );
-  const practice = coopRows(
-    live
-      ? remote!.filter((r) => r.mode === "practice" && r.rulesVersion === 1)
-      : [],
-  );
+          }))
+        : [];
+  const official = rows("official");
+  const practice = rows("practice");
   const tab = (id: "official" | "practice", label: string, n: number) =>
     btn(
       `${label} (${n})`,
@@ -806,7 +921,7 @@ function leaderboard() {
       `ghost board-tab ${boardMode === id ? "active" : ""}`,
       `role="tab" aria-selected="${boardMode === id}"`,
     );
-  return `<section class="leaderboard"><div class="center"><p class="eyebrow">BİRLİKTE BÜYÜYEN BAŞARI</p><h2>Kooperatifler sıralaması</h2><p class="muted">Aynı kooperatifin oyuncularının puanları toplanır · ${live ? "Tüm cihazlardan gelen sonuçlar, kendiliğinden güncellenir" : "Ortak tabloya ulaşılamadı; bu cihazdaki resmî sonuçlar gösteriliyor"}</p><div class="board-tabs" role="tablist">${tab("official", "Resmî", official.length)}${tab("practice", "Serbest", practice.length)}</div></div>${boardMarkup(boardMode === "official" ? official : practice)}<div class="row" style="justify-content:center;margin-top:25px">${btn("← Açılışa dön", "start", "ghost")}${db.active?.phase === "finished" ? btn("Sonucuma dön", "final", "primary") : ""}</div></section>`;
+  return `<section class="leaderboard"><div class="center"><p class="eyebrow">KİM DAHA ÇOK BOŞA GİDENİ BULDU?</p><h2>Liderlik tablosu</h2><p class="muted">Resmî: süreli yarışma · Serbest: süresiz deneme · ${live ? "tüm cihazlardan gelen sonuçlar, kendiliğinden güncellenir" : "ortak tabloya ulaşılamadı; bu cihazdaki resmî sonuçlar gösteriliyor"}</p><div class="board-tabs" role="tablist">${tab("official", "Resmî", official.length)}${tab("practice", "Serbest", practice.length)}</div></div>${boardMarkup(boardMode === "official" ? official : practice)}<div class="row" style="justify-content:center;margin-top:25px">${btn("← Açılışa dön", "start", "ghost")}${db.active?.phase === "finished" ? btn("Sonucuma dön", "final", "primary") : ""}</div></section>`;
 }
 function adminRemote() {
   const pending = pendingCount();
@@ -821,12 +936,12 @@ function adminRemote() {
   const login = adminAuthed
     ? `<p class="subtle">Yönetim anahtarı doğrulandı: silme açık.</p><div class="row">${btn("Serbest denemeleri sil", "rbulk:practice", "danger")}${btn("Tüm sunucu kayıtlarını sil", "rbulk:all", "danger")}${btn("Çıkış", "admin-logout", "ghost")}</div>`
     : `<label class="field"><span>Yönetim anahtarı (silmek için)</span><input type="password" id="admin-token" autocomplete="off" aria-describedby="admin-login-hint"/></label><div class="row">${btn("Giriş", "admin-login", "primary")}${btn("Göster / gizle", "admin-reveal", "ghost")}</div><p class="subtle" id="admin-login-hint">Anahtar Cloudflare'de ADMIN_TOKEN olarak tanımlanır.</p>`;
-  return `<div class="admin-remote"><h3>Ortak liderlik tablosu · ${remote.length} kayıt</h3><p class="subtle">Resmî: ${remote.filter((r) => r.mode === "official").length} · Serbest: ${remote.filter((r) => r.mode === "practice").length} · Bu cihazda bekleyen: ${pending}</p>${login}<div class="row">${btn("CSV indir (tüm cihazlar)", "csv-remote", "primary")}${btn("CSV: kooperatif toplamları", "csv-totals", "primary")}${btn("Bu cihazdaki sonuçları sunucuya gönder", "push-local", "ghost")}${btn("Yenile", "admin-refresh", "ghost")}</div><div class="results">${
+  return `<div class="admin-remote"><h3>Ortak liderlik tablosu · ${remote.length} kayıt</h3><p class="subtle">Resmî: ${remote.filter((r) => r.mode === "official").length} · Oda: ${remote.filter((r) => r.mode === "room").length} · Serbest: ${remote.filter((r) => r.mode === "practice").length} · Bu cihazda bekleyen: ${pending}</p>${login}<div class="row">${btn("CSV indir (tüm cihazlar)", "csv-remote", "primary")}${btn("Bu cihazdaki sonuçları sunucuya gönder", "push-local", "ghost")}${btn("Yenile", "admin-refresh", "ghost")}</div><div class="results">${
     rows
       .slice(remotePage * perPage, (remotePage + 1) * perPage)
       .map(
         (r) =>
-          `<article><div class="row spread"><strong>${esc(r.organization)}</strong><span>${r.mode === "official" ? "Resmî" : "Serbest"} · ${fmt(r.score)} puan</span></div><p>${esc([r.first, r.second].filter(Boolean).join(" & "))}</p><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${adminAuthed ? btn("Bu sonucu sil", `rdelete:${r.id}`, "danger") : ""}</article>`,
+          `<article><div class="row spread"><strong>${esc(r.name)}</strong><span>${{ official: "Resmî", practice: "Serbest", room: "Oda " + (r.room ?? "") }[r.mode]} · ${fmt(r.score)} puan</span></div><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${adminAuthed ? btn("Bu sonucu sil", `rdelete:${r.id}`, "danger") : ""}</article>`,
       )
       .join("") || "<p>Henüz kayıt yok.</p>"
   }</div><div class="row">${btn("← Önceki", "rpage:-1", "ghost", remotePage === 0 ? "disabled" : "")}<span>Sayfa ${remotePage + 1} / ${pages}</span>${btn("Sonraki →", "rpage:1", "ghost", remotePage + 1 >= pages ? "disabled" : "")}</div></div>`;
@@ -838,12 +953,12 @@ function admin() {
     0,
     Math.min(adminPage, Math.ceil(all.length / perPage) - 1),
   );
-  return `<section class="admin"><div class="row spread"><h2>Etkinlik yönetimi</h2>${btn("Oyuna dön", "leave-admin", "ghost")}</div><p>Etkinlik görevlisi içindir. Ortak tablodan silmek için yönetim anahtarı gerekir.</p><p class="subtle">Kurum listesi: ${organizations.length} kurum.</p>${adminRemote()}<h3>Bu cihazdaki kayıtlar</h3><p class="subtle">Sonuç sayısı: ${all.length}.</p><div class="row">${btn("CSV indir", "csv", "primary")}${btn("Tüm kayıtları yedekle", "backup")}${btn("Ham kaydı indir", "raw-backup", "ghost")}</div><label class="import">Yedeği geri yükle (JSON)<input type="file" id="restore-file" accept="application/json,.json"/></label><p class="subtle">Kurumları public/organizations.json dosyasına benzersiz tam adlar olarak ekleyin ve yeniden dağıtın. Bu cihazdaki kayıtlar için yönetim anahtarı gerekmez; cihazı görevli gözetiminde kullanın.</p><div class="results">${
+  return `<section class="admin"><div class="row spread"><h2>Etkinlik yönetimi</h2>${btn("Oyuna dön", "leave-admin", "ghost")}</div><p>Etkinlik görevlisi içindir. Ortak tablodan silmek için yönetim anahtarı gerekir.</p>${adminRemote()}<h3>Bu cihazdaki kayıtlar</h3><p class="subtle">Sonuç sayısı: ${all.length}.</p><div class="row">${btn("CSV indir", "csv", "primary")}${btn("Tüm kayıtları yedekle", "backup")}${btn("Ham kaydı indir", "raw-backup", "ghost")}</div><label class="import">Yedeği geri yükle (JSON)<input type="file" id="restore-file" accept="application/json,.json"/></label><p class="subtle">Bu cihazdaki kayıtlar için yönetim anahtarı gerekmez; cihazı görevli gözetiminde kullanın.</p><div class="results">${
     all
       .slice(adminPage * perPage, (adminPage + 1) * perPage)
       .map(
         (r) =>
-          `<article><div class="row spread"><strong>${esc(r.team.organization)}</strong><span>%${fmt(r.savingPercent)} · ${fmt(r.score)} puan</span></div><p>${esc([r.team.first, r.team.second].filter(Boolean).join(" & "))}</p><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${btn("Hatalı sonucu sil", `delete:${r.id}`, "danger")}</article>`,
+          `<article><div class="row spread"><strong>${esc(r.team.first)}</strong><span>%${fmt(r.savingPercent)} · ${fmt(r.score)} puan</span></div><p class="subtle">${new Date(r.completedAt).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}</p>${btn("Hatalı sonucu sil", `delete:${r.id}`, "danger")}</article>`,
       )
       .join("") || "<p>Henüz resmî sonuç yok.</p>"
   }</div><div class="row">${btn("← Önceki", "admin-page:-1", "ghost", adminPage === 0 ? "disabled" : "")}<span>Sayfa ${adminPage + 1} / ${Math.max(1, Math.ceil(all.length / perPage))}</span>${btn("Sonraki →", "admin-page:1", "ghost", (adminPage + 1) * perPage >= all.length ? "disabled" : "")}</div></section>`;
@@ -868,6 +983,8 @@ function render() {
     final: "Büyük final",
     leaderboard: "Liderlik tablosu",
     admin: "Etkinlik yönetimi",
+    roomEntry: roomIntent === "create" ? "Oda oluştur" : "Odaya gir",
+    lobby: "Oda",
   };
   document.querySelector<HTMLElement>("#stage")!.dataset.room =
     view === "room" ? db.active?.room : "";
@@ -885,11 +1002,16 @@ function render() {
     final: finalScreen,
     leaderboard,
     admin,
+    roomEntry: roomEntryScreen,
+    lobby: lobbyScreen,
   }[view]();
   scheduleLesson();
   if (view === "registration") attachForm();
+  if (view === "roomEntry") attachRoomForm();
   if (view === "admin") attachRestore();
   if (view === "final" && finalStep === "pledges") attachPledges();
+  updateTimeUi();
+  updateRoomBar();
 }
 function animateMeters(before: State) {
   const s = db.active!;
@@ -917,6 +1039,172 @@ function animateMeters(before: State) {
     setTimeout(() => delta.remove(), 1900);
   }
 }
+// ---- rooms
+function attachRoomForm() {
+  const form = document.querySelector<HTMLFormElement>("#room-form")!;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const name = String(data.get("name") ?? "").trim();
+    const code = String(data.get("code") ?? "")
+      .trim()
+      .toUpperCase();
+    const button = form.querySelector<HTMLButtonElement>(
+      "button[type=submit]",
+    )!;
+    const fail = (message: string) => {
+      roomError = message;
+      document.querySelector("#room-error")!.textContent = message;
+      button.disabled = false;
+    };
+    if (!name) return fail("Oyuncu adını yazın.");
+    if (roomIntent === "join" && code.length < 4)
+      return fail("Oda kodunu yazın (4-8 karakter).");
+    button.disabled = true;
+    roomError = "";
+    const result =
+      roomIntent === "create"
+        ? await createRoom(name)
+        : await joinRoom(code, name);
+    if ("error" in result) return fail(result.error);
+    try {
+      localStorage.setItem("yesil-last-name", name);
+    } catch {
+      /* Optional convenience. */
+    }
+    roomSession = { code: result.room.code, playerId: playerId(), name };
+    saveSession(roomSession);
+    applyRoom(result.room);
+    switchView("lobby");
+    startRoomPolling();
+  });
+}
+function applyRoom(room: RoomState) {
+  roomInfo = room;
+  roomReceivedAt = Date.now();
+}
+function leaveRoom() {
+  clearInterval(roomTimer);
+  clearTimeout(scoreTimer);
+  roomTimer = 0;
+  roomSession = null;
+  roomInfo = null;
+  saveSession(null);
+  roomBar.classList.remove("visible");
+}
+const roomBar = document.createElement("button");
+roomBar.id = "room-bar";
+roomBar.type = "button";
+roomBar.dataset.action = "room-ranking";
+document.body.append(roomBar);
+roomBar.addEventListener("click", () => {
+  void action("room-ranking");
+});
+function updateRoomBar() {
+  const s = db.active;
+  const show =
+    !!roomInfo &&
+    !!roomSession &&
+    s?.team.mode === "room" &&
+    s.phase !== "finished" &&
+    (view === "map" ||
+      view === "room" ||
+      view === "market" ||
+      view === "summary");
+  roomBar.classList.toggle("visible", show);
+  if (!show || !roomInfo || !roomSession) return;
+  const ranked = rankPlayers(roomInfo.players);
+  const place = ranked.findIndex((p) => p.id === roomSession!.playerId) + 1;
+  const leader = ranked[0];
+  roomBar.textContent = `Oda ${roomInfo.code} · ${place}. / ${ranked.length}${leader ? ` · lider ${leader.name} ${fmt(leader.score)}` : ""}`;
+}
+function rankingMarkup(): string {
+  if (!roomInfo || !roomSession) return "";
+  return `<ol class="room-ranks">${rankPlayers(roomInfo.players)
+    .map(
+      (p, i) =>
+        `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}><span>${i + 1}</span><b>${esc(p.name)}</b><em>${p.finished ? "bitirdi" : `${p.round}. dönem`}</em><strong>${fmt(p.score)}</strong></li>`,
+    )
+    .join("")}</ol>`;
+}
+async function pollRoom() {
+  if (!roomSession) return;
+  const result = await fetchRoom(roomSession.code);
+  if ("error" in result) {
+    if (/bulunamadı/i.test(result.error) && view === "lobby") {
+      roomError = "Oda artık yok.";
+      leaveRoom();
+      switchView("roomEntry");
+    }
+    return;
+  }
+  const before = JSON.stringify(roomInfo?.players) + roomInfo?.status;
+  applyRoom(result.room);
+  const changed =
+    before !== JSON.stringify(roomInfo?.players) + roomInfo?.status;
+  const remaining = msUntilStart(result.room, roomReceivedAt);
+  if (view === "lobby") {
+    if (result.room.status !== "lobby" && remaining !== null && remaining <= 0)
+      await beginRoomGame();
+    else if (changed && !dialog.open) render();
+  } else if (changed) {
+    updateRoomBar();
+    if (view === "final" && finalStep === "result") render();
+    if (dialog.open && dialog.querySelector(".room-ranks"))
+      dialog.querySelector(".room-ranks")!.outerHTML = rankingMarkup();
+  }
+  updateRoomBar();
+}
+function startRoomPolling() {
+  clearInterval(roomTimer);
+  roomTimer = window.setInterval(() => void pollRoom(), 1500);
+  void pollRoom();
+}
+// Countdown text between polls.
+window.setInterval(() => {
+  const el = document.querySelector("#room-countdown");
+  if (!el || !roomInfo) return;
+  const ms = msUntilStart(roomInfo, roomReceivedAt);
+  if (ms === null) return;
+  el.textContent = `Başlıyor… ${Math.max(0, Math.ceil(ms / 1000))}`;
+  if (ms <= 0 && view === "lobby") void pollRoom();
+}, 250);
+async function beginRoomGame() {
+  if (!roomSession || view !== "lobby") return;
+  const s: State = {
+    ...start({
+      organization: "",
+      first: roomSession.name,
+      second: "",
+      mode: "room",
+      room: roomSession.code,
+      playerId: roomSession.playerId,
+    }),
+    decisionVersion: 1,
+    decisions: [],
+    sorting: {},
+    tutorial: false,
+  };
+  await transaction((d) => ({ ...d, active: s }));
+  submitInfo = "";
+  switchView("map");
+  scheduleScoreReport();
+}
+// Reports this player's score so everyone's ranking stays live.
+function scheduleScoreReport() {
+  const s = db.active;
+  if (!s || s.team.mode !== "room" || !s.team.room) return;
+  clearTimeout(scoreTimer);
+  scoreTimer = window.setTimeout(() => {
+    const cur = db.active;
+    if (!cur || cur.team.mode !== "room" || !cur.team.room) return;
+    const finished = cur.phase === "finished";
+    const key = `${score(cur)}:${cur.round}:${finished}`;
+    if (key === lastReported && !finished) return;
+    lastReported = key;
+    void reportScore(cur.team.room, score(cur), cur.round, finished);
+  }, 1200);
+}
 function attachForm() {
   const form = document.querySelector<HTMLFormElement>("#team-form")!;
   form.addEventListener("change", () => {
@@ -927,9 +1215,9 @@ function attachForm() {
     const data = new FormData(form),
       error = document.querySelector<HTMLElement>("#form-error")!;
     const team: Team = {
-      organization: String(data.get("organization") ?? ""),
+      organization: "",
       first: String(data.get("first") ?? ""),
-      second: String(data.get("second") ?? ""),
+      second: "",
       mode: String(data.get("mode")) as Team["mode"],
     };
     const button = form.querySelector<HTMLButtonElement>(
@@ -938,7 +1226,7 @@ function attachForm() {
     button.disabled = true;
     try {
       const s: State = {
-        ...start(team, db.results, organizations),
+        ...start(team),
         decisionVersion: 1,
         decisions: [],
         sorting: {},
@@ -948,18 +1236,9 @@ function attachForm() {
       tutorial();
     } catch (err) {
       error.textContent = (err as Error).message;
-      let firstInvalid: HTMLInputElement | null = null;
-      for (const field of ["organization", "first", "second"]) {
-        const input = form.elements.namedItem(field) as HTMLInputElement;
-        const invalid =
-          (field !== "second" && !input.value.trim()) ||
-          (field === "organization" &&
-            team.mode === "official" &&
-            !organizations.includes(input.value.trim()));
-        input.setAttribute("aria-invalid", String(invalid));
-        if (invalid && !firstInvalid) firstInvalid = input;
-      }
-      firstInvalid?.focus();
+      const input = form.elements.namedItem("first") as HTMLInputElement;
+      input.setAttribute("aria-invalid", "true");
+      input.focus();
       button.disabled = false;
     }
   });
@@ -1142,6 +1421,13 @@ async function action(action: string) {
       scheduleLesson();
       break;
     }
+    case "skip-budget": {
+      const origin = (db.active!.originScene ?? "kitchen") as RoomId;
+      await mutate((s) => skipUnaffordable(s, arg));
+      announce("Bu adım atlandı; puan getirmez.");
+      await goRoom(origin);
+      break;
+    }
     case "optional-skip":
       await mutate((s) => skipOptional(s, arg));
       closeModal();
@@ -1215,12 +1501,6 @@ async function action(action: string) {
       switchView(stateView());
       if (db.active?.tutorial) tutorial();
       break;
-    case "clear-org": {
-      const field = document.querySelector<HTMLInputElement>("#organization")!;
-      field.value = "";
-      field.focus();
-      break;
-    }
     case "tutorial-done":
       await mutate((s) => ({ ...s, tutorial: false, room: "map" }));
       closeModal();
@@ -1559,6 +1839,33 @@ async function action(action: string) {
     case "resubmit":
       await submitFinished();
       break;
+    case "room-create":
+    case "room-join":
+      roomIntent = kind === "room-create" ? "create" : "join";
+      roomError = "";
+      switchView("roomEntry");
+      break;
+    case "room-start": {
+      if (!roomSession) break;
+      const result = await startRoom(roomSession.code);
+      if ("error" in result) {
+        roomError = result.error;
+        render();
+        break;
+      }
+      applyRoom(result.room);
+      render();
+      break;
+    }
+    case "room-leave":
+      leaveRoom();
+      switchView("start");
+      break;
+    case "room-ranking":
+      showModal(
+        `<p class="eyebrow">ODA ${esc(roomInfo?.code ?? "")}</p><h2 id="dialog-title">Canlı sıralama</h2>${rankingMarkup()}${btn("KAPAT", "close", "primary")}`,
+      );
+      break;
     case "board":
       boardMode = arg === "practice" ? "practice" : "official";
       render();
@@ -1607,7 +1914,7 @@ async function action(action: string) {
       if (r)
         confirmAction(
           "Sonuç silinsin mi?",
-          `${esc(r.organization)} · ${r.mode === "official" ? "Resmî" : "Serbest"} · ${fmt(r.score)} puan. Kayıt tüm cihazlar için ortak tablodan silinir.`,
+          `${esc(r.name)} · ${fmt(r.score)} puan. Kayıt tüm cihazlar için ortak tablodan silinir.`,
           `rdelete-confirm:${arg}`,
           "SONUCU SİL",
         );
@@ -1655,9 +1962,7 @@ async function action(action: string) {
         if (r.rulesVersion === 1)
           await submitResult({
             id: r.id,
-            organization: r.team.organization,
-            first: r.team.first,
-            second: r.team.second,
+            name: r.team.first,
             mode: "official",
             score: r.score,
             bill: r.bill,
@@ -1673,17 +1978,6 @@ async function action(action: string) {
       );
       break;
     }
-    case "csv-totals":
-      if (!remote) {
-        announce("Sunucuya ulaşılamadı.", true);
-        break;
-      }
-      download(
-        "yesil-donusum-kooperatif-toplamlari.csv",
-        totalsCsv(remote),
-        "text/csv;charset=utf-8",
-      );
-      break;
     case "csv-remote":
       if (!remote) {
         announce("Sunucuya ulaşılamadı.", true);
@@ -1691,23 +1985,7 @@ async function action(action: string) {
       }
       download(
         "yesil-donusum-tum-sonuclar.csv",
-        csv(
-          remote.map((r) => ({
-            rulesVersion: 1 as const,
-            id: r.id,
-            team: {
-              organization: r.organization,
-              first: r.first,
-              second: r.second,
-              mode: r.mode,
-            },
-            bill: r.bill,
-            budget: r.budget,
-            savingPercent: r.savingPercent,
-            score: r.score,
-            completedAt: r.completedAt,
-          })),
-        ),
+        gamesCsv(remote),
         "text/csv;charset=utf-8",
       );
       break;
@@ -1720,7 +1998,7 @@ async function action(action: string) {
       if (r)
         confirmAction(
           "Sonuç silinsin mi?",
-          `${esc(r.team.organization)} sonucunu sileceksiniz. Kurum yeniden resmî oyun oynayabilecek. Önce otomatik yedek indirilecek.`,
+          `${esc(r.team.first)} sonucunu sileceksiniz. Önce otomatik yedek indirilecek.`,
           `delete-confirm:${arg}`,
           "SONUCU SİL",
         );

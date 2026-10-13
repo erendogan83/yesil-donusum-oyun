@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "revision": 21,
+  "revision": 26,
   "active": {
     "version": 2,
-    "id": "b0cfd6d4-99c5-49ce-a890-2a7a189e33f7",
+    "id": "a3c40a91-588f-46a4-8ca4-b6746fd01185",
     "team": {
-      "organization": "Toplumsal Değişme ve Emekçi Kadın Girişimi Kooperatifi",
+      "organization": "",
       "first": "QA Deniz",
-      "second": "QA Ece",
+      "second": "",
       "mode": "official"
     },
     "round": 4,
@@ -119,8 +119,16 @@
     },
     "originScene": "kitchen",
     "originZone": "rev-tap",
+    "clockRunning": null,
     "purchaseCosts": {
       "rev-tap-aerator": 295
+    },
+    "timePenalty": 0,
+    "clock": {
+      "kitchen@1": {
+        "ms": 2663,
+        "charged": 0
+      }
     },
     "salesIncomeGranted": true,
     "salesIncomeAcknowledged": true,
@@ -132,18 +140,18 @@
   },
   "results": [
     {
-      "id": "b0cfd6d4-99c5-49ce-a890-2a7a189e33f7",
+      "id": "a3c40a91-588f-46a4-8ca4-b6746fd01185",
       "team": {
-        "organization": "Toplumsal Değişme ve Emekçi Kadın Girişimi Kooperatifi",
+        "organization": "",
         "first": "QA Deniz",
-        "second": "QA Ece",
+        "second": "",
         "mode": "official"
       },
       "bill": 10000,
       "budget": 9705,
       "savingPercent": 0,
       "score": 20,
-      "completedAt": "2026-10-13T09:26:46.652Z",
+      "completedAt": "2026-10-13T10:26:17.141Z",
       "rulesVersion": 1,
       "realLifePledges": [
         "Evde damlayan muslukları kontrol edeceğiz.",

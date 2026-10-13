@@ -180,6 +180,23 @@ export function recordChoice(s: State, id: string): State {
     ],
   };
 }
+/** A required purchase the player can no longer afford (for example after time penalties). */
+export function skipUnaffordable(s: State, id: string): State {
+  const o = opportunities.find((o) => o.id === id);
+  if (!o || o.kind !== "product" || !o.core) throw Error("Bu adım atlanamaz.");
+  eligible(s, o);
+  const cheapest = Math.min(
+    ...o.choices.map((c) => (existingFixture(c) ? 0 : economy[c].priceTL)),
+  );
+  if (cheapest <= s.budget) throw Error("Bütçen bu adım için yetiyor.");
+  return {
+    ...s,
+    decisions: [
+      ...(s.decisions || []),
+      { opportunityId: id, choiceId: "skip-budget", round: s.round },
+    ],
+  };
+}
 export function skipOptional(s: State, id: string): State {
   const o = opportunities.find((o) => o.id === id)!;
   eligible(s, o);
@@ -295,6 +312,7 @@ export function validDecisions(s: State): boolean {
         )
           return false;
         if (d.choiceId === "skip") return !o.core;
+        if (d.choiceId === "skip-budget") return o.kind === "product" && o.core;
         if (o.kind === "sorting") {
           const p = s.sorting?.[o.id];
           return (

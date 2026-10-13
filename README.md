@@ -19,6 +19,12 @@ Alternatif: `node serve.mjs`. `dist/` depoda tutulmaz; ilk çalıştırmada BASL
 - Ürün: sorunu gör → markette incele → satın al → otomatik odaya dön → yerleştir → ANLADIM.
 - Atık ve çamaşır ayırma: nesneyi hedefe sürükleyip bırak (ya da nesneye, sonra hedefe dokun). Yanlış hedef bırakılabilir:
   ilk yanlış eşleştirme ₺50 krediden götürür ve o nesnenin puanını da götürür; tekrar denemek ücretsizdir ama puan getirmez.
+- **Süreli yarışma (Resmî):** her odada 30 saniye vardır; süre dolduğunda oda bitmemişse her saniye bütçeden ₺5 düşer
+  (bütçe sıfırın altına inmez). Süre yalnızca oda/market içinde işler; haritada ve öğrenme kartı açıkken durur.
+  Bütçe artık hiçbir seçeneğe yetmiyorsa gerekli satın alma adımı "Bütçem yetmiyor, bu adımı geç" ile atlanır (puan getirmez).
+  Serbest denemede süre yoktur.
+- **Odalar:** "ODA OLUŞTUR" 5 karakterli bir kod verir, "ODAYA GİR" kodla katılır. Kurucu "OYUNU BAŞLAT" der, herkes aynı anda
+  (5 sn geri sayımla) süreli oyuna başlar; üstte canlı sıralama görünür, final ekranı odanın sıralamasını gösterir.
 - Oda sonu: oda bitince "BÖLÜMÜ BİTİR" haritaya döner, onay sormaz. Dönem sonu yalnız haritadadır; tamamlanmamış temel adım varsa hangi alanlar olduğunu yazan bir onay çıkar. İsteğe bağlı fırsatlar (leğen, LED şerit, zamanlayıcı, çatı) dönemi bitirmeye engel olmaz.
 - Dikey telefonlarda oda ve market ürünleri alt kısımda büyük kartlar olarak gösterilir; yatay/masaüstünde resmin üzerindeki etiketler kullanılır.
 - Kayıt: oyun her adımda bu cihaza kendiliğinden kaydolur. Sonuç, 4. dönem sonunda "Büyük finale geç" ile ya da yardım (?) penceresindeki
@@ -42,8 +48,8 @@ Dönem ödülü mevcut kuralla korunur: yeni gider azalmasının %50'si, en çok
 
 ## Kayıtlar ve kurumlar
 
-`public/organizations.json` mevcut 26 kurumun tam adlarını içerir. Kooperatif ve birinci katılımcı adı zorunludur; ikinci katılımcı isteğe bağlıdır (tek kişi de oynayabilir).
-Serbest deneme sonuçları liderlik tablosunun Serbest sekmesinde görünür. Bir kooperatifin birden fazla takımı/oyuncusu resmî oynayabilir; liderlik tablosu kooperatif başına toplam puanı gösterir.
+Oyun tekli: yalnızca oyuncu adı gerekir. Kooperatif/kurum listesi kaldırıldı.
+Serbest deneme sonuçları liderlik tablosunun Serbest sekmesinde, resmî (süreli) sonuçlar Resmî sekmesinde görünür.
 Otomatik kayıt anahtarı `yesil-donusum-v1`, veritabanı biçimi v2 olarak korunur.
 
 Eski oyunlar eski karar/ekonomi kurallarıyla devam eder; eski sonuçlar yeniden puanlanmaz.
@@ -95,9 +101,8 @@ Yerelde denemek için: `npm run build && npm run dev:cf` (`http://127.0.0.1:8788
 `npm run test:api` ve `npm run test:board` bu sunucuya karşı çalışır.
 
 - **Kim görür:** Tüm cihazların sonuçları aynı tabloda toplanır; tablo 15 sn'de bir kendini yeniler.
-  _Resmî_ ve _Serbest_ sekmeleri vardır. Sınırsız sayıda takım/kurum olabilir; kurum listesi `public/organizations.json`.
-- **Kooperatif toplamı:** Aynı kooperatifin tüm oyuncularının puanları toplanır; tabloda kooperatif adı, oyun sayısı ve oyuncular yazar.
-  Resmî oyun için kurum listede olmalıdır; listede olmayan ad otomatik olarak _Serbest_ sayılır. Bir kooperatifin kaç takımı olduğu sınırlı değildir.
+  _Resmî_ ve _Serbest_ sekmeleri vardır.
+- **Tablo:** Tüm oyuncuların sonuçları puana göre sıralanır (Resmî ve Serbest sekmeleri). Oda oyunları yalnızca odanın kendi sıralamasında görünür.
 - **Bağlantı yoksa:** Biten oyun cihazda bekler ve bağlantı gelince otomatik gönderilir. Sunucu yoksa (yerel
   `node serve.mjs`) tablo bu cihazdaki resmî sonuçları gösterir.
 - **Yönetim (`/#admin`):** Anahtarla giriş yapınca tek tek sonuç silme, serbest denemeleri toplu silme, tüm kayıtları
@@ -106,10 +111,9 @@ Yerelde denemek için: `npm run build && npm run dev:cf` (`http://127.0.0.1:8788
   yalnızca biçim ve sınırları (0–2000 puan vb.) denetler. Silme/sıfırlama ise anahtarsız mümkün değildir.
 
 `public/_headers` önbellek ve güvenlik başlıklarını belirler: `js/` ve `css/` (hash'li) bir yıl önbelleğe alınır,
-`index.html`, `sw.js` ve `organizations.json` her seferinde doğrulanır. Derleme, varsa orijinal sheet'leri
+`index.html` ve `sw.js` her seferinde doğrulanır. Derleme, varsa orijinal sheet'leri
 (`assets/source/`) `dist/` dışında bırakır; Pages sınırlarının (dosya başına 25 MiB, 20.000 dosya) çok altındayız.
 `node serve.mjs` aynı başlıkları yerelde uygular, böylece CSP sorunları dağıtımdan önce görülür.
-Kurum listesi için `public/organizations.json` düzenlenip yeniden dağıtılmalıdır.
 
 ## Geliştirme ve doğrulama
 

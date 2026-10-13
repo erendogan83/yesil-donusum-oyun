@@ -31,10 +31,18 @@ import {
 } from "./learning";
 import { ideas, type Discovery, type Consideration } from "./journey";
 export interface Team {
+  /** Legacy: cooperatives were removed; new games leave this empty. */
   organization: string;
+  /** The player's name. */
   first: string;
+  /** Legacy: games are single player now. */
   second: string;
-  mode: "practice" | "official";
+  /** practice: untimed; official and room: timed (see clock.ts). */
+  mode: "practice" | "official" | "room";
+  /** Room code when playing against others in a room. */
+  room?: string;
+  /** Identifies this player inside a room. */
+  playerId?: string;
 }
 export interface Move {
   replacedBy?: string;
@@ -87,6 +95,12 @@ export interface State {
   discoveries?: Discovery[];
   considered?: Consideration[];
   realLifePledges?: string[];
+  /** Time used per "room@round" in timed games. */
+  clock?: Record<string, { ms: number; charged: number; done?: boolean }>;
+  /** The room the clock is currently running for, and since when (epoch ms). */
+  clockRunning?: { room: string; at: number } | null;
+  /** Total money taken for overtime. */
+  timePenalty?: number;
 }
 export interface Result {
   rulesVersion?: 1;
@@ -127,26 +141,18 @@ export const savingPercent = (s: State) =>
   Math.round(((INITIAL_BILL - s.bill) / INITIAL_BILL) * 1000) / 10;
 export function start(
   team: Team,
-  results: Result[],
-  organizations: string[],
+  _results: Result[] = [],
+  _organizations: string[] = [],
 ): State {
   const clean = {
     ...team,
-    organization: team.organization.trim(),
+    organization: (team.organization ?? "").trim(),
     first: team.first.trim(),
-    second: team.second.trim(),
+    second: (team.second ?? "").trim(),
   };
-  if (!clean.organization || !clean.first)
-    throw Error("Kooperatifi ve en az bir katılımcının adını yazın.");
-  if (Object.values(clean).some((x) => x.length > 180))
+  if (!clean.first) throw Error("Oyuncu adını yazın.");
+  if (Object.values(clean).some((x) => String(x).length > 180))
     throw Error("İsimleri 180 karakterden kısa yazın.");
-  if (clean.mode === "official") {
-    if (
-      organizations.length === 0 ||
-      !organizations.includes(clean.organization)
-    )
-      throw Error("Resmî oyun için doğrulanmış kurum listesinden seçim yapın.");
-  }
   return {
     version: 2,
     id: crypto.randomUUID(),
@@ -426,14 +432,13 @@ export function validDatabase(value: unknown): value is Database {
   const validTeam = (t: Team) =>
     t &&
     typeof t.organization === "string" &&
-    !!t.organization.trim() &&
     t.organization.length <= 180 &&
     typeof t.first === "string" &&
     !!t.first.trim() &&
     t.first.length <= 180 &&
     typeof t.second === "string" &&
     t.second.length <= 180 &&
-    ["practice", "official"].includes(t.mode);
+    ["practice", "official", "room"].includes(t.mode);
   if (
     ![1, 2].includes(d.version) ||
     !Number.isInteger(d.revision) ||
@@ -445,7 +450,7 @@ export function validDatabase(value: unknown): value is Database {
         !r ||
         !validTeam(r.team) ||
         !validPledges(r.realLifePledges) ||
-        r.team.mode !== "official" ||
+        r.team.mode === "practice" ||
         typeof r.id !== "string" ||
         ![r.bill, r.budget, r.score, r.savingPercent].every(Number.isFinite) ||
         r.bill < 0 ||
@@ -686,9 +691,8 @@ export function csv(results: Result[]): string {
     [
       [
         "Sıra",
-        "Kurum",
-        "1. Katılımcı",
-        "2. Katılımcı",
+        "Oyuncu",
+        "Oda",
         "Tasarruf %",
         "Skor",
         "Aylık gider (TL)",
@@ -699,16 +703,15 @@ export function csv(results: Result[]): string {
       ],
       ...ranking(results).map((r, i) => [
         i + 1,
-        r.team.organization,
         r.team.first,
-        r.team.second,
+        r.team.room ?? "",
         r.savingPercent,
         r.score,
         r.bill,
         r.budget,
         r.completedAt,
         r.rulesVersion === 1 ? "Karar puanı v1" : "Eski ekonomi puanı",
-        r.team.mode === "official" ? "Resmî" : "Serbest",
+        { official: "Resmî", room: "Oda", practice: "Serbest" }[r.team.mode],
       ]),
     ]
       .map((row) => row.map(cell).join(";"))

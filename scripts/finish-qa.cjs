@@ -32,11 +32,9 @@ const token = process.env.ADMIN_TOKEN || "secret123";
   const api = (path) =>
     page.evaluate(async (p) => (await fetch(p)).json(), path);
   const status = () => page.locator(".submit-status").innerText();
-  const start = async (org, second = "Nisa") => {
+  const start = async (name) => {
     await click("new");
-    await page.locator("#organization").fill(org);
-    await page.locator("#first").fill("Ayşe");
-    if (second) await page.locator("#second").fill(second);
+    await page.locator("#first").fill(name);
     await page.locator('[type="submit"]').click();
     await click("tutorial-done");
   };
@@ -77,7 +75,7 @@ const token = process.env.ADMIN_TOKEN || "secret123";
   );
   assert((await status()).includes("Serbest"), await status());
   let rows = (await api("/api/results")).results.filter(
-    (r) => r.organization === "Bitir QA 1",
+    (r) => r.name === "Bitir QA 1",
   );
   assert.equal(rows.length, 1);
   assert(rows[0].score > 0, "decisions made so far count");
@@ -85,8 +83,7 @@ const token = process.env.ADMIN_TOKEN || "secret123";
 
   // Offline finish: the result waits, then the retry button sends it.
   await page.goto(base);
-  // A single player: the second name is optional.
-  await start("Bitir QA 2", "");
+  await start("Bitir QA 2");
   await context.setOffline(true);
   await click("help");
   await dialogClick("finish-now");
@@ -103,14 +100,9 @@ const token = process.env.ADMIN_TOKEN || "secret123";
     document.querySelector(".submit-status")?.textContent.includes("✓"),
   );
   rows = (await api("/api/results")).results.filter(
-    (r) => r.organization === "Bitir QA 2",
+    (r) => r.name === "Bitir QA 2",
   );
   assert.equal(rows.length, 1);
-  assert.equal(
-    rows[0].second,
-    "",
-    "solo player is stored without a second name",
-  );
   assert.deepEqual(
     errors.filter((e) => !/Failed to fetch|net::/.test(e)),
     [],

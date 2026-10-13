@@ -6,6 +6,10 @@ export const ROUND_REWARD_RATE = 0.25;
 export const FINAL_SALES_INCOME = 7_500;
 export const ROUND_REWARD_CAP = 500;
 export const LARGE_PURCHASE_SHARE = 0.3;
+/** Timed play (official and room games): seconds allowed per room and period. */
+export const TIME_LIMIT_S = 30;
+/** Charged for every second beyond the limit while the room is still unfinished. */
+export const OVERTIME_COST = 5;
 /** Charged once per item whose first sorting answer is wrong. */
 export const SORT_MISTAKE_PENALTY = 50;
 const money = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 });

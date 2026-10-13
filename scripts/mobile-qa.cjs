@@ -157,9 +157,15 @@ async function run(label, engine, device) {
   await page.goto(U);
   await page.locator('[data-action="new"]').waitFor();
   await audit("start");
+  // The room screens must be usable on a phone too.
+  await tap('[data-action="room-create"]');
+  await audit("room-create");
+  await tap('[data-action="start"]');
+  await tap('[data-action="room-join"]');
+  await audit("room-join");
+  await tap('[data-action="start"]');
   await tap('[data-action="new"]');
   await audit("registration");
-  await page.locator("#organization").fill("Mobil Test");
   await page.locator("#first").fill("Eren");
   await tap('[type="submit"]');
   await audit("tutorial");
