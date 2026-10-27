@@ -320,24 +320,6 @@
     ]
   },
   {
-    "id": "laundry-program",
-    "roomId": "laundry",
-    "title": "Yıkama programı",
-    "scenario": "Günlük, normal kirli çamaşırlar; özel hijyen gereksinimi yok. Etiketleri düşük sıcaklığa uygun.",
-    "x": 31,
-    "y": 49,
-    "kind": "behavior",
-    "core": true,
-    "round": 2,
-    "choices": [
-      "rev-laundry-program-eco",
-      "rev-laundry-program-normal",
-      "rev-laundry-program-hot",
-      "rev-laundry-program-cold",
-      "rev-laundry-program-boil"
-    ]
-  },
-  {
     "id": "irrigation",
     "roomId": "garden",
     "title": "Sebze sıraları",

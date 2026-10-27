@@ -32,7 +32,8 @@ export type View =
   | "leaderboard"
   | "admin"
   | "roomEntry"
-  | "lobby";
+  | "lobby"
+  | "howto";
 export class World extends Phaser.Scene {
   ready = false;
   onReady = () => {};
@@ -139,6 +140,7 @@ export class World extends Phaser.Scene {
         "summary",
         "roomEntry",
         "lobby",
+        "howto",
       ].includes(view)
     )
       this.add.rectangle(

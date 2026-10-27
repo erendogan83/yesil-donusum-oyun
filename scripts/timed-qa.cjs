@@ -91,7 +91,7 @@ const base = process.env.GAME_URL || "http://127.0.0.1:4180";
   assert.match(await clockText(), /^\+\d+ sn/);
   const saved = await state();
   assert(
-    saved.budget < 2500 && saved.timePenalty > 0,
+    saved.budget < 10000 && saved.timePenalty > 0,
     "the penalty is saved, not only shown",
   );
   assert(saved.budget >= 0);

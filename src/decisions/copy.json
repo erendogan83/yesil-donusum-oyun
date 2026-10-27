@@ -195,27 +195,6 @@
     "resultText": "Çamaşırları sıkıştırmadan biriktirmek, aynı miktar için gereken yıkama sayısını azaltır.",
     "whyText": ""
   },
-  "rev-laundry-program-eco": {
-    "title": "30°C / ECO",
-    "shortDescription": "Düşük sıcaklıkta yıkama.",
-    "resultTitle": "Düşük sıcaklıkta yıkadın.",
-    "resultText": "Bu günlük çamaşırlar için yüksek ısı gerekmiyordu; daha az su ısıttın.",
-    "whyText": ""
-  },
-  "rev-laundry-program-normal": {
-    "title": "40°C / NORMAL",
-    "shortDescription": "Orta sıcaklıkta standart yıkama.",
-    "resultTitle": "Normal programı seçtin.",
-    "resultText": "Bu çamaşırlar düşük sıcaklıkta da yıkanabilirdi; daha fazla su ısıttın.",
-    "whyText": ""
-  },
-  "rev-laundry-program-hot": {
-    "title": "60°C / YOĞUN",
-    "shortDescription": "Yüksek sıcaklıkta yoğun yıkama.",
-    "resultTitle": "Gerekenden yüksek ısı seçtin.",
-    "resultText": "Bu senaryoda özel hijyen ihtiyacı yoktu; yüksek ısıya gerek kalmıyordu.",
-    "whyText": ""
-  },
   "rev-irrigation-hose": {
     "title": "Hortum Tabancası",
     "shortDescription": "Mevcut hortuma takılan el tabancası.",
@@ -424,20 +403,6 @@
     "shortDescription": "Çamaşırlar sıkışır.",
     "resultTitle": "Tamburu aşırı doldurdun.",
     "resultText": "Sıkışan çamaşır iyi yıkanmaz, tekrar yıkamak gerekebilir.",
-    "whyText": ""
-  },
-  "rev-laundry-program-cold": {
-    "title": "20°C / SOĞUK",
-    "shortDescription": "Soğuk suyla kısa yıkama.",
-    "resultTitle": "Soğuk suyla yıkadın.",
-    "resultText": "Az kirli çamaşırlarda enerji tasarrufu sağlar; leke varsa yetmeyebilir.",
-    "whyText": ""
-  },
-  "rev-laundry-program-boil": {
-    "title": "90°C / KAYNATMA",
-    "shortDescription": "En yüksek sıcaklıkta yıkama.",
-    "resultTitle": "En yüksek ısıyı seçtin.",
-    "resultText": "Günlük çamaşırlar için gereksiz; çok enerji harcar ve kumaşı yıpratır.",
     "whyText": ""
   },
   "rev-irrigation-time-night": {

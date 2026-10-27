@@ -13,8 +13,11 @@ export const limitSeconds = () => {
   return typeof v === "number" && v > 0 ? v : TIME_LIMIT_S;
 };
 
+/** Practice games and rooms created without a clock are untimed. */
 export const isTimed = (s: State) =>
-  s.decisionVersion === 1 && s.team.mode !== "practice";
+  s.decisionVersion === 1 &&
+  s.team.mode !== "practice" &&
+  s.team.timed !== false;
 
 /** Adds the time since the clock was last looked at and charges overtime. */
 export function settle(s: State, now: number): State {

@@ -5,6 +5,7 @@ import economyData from "./economy.json";
 import scoresData from "./scores.json";
 import copyData from "./copy.json";
 import assetsData from "./assets.json";
+import detailsData from "./details.json";
 import type { Product, RoomId, Category } from "../data";
 import type { State } from "../model";
 import type { Lesson } from "../learning";
@@ -47,6 +48,17 @@ export const assets: Record<
   string,
   { asset: string; installationSlot: string }
 > = assetsData;
+/** What an item does well and badly, in plain words the player can read before choosing. */
+export const details: Record<string, { pros: string; cons: string }> =
+  detailsData;
+/**
+ * Decisions that were removed from the game. Older saves may still hold them;
+ * they are ignored on load and dropped on migration, never scored.
+ */
+export const RETIRED_OPPORTUNITIES = ["laundry-program"];
+export const RETIRED_CHOICE_PREFIXES = ["rev-laundry-program-"];
+export const isRetiredChoice = (id: string) =>
+  RETIRED_CHOICE_PREFIXES.some((p) => id.startsWith(p));
 export const opportunityFor = (id: string) =>
   opportunities.find((o) => o.choices.includes(id));
 export const zoneFor = (o: Opportunity) => `rev-${o.id}`;
@@ -285,6 +297,36 @@ export function sortItem(
     lessons: [...(s.lessons || []), lesson],
   };
 }
+/** Removes everything that belongs to decisions that no longer exist. */
+export function dropRetired(s: State): State {
+  if (
+    !s.decisions?.some((d) =>
+      RETIRED_OPPORTUNITIES.includes(d.opportunityId),
+    ) &&
+    !s.lessons?.some((l) => isRetiredChoice(l.id))
+  )
+    return s;
+  return {
+    ...s,
+    decisions: s.decisions?.filter(
+      (d) => !RETIRED_OPPORTUNITIES.includes(d.opportunityId),
+    ),
+    lessons: s.lessons?.filter((l) => !isRetiredChoice(l.id)),
+  };
+}
+/**
+ * Choices the player made in this period for a room, newest last. They can still be
+ * taken back until the period is closed.
+ */
+export function revisable(s: State, room: RoomId) {
+  if (s.decisionVersion !== 1 || s.phase !== "playing") return [];
+  return (s.decisions || []).flatMap((d) => {
+    const o = opportunities.find((o) => o.id === d.opportunityId);
+    return o && o.roomId === room && o.kind !== "sorting" && d.round === s.round
+      ? [{ decision: d, opportunity: o }]
+      : [];
+  });
+}
 // Compatibility only: the briefly released price revision stored a keep-existing
 // choice without a purchase or installation. Never fabricate either on recovery.
 function savedExistingBulb(s: State, id: string) {
@@ -319,6 +361,7 @@ export function validDecisions(s: State): boolean {
       return false;
     return (
       s.decisions.every((d) => {
+        if (RETIRED_OPPORTUNITIES.includes(d.opportunityId)) return true;
         const o = opportunities.find((o) => o.id === d.opportunityId);
         if (
           !o ||
@@ -383,8 +426,6 @@ export const practicalPledges: Record<string, string> = {
   "laundry-sort":
     "Çamaşırları renklerine ve bakım etiketlerine göre ayıracağız.",
   "laundry-load": "Makineyi sıkıştırmadan uygun tam yükle çalıştıracağız.",
-  "laundry-program":
-    "Günlük çamaşırlarda etikete uygun düşük sıcaklığı değerlendireceğiz.",
   irrigation: "Sulama suyunu bitkinin köküne yönlendireceğiz.",
   "irrigation-time": "Sıcak günlerde sulamayı serin saatlere bırakacağız.",
   "irrigation-timer": "Sulama ayarını toprağın ihtiyacına göre yapacağız.",
@@ -419,6 +460,7 @@ export const choices = opportunities.flatMap((o) =>
     ...economy[id],
     ...points[id],
     ...assets[id],
+    ...details[id],
     sourceNote: sourceNotes[o.id as keyof typeof sourceNotes],
   })),
 );

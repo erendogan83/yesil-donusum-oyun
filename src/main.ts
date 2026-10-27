@@ -15,6 +15,8 @@ import {
   skipUnaffordable,
   opportunityFor,
   choiceOrder,
+  details as itemDetails,
+  revisable,
 } from "./decisions";
 import {
   activeOpportunity,
@@ -31,6 +33,7 @@ import {
   EARLY_BONUS,
   LARGE_PURCHASE_SHARE,
   SORT_MISTAKE_PENALTY,
+  ROOM_EXTEND_S,
   fmtMoney,
   signedMoney,
   SIMULATION_NOTE,
@@ -39,12 +42,14 @@ import Phaser from "phaser";
 import { miniGoals, ideas, solutions, roundIdea } from "./journey";
 import { discover, consider, setPledges, migrateDatabase } from "./model";
 import { cueSound } from "./sound";
+import { guideHtml, roundTips } from "./guide";
 import { reconcile, clockView, isTimed, limitSeconds } from "./clock";
 import {
   createRoom,
   joinRoom,
   fetchRoom,
   startRoom,
+  extendRoom,
   roomSlug,
   reportScore,
   leaveRoomApi,
@@ -134,6 +139,7 @@ import {
   continueRound,
   finish,
   finishNow,
+  changeChoice,
   score,
   savingPercent,
   ranking,
@@ -165,12 +171,20 @@ const esc = (s: unknown) =>
 const asset = (key: string) => `assets/${key}.webp`;
 const art = (key: string, cls = "") =>
   `<img class="${cls}" src="${asset(key)}" alt="" draggable="false"/>`;
+/** What an item does well and badly. Spans only, so it is valid inside a button. */
+const prosCons = (id: string) => {
+  const d = itemDetails[id];
+  return d
+    ? `<span class="pros-cons"><span class="pc pro"><i>Artısı</i> ${esc(d.pros)}</span><span class="pc con"><i>Eksisi</i> ${esc(d.cons)}</span></span>`
+    : "";
+};
 const btn = (label: string, action: string, cls = "", extra = "") =>
   `<button type="button" class="${cls}" data-action="${action}" ${extra}>${label}</button>`;
 let db: Database = emptyDatabase(),
   view: View = location.hash === "#admin" ? "admin" : "start",
   category: Category = "Su",
   marketPage = 0;
+let howtoReturn: View = "start";
 let inventoryOpen = false,
   selectedProduct: string | null = null,
   toastTimer = 0,
@@ -205,6 +219,7 @@ let roomSession: RoomSession | null = loadSession(),
   roomInfo: RoomState | null = null,
   roomReceivedAt = 0,
   roomIntent: "create" | "join" = "create",
+  roomTimed = true,
   roomError = "",
   roomTimer = 0,
   scoreTimer = 0,
@@ -732,10 +747,13 @@ function inventory() {
   }</section>`;
 }
 function startScreen() {
-  return `<section class="title-screen"><div class="eyebrow">BİRLİKTE ÜRET • BİRLİKTE DÖNÜŞTÜR</div><h1>YEŞİL<br/><span>DÖNÜŞÜM</span></h1><p>Bütçeni yönet.<br/>Doğru seçimleri yap.<br/>Aylık gideri düşür.</p>${db.active && db.active.phase !== "finished" ? `<p class="subtle">Yarım kalan oyununuz var.</p>${btn("DEVAM ET", "resume", "primary")}` : btn("OYUNA BAŞLA", "new", "primary")}${db.active && db.active.phase !== "finished" ? btn("Yeni oyun", "new", "ghost", 'style="margin-top:12px"') : ""}<div class="room-buttons">${btn("ODA OLUŞTUR", "room-create", "gold")}${btn("ODAYA GİR", "room-join", "ghost")}</div><div class="seal"><small>BİR YERLEŞKE</small><b>4</b><small>DÖNEM • BİRLİKTE</small></div><footer class="start-footer"><span>Tek başına ya da bir odada rakiplerinle: boşa gideni önce kim bulacak?</span>${btn("Liderlik tablosu ↗", "leaderboard", "ghost")}</footer></section>`;
+  return `<section class="title-screen"><div class="eyebrow">BİRLİKTE ÜRET • BİRLİKTE DÖNÜŞTÜR</div><h1>YEŞİL<br/><span>DÖNÜŞÜM</span></h1><p>Bütçeni yönet.<br/>Doğru seçimleri yap.<br/>Aylık gideri düşür.</p>${db.active && db.active.phase !== "finished" ? `<p class="subtle">Yarım kalan oyununuz var.</p>${btn("DEVAM ET", "resume", "primary")}` : btn("OYUNA BAŞLA", "new", "primary")}${db.active && db.active.phase !== "finished" ? btn("Yeni oyun", "new", "ghost", 'style="margin-top:12px"') : ""}<div class="room-buttons">${btn("ODA OLUŞTUR", "room-create", "gold")}${btn("ODAYA GİR", "room-join", "ghost")}</div><div class="seal"><small>BİR YERLEŞKE</small><b>4</b><small>DÖNEM • BİRLİKTE</small></div><footer class="start-footer"><span>Tek başına ya da bir odada rakiplerinle: boşa gideni önce kim bulacak?</span><span class="footer-links">${btn("Nasıl oynanır?", "howto", "ghost")}${btn("Liderlik tablosu ↗", "leaderboard", "ghost")}</span></footer></section>`;
 }
 function registration() {
   return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">ÖNCE TANIŞALIM</p><h2>Boşa gideni<br/>sen bulacaksın.</h2><form id="team-form" novalidate><fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oyun türü</legend><label><input type="radio" name="mode" value="practice" ${mode === "practice" ? "checked" : ""}/> Serbest deneme · süre yok</label><label><input type="radio" name="mode" value="official" ${mode === "official" ? "checked" : ""}/> Süreli yarışma · ${TIME_LIMIT_S} sn</label></fieldset><p class="subtle timed-note">Süreli yarışmada her odada <b>${TIME_LIMIT_S} saniyen</b> var. Erken bitirirsen her saniye için <b>${fmtMoney(EARLY_BONUS)}</b> kazanırsın; süre dolarsa her saniye bütçenden <b>${fmtMoney(OVERTIME_COST)}</b> düşer.</p><label class="field" for="first"><span>Oyuncu adı</span><input id="first" name="first" required autocomplete="given-name" maxlength="40" aria-describedby="form-error"/></label><p class="error" id="form-error" role="alert"></p><button type="submit" class="primary">BAŞLAYALIM →</button><p class="subtle" style="margin:12px 0 0">Sonuçlar liderlik tablosunda "Süreli" ve "Serbest" sekmelerinde görünür.</p></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+}
+function howtoScreen() {
+  return `<section class="panel-screen howto-screen"><div class="register-panel howto">${guideHtml()}<div class="actions">${btn("← Geri", "howto-back", "ghost back")}</div></div></section>`;
 }
 function roomEntryScreen() {
   const creating = roomIntent === "create";
@@ -745,7 +763,7 @@ function roomEntryScreen() {
   } catch {
     /* Optional convenience. */
   }
-  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">${creating ? "YENİ ODA" : "ODAYA KATIL"}</p><h2>${creating ? "Rakiplerini<br/>odana çağır." : "Oda adını yaz,<br/>yarışa katıl."}</h2><p class="muted">Odadaki herkes aynı anda, süreli oynar: her odada ${TIME_LIMIT_S} sn. Erken bitirene saniye başına ${fmtMoney(EARLY_BONUS)}, geç kalana saniye başına ${fmtMoney(-OVERTIME_COST)}.</p><form id="room-form" novalidate><label class="field" for="room-title"><span>Oda adı</span><input id="room-title" name="room" required autocomplete="off" maxlength="30" placeholder="${creating ? "örn. Muhasebe 3" : "Arkadaşının verdiği oda adı"}" aria-describedby="room-error"/></label><label class="field" for="room-name"><span>Oyuncu adı</span><input id="room-name" name="name" required autocomplete="given-name" maxlength="40" value="${esc(lastName)}" aria-describedby="room-error"/></label><p class="error" id="room-error" role="alert">${esc(roomError)}</p><button type="submit" class="primary">${creating ? "ODAYI OLUŞTUR →" : "ODAYA GİR →"}</button></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel"><p class="eyebrow">${creating ? "YENİ ODA" : "ODAYA KATIL"}</p><h2>${creating ? "Rakiplerini<br/>odana çağır." : "Oda adını yaz,<br/>yarışa katıl."}</h2><p class="muted">Odadaki herkes aynı anda oynar. ${creating ? "Odayı süreli ya da süresiz kurabilirsin." : "Odanın süreli mi süresiz mi olduğunu kurucu seçer; odaya girince görürsün."} Süreli odada her bölümde ${TIME_LIMIT_S} sn vardır: erken bitirene saniye başına ${fmtMoney(EARLY_BONUS)}, geç kalana saniye başına ${fmtMoney(-OVERTIME_COST)}.</p><form id="room-form" novalidate><label class="field" for="room-title"><span>Oda adı</span><input id="room-title" name="room" required autocomplete="off" maxlength="30" placeholder="${creating ? "örn. Muhasebe 3" : "Arkadaşının verdiği oda adı"}" aria-describedby="room-error"/></label><label class="field" for="room-name"><span>Oyuncu adı</span><input id="room-name" name="name" required autocomplete="given-name" maxlength="40" value="${esc(lastName)}" aria-describedby="room-error"/></label>${creating ? `<fieldset class="mode-choice" style="border:0;padding:0"><legend class="subtle">Oda türü</legend><label><input type="radio" name="timed" value="1" ${roomTimed ? "checked" : ""}/> Süreli · her bölümde ${TIME_LIMIT_S} sn</label><label><input type="radio" name="timed" value="0" ${roomTimed ? "" : "checked"}/> Süresiz · acele yok</label></fieldset>` : ""}<p class="error" id="room-error" role="alert">${esc(roomError)}</p><button type="submit" class="primary">${creating ? "ODAYI OLUŞTUR →" : "ODAYA GİR →"}</button></form>${btn("← Geri", "start", "ghost back")}</div></section>`;
 }
 function lobbyScreen() {
   const info = roomInfo;
@@ -754,7 +772,7 @@ function lobbyScreen() {
   const host = info.hostId === roomSession.playerId;
   const remaining = msUntilStart(info, roomReceivedAt);
   const counting = info.status === "playing" && remaining !== null;
-  return `<section class="panel-screen"><div class="register-panel lobby"><p class="eyebrow">ODA</p><h2 class="room-code">${esc(info.title)}</h2><p class="muted">Bu oda adını arkadaşlarına ver; <b>ODAYA GİR</b> ile adı yazıp katılsınlar.</p><ul class="player-list" aria-label="Odadaki oyuncular">${info.players.map((p) => `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}>${esc(p.name)}${p.id === info.hostId ? " <small>kurucu</small>" : ""}</li>`).join("")}</ul><p class="subtle">${info.players.length} oyuncu</p>${info.status === "lobby" ? `<p class="subtle host-timer" id="host-timer">${host ? "Oyunu başlatmak için" : `Kurucu ${esc(info.players.find((p) => p.id === info.hostId)?.name ?? "")}; başlatması için`} <b id="host-left">…</b> var. Başlatılmazsa kuruculuk sıradaki oyuncuya geçer.</p>` : ""}${counting ? `<p class="room-countdown" id="room-countdown" role="status">Başlıyor… ${Math.max(0, Math.ceil(remaining / 1000))}</p>` : host ? btn("OYUNU BAŞLAT", "room-start", "gold") : '<p class="subtle" role="status">Kurucunun başlatması bekleniyor…</p>'}<p class="error" id="room-error" role="alert">${esc(roomError)}</p>${btn("Odadan çık", "room-leave", "ghost")}</div></section>`;
+  return `<section class="panel-screen"><div class="register-panel lobby"><p class="eyebrow">ODA</p><h2 class="room-code">${esc(info.title)}</h2><p class="muted">Bu oda adını arkadaşlarına ver; <b>ODAYA GİR</b> ile adı yazıp katılsınlar.</p><p class="room-kind">${info.timed ? `Süreli oda · her bölümde ${TIME_LIMIT_S} sn` : "Süresiz oda · acele yok"}</p><ul class="player-list" aria-label="Odadaki oyuncular">${info.players.map((p) => `<li${p.id === roomSession!.playerId ? ' class="me"' : ""}>${esc(p.name)}${p.id === info.hostId ? " <small>kurucu</small>" : ""}</li>`).join("")}</ul><p class="subtle">${info.players.length} oyuncu</p>${info.status === "lobby" ? `<p class="subtle host-timer" id="host-timer">${host ? "Oyunu başlatmak için" : `Kurucu ${esc(info.players.find((p) => p.id === info.hostId)?.name ?? "")}; başlatması için`} <b id="host-left">…</b> var. Başlatılmazsa kuruculuk sıradaki oyuncuya geçer.</p>${host ? btn(`+${ROOM_EXTEND_S} SN SÜRE EKLE`, "room-extend", "ghost") : ""}` : ""}${counting ? `<p class="room-countdown" id="room-countdown" role="status">Başlıyor… ${Math.max(0, Math.ceil(remaining / 1000))}</p>` : host ? btn("OYUNU BAŞLAT", "room-start", "gold") : '<p class="subtle" role="status">Kurucunun başlatması bekleniyor…</p>'}<p class="error" id="room-error" role="alert">${esc(roomError)}</p>${btn("Odadan çık", "room-leave", "ghost")}</div></section>`;
 }
 function mapScreen() {
   const s = db.active!;
@@ -791,7 +809,7 @@ function roomScreen() {
     r = roomById(s.room as RoomId),
     z = activeOpportunity(s, r.id),
     p = readyProduct();
-  return `${hud()}<section aria-label="${r.name}"><div class="location task-panel"><h2>${r.name}</h2>${z ? `<small>Bugünkü hedef</small><ul><li>${p ? "Seçimin hazır." : z.problem}</li><li>${p ? "Haydi bunu yerine koyalım." : s.decisionVersion === 1 ? "Birlikte karar verin." : "Bir çözüm seç ve yerine koy."}</li></ul>` : "<p>Buradaki adım tamam.</p>"}</div>${z && !p ? btn(s.decisionVersion === 1 ? z.name : z.problem, `zone:${z.id}`, "zone active-problem", `style="left:${z.x}%;top:${z.y + 9}%"`) : ""}</section>${footer()}`;
+  return `${hud()}<section aria-label="${r.name}"><div class="location task-panel"><h2>${r.name}</h2>${z ? `<small>Bugünkü hedef</small><ul><li>${p ? "Seçimin hazır." : z.problem}</li><li>${p ? "Haydi bunu yerine koyalım." : s.decisionVersion === 1 ? "Birlikte karar verin." : "Bir çözüm seç ve yerine koy."}</li></ul>` : "<p>Buradaki adım tamam.</p>"}${revisable(s, r.id).length ? btn("Seçimimi değiştir", "revise-list", "ghost revise-button") : ""}</div>${z && !p ? btn(s.decisionVersion === 1 ? z.name : z.problem, `zone:${z.id}`, "zone active-problem", `style="left:${z.x}%;top:${z.y + 9}%"`) : ""}</section>${footer()}`;
 }
 function marketScreen() {
   const s = db.active!,
@@ -845,7 +863,7 @@ function summaryScreen() {
   const s = db.active!,
     h = s.history.at(-1)!;
   const changes = s.moves.filter((m) => m.round === s.round);
-  return `<section class="summary-screen period-result"><p class="eyebrow">DÖNEM ${s.round} TAMAMLANDI</p><h2>${roundNames[s.round - 1]}</h2><div class="bill-journey"><div><small>ÖNCE</small><span class="before">${fmtMoney(h.before)}</span></div><span aria-hidden="true">→</span><div><small>ŞİMDİ</small><strong class="big-number" id="result-bill">${fmtMoney(h.after)}</strong></div></div><div class="period-totals"><p><small>BU DÖNEM CEBİNDE KALAN</small><b id="result-saving">${fmtMoney(h.saving)}</b></p><p><small>KASA’YA GERİ DÖNEN</small><b id="result-reward">${signedMoney(h.reward)}</b></p></div>${h.after > h.before ? '<p class="subtle">Bu dönem gider yükseldi. Sonraki kararında ürünün işlevine de bak.</p>' : ""}${
+  return `<section class="summary-screen period-result"><p class="eyebrow">DÖNEM ${s.round} TAMAMLANDI</p><h2>${roundNames[s.round - 1]}</h2><div class="bill-journey"><div><small>ÖNCE</small><span class="before">${fmtMoney(h.before)}</span></div><span aria-hidden="true">→</span><div><small>ŞİMDİ</small><strong class="big-number" id="result-bill">${fmtMoney(h.after)}</strong></div></div><div class="period-totals"><p><small>BU DÖNEM CEBİNDE KALAN</small><b id="result-saving">${fmtMoney(h.saving)}</b></p><p><small>${s.decisionVersion === 1 ? "TASARRUFTAN KAZANILAN PARA" : "KASA’YA GERİ DÖNEN"}</small><b id="result-reward">${signedMoney(h.reward)}</b></p></div>${h.after > h.before ? '<p class="subtle">Bu dönem gider yükseldi. Sonraki kararında ürünün işlevine de bak.</p>' : ""}${
     changes.length
       ? `<div class="round-recap" aria-label="Bu dönem değiştirdikleriniz">${changes
           .slice(0, 6)
@@ -858,7 +876,7 @@ function summaryScreen() {
             "",
           )}${changes.length > 6 ? `<span>+${changes.length - 6} hamle</span>` : ""}</div>`
       : ""
-  }<p class="carryover-note">Tasarrufundan kasana ${signedMoney(h.reward)} geri döndü.${s.round < 4 ? " Kalan paran sonraki döneme aktarılacak." : ""}</p><div class="period-idea"><span class="eyebrow">BU DÖNEMİN FİKRİ</span><p>“${esc(roundIdea(s))}”</p></div>${btn(s.round === 4 ? "BÜYÜK FİNALE GEÇ →" : `${s.round + 1}. DÖNEME GEÇ →`, "continue", "gold")}</section>`;
+  }<p class="carryover-note">${s.decisionVersion === 1 ? `Doğru seçimlerin tasarruf ettirdiği kadar kasana ${signedMoney(h.reward)} eklendi.` : `Tasarrufundan kasana ${signedMoney(h.reward)} geri döndü.`}${s.round < 4 ? " Kalan paran sonraki döneme aktarılacak." : ""}</p><div class="period-idea"><span class="eyebrow">BU DÖNEMİN FİKRİ</span><p>“${esc(roundIdea(s))}”</p></div>${s.decisionVersion === 1 ? `<div class="period-idea period-tip"><span class="eyebrow">TAVSİYE</span><p>${esc(roundTips[s.round - 1])}</p></div>` : ""}${btn(s.round === 4 ? "BÜYÜK FİNALE GEÇ →" : `${s.round + 1}. DÖNEME GEÇ →`, "continue", "gold")}</section>`;
 }
 function awards() {
   const s = db.active!,
@@ -888,7 +906,7 @@ function finalScreen() {
       )}</div><p id="pledge-count" role="status">${pledgeDraft.length} / 3 seçildi</p><div class="row">${btn("Sonucumuza dön", "final-result", "ghost")}${btn("3 YEŞİL HAMLEMİZİ KAYDET", "pledges-save", "gold", pledgeDraft.length === 3 ? "" : "disabled")}</div><p class="subtle">Bu seçimler yarışma skorunu ve sıralamayı değiştirmez.</p></section>`;
   if (finalStep === "card" && s.realLifePledges)
     return `<section class="summary-screen pledge-finale"><div class="pledge-keepsake"><p class="eyebrow">BİZİM 3 YEŞİL HAMLEMİZ</p><h2>${names}</h2><p class="team-signature">${names}</p><ol>${s.realLifePledges.map((p) => `<li>${esc(p)}</li>`).join("")}</ol><p class="closing-line">Küçük başlayın. Birlikte sürdürün.</p></div><div class="row">${btn("LİDERLİK TABLOSUNU GÖR", "leaderboard", "gold")}${btn("Seçimlerimizi değiştir", "pledges", "ghost")}${btn("Sonucumuz", "final-result", "ghost")}</div></section>`;
-  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${names}</h2><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p><p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div>${s.decisionVersion === 1 ? `<p class="submit-status" role="status">${esc(submitText(s)) || "Sonuç henüz liderlik tablosuna gönderilmedi."}</p>${submitInfo === "sending" || submitInfo === "sent" || submitInfo === "downgraded" ? "" : btn(submitInfo === "" ? "SONUCU LİDERLİK TABLOSUNA GÖNDER" : "TEKRAR GÖNDER", "resubmit", "ghost")}` : ""}<p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Süreli sonuç liderlik tablosuna gönderildi."}</p>${s.team.mode === "room" && roomInfo ? `<div class="room-final"><h3>Odadaki sıralama</h3>${rankingMarkup()}<p class="subtle">${roomInfo.status === "finished" ? "Herkes bitirdi." : "Rakipler hâlâ oynuyor; sıralama canlı güncellenir."}</p>${btn("Odadan çık", "room-leave", "ghost")}</div>` : ""}<p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
+  return `<section class="summary-screen final-result ${s.decisionVersion === 1 ? "decision-final" : ""}"><p class="eyebrow">4 DÖNEM TAMAMLANDI</p><h2 class="final-org">${names}</h2><div class="final-reveal"><span>${fmtMoney(INITIAL_BILL)} <span aria-hidden="true">↓</span></span><small>FİNAL AYLIK GİDER</small><strong id="result-bill">${fmtMoney(s.bill)}</strong><b>%${fmt(Math.abs(pct))} ${pct >= 0 ? "DAHA AZ GİDER" : "DAHA FAZLA GİDER"}</b></div><div class="final-score">TOPLAM SKOR <b>${fmt(score(s))}${s.decisionVersion === 1 ? " / " + fmt(maximumScore) : ""}</b></div><div class="final-economy"><p>Kalan para<b>${fmtMoney(s.budget)}</b></p><p>Toplam yatırım<b>${fmtMoney(s.moves.reduce((n, m) => n + m.cost, 0) + (s.removedSpend ?? 0) + s.inventory.reduce((n, id) => n + (s.purchaseCosts?.[id] ?? productById(id).price), 0))}</b></p>${s.decisionVersion === 1 ? `<p>Tasarruftan kazanılan<b>${fmtMoney(s.moves.reduce((n, m) => n + (m.reward ?? 0), 0))}</b></p>` : ""}<p>Tahmini dönemsel tasarruf<b>${fmtMoney(Math.max(0, INITIAL_BILL - s.bill))}</b></p></div>${awards()}<div class="row">${btn("GERÇEK HAYATTA 3 HAMLEMİZ →", "pledges", "gold")}</div>${s.decisionVersion === 1 ? `<p class="submit-status" role="status">${esc(submitText(s)) || "Sonuç henüz liderlik tablosuna gönderilmedi."}</p>${submitInfo === "sending" || submitInfo === "sent" || submitInfo === "downgraded" ? "" : btn(submitInfo === "" ? "SONUCU LİDERLİK TABLOSUNA GÖNDER" : "TEKRAR GÖNDER", "resubmit", "ghost")}` : ""}<p class="subtle">${s.team.mode === "practice" ? "Serbest deneme • Sonucunuz liderlik tablosunun Serbest sekmesinde yer alır." : "Süreli sonuç liderlik tablosuna gönderildi."}</p>${s.team.mode === "room" && roomInfo ? `<div class="room-final"><h3>Odadaki sıralama</h3>${rankingMarkup()}<p class="subtle">${roomInfo.status === "finished" ? "Herkes bitirdi." : "Rakipler hâlâ oynuyor; sıralama canlı güncellenir."}</p>${btn("Odadan çık", "room-leave", "ghost")}</div>` : ""}<p class="simulation-note">${SIMULATION_NOTE}</p></section>`;
 }
 interface BoardRow {
   name: string;
@@ -1009,6 +1027,7 @@ function render() {
     admin: "Etkinlik yönetimi",
     roomEntry: roomIntent === "create" ? "Oda oluştur" : "Odaya gir",
     lobby: "Oda",
+    howto: "Nasıl oynanır",
   };
   document.querySelector<HTMLElement>("#stage")!.dataset.room =
     view === "room" ? db.active?.room : "";
@@ -1028,6 +1047,7 @@ function render() {
     admin,
     roomEntry: roomEntryScreen,
     lobby: lobbyScreen,
+    howto: howtoScreen,
   }[view]();
   scheduleLesson();
   if (view === "registration") attachForm();
@@ -1084,9 +1104,10 @@ function attachRoomForm() {
     if (!name) return fail("Oyuncu adını yazın.");
     button.disabled = true;
     roomError = "";
+    roomTimed = data.get("timed") !== "0";
     const result =
       roomIntent === "create"
-        ? await createRoom(room, name)
+        ? await createRoom(room, name, roomTimed)
         : await joinRoom(room, name);
     if ("error" in result) return fail(result.error);
     try {
@@ -1223,6 +1244,7 @@ async function beginRoomGame() {
       mode: "room",
       room: roomSession.code,
       playerId: roomSession.playerId,
+      timed: roomInfo?.timed !== false,
     }),
     decisionVersion: 1,
     decisions: [],
@@ -1312,7 +1334,7 @@ async function productDetail(id: string) {
   const large = solar || (!review && p.price > s.budget * LARGE_PURCHASE_SHARE);
   const packaging = id.startsWith("rev-pack-");
   showModal(
-    `<p class="eyebrow">YEŞİL MARKET · ${esc(p.category)}${solar ? " · BÜYÜK YATIRIM" : ""}</p>${art(p.asset, "product-art")}<h2 id="dialog-title">${esc(p.name)}</h2><p class="product-feature">${esc(p.feature)}</p><p class="product-use">${esc(p.description)}</p><dl class="purchase-math"><div><dt>${packaging ? "1 adet ambalaj payı" : "Fiyat"}</dt><dd>${priceLabel(id, p.price)}</dd>${solar ? '<p class="panel-price-note">Yalnız panel fiyatıdır.</p>' : ""}${marketPrice(id)?.priceStatus === "estimate" ? '<p class="panel-price-note">Bu fiyat oyun için tahmini bir değerdir.</p>' : ""}</div>${review ? "" : `<div class="remaining"><dt>${affordable ? "Kalan" : "Bu ürün için eksik"}</dt><dd id="purchase-remaining">${fmtMoney(Math.abs(remaining))}</dd></div>`}</dl>${solar ? '<details class="price-detail"><summary>Fiyata neler dahil?</summary><p>İnverter, konstrüksiyon, kablolama, proje, montaj ve işçilik dahil değildir.</p></details>' : ""}${packaging ? '<p class="panel-price-note">İçindeki ürünün bedeli hariçtir. Çoklu paketten hesaplanan adet payı olabilir.</p>' : ""}${review ? '<p class="error">Paket içeriği ve fiyatı doğrulanıyor. Şimdilik satın alınamaz.</p>' : !owned && !affordable ? `<p class="error">🔒 ${fmtMoney(-remaining)} daha gerekiyor.</p>` : !owned && large ? '<p class="budget-question">Bu büyük bir harcama. Birlikte karar verin.</p>' : ""}<div class="actions">${btn("BİR DAHA BAK", "close", "ghost")}${btn(owned ? "Zaten sizde" : "SATIN AL", `buy:${id}`, "primary", owned || !affordable ? "disabled" : "")}</div>`,
+    `<p class="eyebrow">YEŞİL MARKET · ${esc(p.category)}${solar ? " · BÜYÜK YATIRIM" : ""}</p>${art(p.asset, "product-art")}<h2 id="dialog-title">${esc(p.name)}</h2><p class="product-feature">${esc(p.feature)}</p><p class="product-use">${esc(p.description)}</p>${prosCons(id)}<dl class="purchase-math"><div><dt>${packaging ? "1 adet ambalaj payı" : "Fiyat"}</dt><dd>${priceLabel(id, p.price)}</dd>${solar ? '<p class="panel-price-note">Yalnız panel fiyatıdır.</p>' : ""}${marketPrice(id)?.priceStatus === "estimate" ? '<p class="panel-price-note">Bu fiyat oyun için tahmini bir değerdir.</p>' : ""}</div>${review ? "" : `<div class="remaining"><dt>${affordable ? "Kalan" : "Bu ürün için eksik"}</dt><dd id="purchase-remaining">${fmtMoney(Math.abs(remaining))}</dd></div>`}</dl>${solar ? '<details class="price-detail"><summary>Fiyata neler dahil?</summary><p>İnverter, konstrüksiyon, kablolama, proje, montaj ve işçilik dahil değildir.</p></details>' : ""}${packaging ? '<p class="panel-price-note">İçindeki ürünün bedeli hariçtir. Çoklu paketten hesaplanan adet payı olabilir.</p>' : ""}${review ? '<p class="error">Paket içeriği ve fiyatı doğrulanıyor. Şimdilik satın alınamaz.</p>' : !owned && !affordable ? `<p class="error">🔒 ${fmtMoney(-remaining)} daha gerekiyor.</p>` : !owned && large ? '<p class="budget-question">Bu büyük bir harcama. Birlikte karar verin.</p>' : ""}<div class="actions">${btn("BİR DAHA BAK", "close", "ghost")}${btn(owned ? "Zaten sizde" : "SATIN AL", `buy:${id}`, "primary", owned || !affordable ? "disabled" : "")}</div>`,
   );
   dialog.classList.add("product-dialog");
 }
@@ -1360,6 +1382,8 @@ async function installProduct(id: string, zone: string) {
   world.effect(db.active!.bill - before.bill, p.room, p.zone, id, lesson.tone);
   world.zoomProduct(id);
   decisionSound(lesson.tone);
+  const paid = db.active!.moves.find((m) => m.id === id)?.reward ?? 0;
+  if (paid) announce(`Tasarruf ettirdi: kasana +${fmtMoney(paid)} eklendi.`);
   scheduleLesson();
 }
 function freeModal() {
@@ -1552,7 +1576,7 @@ async function action(action: string) {
       break;
     case "help":
       showModal(
-        `<h2 id="dialog-title">Birlikte, adım adım.</h2><p>Soruna bak, bir çözüm seç, yerine koy.</p><p>Oyun kendiliğinden kaydolur.</p>${btn("ANLADIM", "close", "primary")}<div class="secondary-tools">${btn("Başka odaya geç", "map", "ghost")}${btn("Mola ver", "pause", "ghost")}${btn("Tutarlar hakkında", "money-info", "ghost")}${db.active && db.active.phase !== "finished" && db.active.decisionVersion === 1 ? btn("Oyunu bitir ve kaydet", "finish-now", "ghost") : ""}</div>`,
+        `<h2 id="dialog-title">Birlikte, adım adım.</h2><p>Soruna bak, bir çözüm seç, yerine koy.</p><p>Oyun kendiliğinden kaydolur.</p>${btn("ANLADIM", "close", "primary")}<div class="secondary-tools">${btn("Nasıl oynanır?", "howto-modal", "ghost")}${btn("Başka odaya geç", "map", "ghost")}${btn("Mola ver", "pause", "ghost")}${btn("Tutarlar hakkında", "money-info", "ghost")}${db.active && db.active.phase !== "finished" && db.active.decisionVersion === 1 ? btn("Oyunu bitir ve kaydet", "finish-now", "ghost") : ""}</div>`,
       );
       break;
     case "pause":
@@ -1901,6 +1925,88 @@ async function action(action: string) {
       render();
       break;
     }
+    case "revise-list": {
+      const s = db.active!,
+        room = s.room as RoomId,
+        items = revisable(s, room);
+      showModal(
+        `<p class="eyebrow">${esc(roomById(room).name)}</p><h2 id="dialog-title">Seçimlerini gözden geçir</h2><p class="subtle">Dönem bitmeden değiştirebilirsin. Sökülen ürünün bedeli geri gelmez; ürünün kazandırdığı tasarruf parası da kasandan düşer.</p>${
+          items.length
+            ? `<ul class="revise-list">${items
+                .map(({ decision: d, opportunity: o }) => {
+                  const move = s.moves.find((m) => m.id === d.choiceId),
+                    chosen =
+                      decisionCopy[d.choiceId]?.title ??
+                      (d.choiceId === "skip"
+                        ? "Şimdilik geçildi"
+                        : "Bütçe yetmediği için geçildi");
+                  return `<li><span><b>${esc(o.title)}</b><small>${esc(chosen)}${move ? ` · ödenen ${fmtMoney(move.cost)}${move.reward ? ` · kazandırdığı ${fmtMoney(move.reward)}` : ""}` : ""}</small></span>${btn("Değiştir", `revise-ask:${o.id}`, "ghost")}</li>`;
+                })
+                .join("")}</ul>`
+            : "<p>Bu odada değiştirilecek bir seçim yok.</p>"
+        }${btn("KAPAT", "close", "primary")}`,
+      );
+      break;
+    }
+    case "revise-ask": {
+      const s = db.active!,
+        o = decisionOpportunities.find((o) => o.id === arg),
+        d = s.decisions?.find((d) => d.opportunityId === arg);
+      if (!o || !d) break;
+      const move = s.moves.find((m) => m.id === d.choiceId),
+        name = esc(decisionCopy[d.choiceId]?.title ?? "Bu seçim");
+      if (learningDialog.open) learningDialog.close();
+      showModal(
+        `<p class="eyebrow">SEÇİMİ DEĞİŞTİR</p><h2 id="dialog-title">${esc(o.title)}</h2><p>${
+          move
+            ? `<b>${name}</b> sökülecek. Ödediğin ${fmtMoney(move.cost)} geri gelmez${move.reward ? `, ürünün kazandırdığı ${fmtMoney(move.reward)} de kasandan düşer` : ""}. Sonra başka bir seçenek deneyebilirsin.`
+            : `<b>${name}</b> seçimi geri alınacak. Bunun için para ödemezsin; yeniden seçebilirsin.`
+        }</p><div class="actions">${btn("Vazgeç", "revise-cancel", "ghost", "autofocus")}${btn(move ? "SÖK VE YENİDEN SEÇ" : "DEĞİŞTİR", `revise:${o.id}`, "primary")}</div>`,
+      );
+      break;
+    }
+    case "revise-cancel":
+      closeModal();
+      scheduleLesson();
+      break;
+    case "revise": {
+      const o = decisionOpportunities.find((o) => o.id === arg);
+      if (!o) break;
+      const before = structuredClone(db.active!);
+      await mutate((s) => changeChoice(s, arg));
+      activeLesson = "";
+      if (learningDialog.open) learningDialog.close();
+      closeModal();
+      await goRoom(o.roomId);
+      animateMeters(before);
+      announce("Seçim geri alındı. Yeni bir seçenek deneyebilirsin.");
+      break;
+    }
+    case "room-extend": {
+      if (!roomSession) break;
+      const result = await extendRoom(roomSession.code);
+      if ("error" in result) {
+        roomError = result.error;
+        render();
+        break;
+      }
+      roomError = "";
+      applyRoom(result.room);
+      render();
+      announce(`${ROOM_EXTEND_S} saniye eklendi.`);
+      break;
+    }
+    case "howto":
+      howtoReturn = view;
+      switchView("howto");
+      break;
+    case "howto-back":
+      switchView(howtoReturn === "howto" ? "start" : howtoReturn);
+      break;
+    case "howto-modal":
+      showModal(guideHtml() + btn("KAPAT", "close", "primary"));
+      dialog.classList.add("howto-dialog");
+      break;
     case "room-leave":
       if (roomSession) await leaveRoomApi(roomSession.code);
       leaveRoom();
@@ -2178,7 +2284,12 @@ function showLesson(id: string) {
   if (!l) return;
   activeLesson = id;
   learningDialog.dataset.room = db.active?.room;
-  learningDialog.innerHTML = `<div class="lesson-top">${l.asset ? art(l.asset, "lesson-art") : ""}<div><p class="eyebrow">SEÇİMİN SONUCU</p><h2 id="lesson-title">${esc(l.title)}</h2></div></div><p>${esc(l.result)}</p>${l.takeaway ? `<p class="takeaway">${esc(l.takeaway)}</p>` : ""}<div class="actions">${btn("ANLADIM", "lesson-ack", "primary")}</div>`;
+  const s = db.active!,
+    op = opportunityFor(id),
+    paid = s.moves.find((m) => m.id === id)?.reward ?? 0,
+    canChange =
+      !!op && revisable(s, op.roomId).some((x) => x.opportunity.id === op.id);
+  learningDialog.innerHTML = `<div class="lesson-top">${l.asset ? art(l.asset, "lesson-art") : ""}<div><p class="eyebrow">SEÇİMİN SONUCU</p><h2 id="lesson-title">${esc(l.title)}</h2></div></div><p>${esc(l.result)}</p>${paid ? `<p class="payout">Bu seçim aylık gideri ${fmtMoney(paid)} düşürdü; kasana <b>+${fmtMoney(paid)}</b> eklendi.</p>` : ""}${prosCons(id)}${l.takeaway ? `<p class="takeaway">${esc(l.takeaway)}</p>` : ""}<div class="actions">${btn("ANLADIM", "lesson-ack", "primary")}${canChange ? btn("SEÇİMİ DEĞİŞTİR", `revise-ask:${op!.id}`, "ghost") : ""}</div>`;
   if (!learningDialog.open) learningDialog.showModal();
 }
 function memory() {
@@ -2306,9 +2417,6 @@ const choiceIcons: Record<string, string> = {
   "rev-hygiene-paper": "📦",
   "rev-hygiene-other": "🗑️",
   "rev-hygiene-organic": "🍎",
-  "rev-laundry-program-eco": "❄️",
-  "rev-laundry-program-normal": "🌡️",
-  "rev-laundry-program-hot": "🔥",
   "rev-irrigation-time-morning": "🌅",
   "rev-irrigation-time-noon": "☀️",
   "rev-irrigation-time-evening": "🌇",
@@ -2318,8 +2426,6 @@ const choiceIcons: Record<string, string> = {
   "rev-toothbrush-shower": "🚿",
   "rev-hygiene-plastic": "🧴",
   "rev-hygiene-toilet": "🚽",
-  "rev-laundry-program-cold": "🧊",
-  "rev-laundry-program-boil": "♨️",
   "rev-irrigation-time-night": "🌙",
   "rev-irrigation-time-rain": "🌧️",
 };
@@ -2520,7 +2626,7 @@ function openDecision(id: string) {
       )
         .map((id) =>
           btn(
-            `${choiceIcons[id] ? `<span class="decision-icon" aria-hidden="true">${choiceIcons[id]}</span>` : ""}${o.kind === "load" ? `<span class="load-drum" style="--fill:${loadFill[id] ?? 50}%" aria-hidden="true"></span>` : ""}<b>${esc(decisionCopy[id].title)}</b><span>${esc(decisionCopy[id].shortDescription)}</span>`,
+            `${choiceIcons[id] ? `<span class="decision-icon" aria-hidden="true">${choiceIcons[id]}</span>` : ""}${o.kind === "load" ? `<span class="load-drum" style="--fill:${loadFill[id] ?? 50}%" aria-hidden="true"></span>` : ""}<b>${esc(decisionCopy[id].title)}</b><span>${esc(decisionCopy[id].shortDescription)}</span>${prosCons(id)}`,
             `${o.kind === "load" ? "load-select" : "choose"}:${id}`,
             `decision-option ${selectedLoad === id ? "selected" : ""}`,
           ),

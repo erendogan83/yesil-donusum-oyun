@@ -111,18 +111,6 @@
     "billImpact": 0,
     "impactStatus": "simulation"
   },
-  "rev-laundry-program-eco": {
-    "billImpact": 0,
-    "impactStatus": "simulation"
-  },
-  "rev-laundry-program-normal": {
-    "billImpact": 0,
-    "impactStatus": "simulation"
-  },
-  "rev-laundry-program-hot": {
-    "billImpact": 0,
-    "impactStatus": "simulation"
-  },
   "rev-irrigation-hose": {
     "billImpact": -180,
     "impactStatus": "simulation"
@@ -240,14 +228,6 @@
     "impactStatus": "simulation"
   },
   "rev-laundry-load-over": {
-    "billImpact": 0,
-    "impactStatus": "simulation"
-  },
-  "rev-laundry-program-cold": {
-    "billImpact": 0,
-    "impactStatus": "simulation"
-  },
-  "rev-laundry-program-boil": {
     "billImpact": 0,
     "impactStatus": "simulation"
   },

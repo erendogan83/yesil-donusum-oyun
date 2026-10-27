@@ -201,7 +201,7 @@ fs.mkdirSync(out, { recursive: true });
   assert.equal(final.active.phase, "finished");
   assert.equal(
     final.active.decisions.length,
-    process.env.LEAVE_OPTIONAL ? 19 : 22,
+    process.env.LEAVE_OPTIONAL ? 18 : 21,
   );
   assert.equal(final.active.team.first, "Ayşe");
   assert.deepEqual(errors, []);

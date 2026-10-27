@@ -111,18 +111,6 @@
     "decisionScore": 100,
     "reason": "Çamaşırları sıkıştırmadan biriktirmek, aynı miktar için gereken yıkama sayısını azaltır."
   },
-  "rev-laundry-program-eco": {
-    "decisionScore": 100,
-    "reason": "Bu günlük çamaşırlar için yüksek ısı gerekmiyordu; daha az su ısıttın."
-  },
-  "rev-laundry-program-normal": {
-    "decisionScore": 60,
-    "reason": "Bu çamaşırlar düşük sıcaklıkta da yıkanabilirdi; daha fazla su ısıttın."
-  },
-  "rev-laundry-program-hot": {
-    "decisionScore": 20,
-    "reason": "Bu senaryoda özel hijyen ihtiyacı yoktu; yüksek ısıya gerek kalmıyordu."
-  },
   "rev-irrigation-hose": {
     "decisionScore": 100,
     "reason": "Hortumu kökte tutup geçişlerde kapattığında boş alanları sulamadın."
@@ -250,14 +238,6 @@
   "rev-laundry-load-over": {
     "decisionScore": 40,
     "reason": "Sıkışan çamaşır iyi yıkanmaz, tekrar yıkamak gerekebilir."
-  },
-  "rev-laundry-program-cold": {
-    "decisionScore": 80,
-    "reason": "Az kirli çamaşırlarda enerji tasarrufu sağlar; leke varsa yetmeyebilir."
-  },
-  "rev-laundry-program-boil": {
-    "decisionScore": 0,
-    "reason": "Günlük çamaşırlar için gereksiz; çok enerji harcar ve kumaşı yıpratır."
   },
   "rev-irrigation-time-night": {
     "decisionScore": 60,

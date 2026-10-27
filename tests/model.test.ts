@@ -31,10 +31,10 @@ function put(s: State, id: string) {
   const p = products.find((p) => p.id === id)!;
   return install(purchase(s, id), id, p.room, p.zone);
 }
-test("starts at 10000 bill / 2500 budget and retains both participant names", () => {
+test("starts at 10000 bill / 10000 budget and retains both participant names", () => {
   const s = fresh();
   assert.equal(s.bill, 10000);
-  assert.equal(s.budget, 2500);
+  assert.equal(s.budget, 10000);
   assert.deepEqual(s.team, team);
 });
 test("registration needs only a player name; cooperatives no longer exist", () => {
@@ -57,7 +57,7 @@ test("registration needs only a player name; cooperatives no longer exist", () =
 });
 test("purchase charges once, creates inventory, reveals no effect", () => {
   const s = purchase(fresh(), "tap-a");
-  assert.equal(s.budget, 2350);
+  assert.equal(s.budget, 10000 - 150);
   assert.equal(s.bill, 10000);
   assert.deepEqual(s.inventory, ["tap-a"]);
   assert.throws(() => purchase(s, "tap-a"));
@@ -73,7 +73,7 @@ test("wrong installation zone / room costs nothing and keeps product", () => {
   assert.throws(() => install(s, "tap-a", "kitchen", "food"));
   assert.throws(() => install(s, "tap-a", "bathroom", "shower"));
   assert.equal(s.bill, 10000);
-  assert.equal(s.budget, 2350);
+  assert.equal(s.budget, 10000 - 150);
   assert.deepEqual(s.inventory, ["tap-a"]);
 });
 test("installation is single-use and applies exact impact", () => {
@@ -113,11 +113,11 @@ test("four free actions total, no duplicates, unavailable areas rejected", () =>
   assert.equal(s.actions.length, 4);
   assert.throws(() => freeMove(s, "dawn"));
   assert.throws(() => freeMove(s, "lights"));
-  assert.equal(s.budget, 2500);
+  assert.equal(s.budget, 10000);
 });
 test("round reward is 25% of new period saving, cannot be collected twice", () => {
   const s = endRound(put(fresh(), "tap-a"));
-  assert.equal(s.budget, 2395);
+  assert.equal(s.budget, 10000 - 150 + 45);
   assert.equal(s.history[0].reward, 45);
   assert.throws(() => endRound(s));
   assert.throws(() => purchase(s, "repair"));
@@ -131,7 +131,7 @@ test("all four rounds complete, final score deterministic, practice excluded", (
   }
   assert.equal(s.phase, "finished");
   assert.equal(s.history.length, 4);
-  assert.equal(score(s), 360 + (235 + 4.5) * 2);
+  assert.equal(score(s), 360 + ((10000 - 150) / 10 + 4.5) * 2);
   const db = finish({ ...emptyDatabase(), active: s });
   assert.equal(db.results.length, 0);
 });

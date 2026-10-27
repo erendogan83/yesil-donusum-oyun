@@ -14,19 +14,22 @@ Alternatif: `node serve.mjs`. `dist/` depoda tutulmaz; ilk çalıştırmada BASL
 
 ## Güncel oyun
 
-- 8 görünür alan, 4 dönem; 18 temel karar ve 4 puansız isteğe bağlı fırsat.
-- 92 karar seçeneği; 62 kurulabilir ürün. Her seçim noktasında en az 4 seçenek var (davranış sorularında 5); seçeneklerin sırası her oyunda karışık gösterilir, doğru cevap hep aynı yerde olmaz.
+- 8 görünür alan, 4 dönem; 17 temel karar ve 4 puansız isteğe bağlı fırsat.
+- 87 karar seçeneği; 62 kurulabilir ürün. Yıkama programı sorusu kaldırıldı (doğru cevap çamaşırın etiketine göre değiştiği için); eski kayıtlardaki cevabı yok sayılır ve puanlanmaz. Her seçim noktasında en az 4 seçenek var (davranış sorularında 5); seçeneklerin sırası her oyunda karışık gösterilir, doğru cevap hep aynı yerde olmaz.
 - Eklenen seçeneklerin görselleri vektörle çizilmiş basit ikonlardır (`scripts/build_vector_sprites.cjs`); fiyatları tahminidir.
 - Ürün: sorunu gör → markette incele → satın al → otomatik odaya dön → yerleştir → ANLADIM.
+- **Artısı / Eksisi:** her ürün ve seçenek için ne işe yaradığı ve neyi yapmadığı yazılıdır (`src/decisions/details.json`); ürün penceresinde, davranış kartlarında ve sonuç kartında görünür.
+- **Nasıl oynanır:** açılış ekranında "Nasıl oynanır?" sayfası, oyun içinde (?) penceresinde aynı içerik vardır; oyunu, parayı, puanı, odaları ve tavsiyeleri anlatır (`src/guide.ts`). Dönem sonu ekranında bir sonraki dönem için tavsiye görünür.
+- **Seçimi değiştir:** dönem bitmeden odadaki "Seçimimi değiştir" düğmesiyle (ya da sonuç kartındaki "Seçimi değiştir" ile) takılan ürün sökülür ve başka seçenek denenir. Ödenen ürün bedeli iade edilmez (finalde "Toplam yatırım"a sayılır); ürünün kazandırdığı tasarruf parası geri alınır, bu yüzden al-sök ile para çıkarılamaz. Davranış seçimleri ücretsiz değişir. Puan her zaman son seçime göredir. Önceki dönemin seçimleri kilitlidir.
 - Atık ve çamaşır ayırma: nesneyi hedefe sürükleyip bırak (ya da nesneye, sonra hedefe dokun). Yanlış hedef bırakılabilir:
   ilk yanlış eşleştirme ₺50 krediden götürür ve o nesnenin puanını da götürür; tekrar denemek ücretsizdir ama puan getirmez.
-- **Süreli yarışma:** her odada 60 saniye vardır. Odayı erken bitirene her artan saniye için ₺5 bonus yazılır
+- **Süreli yarışma:** her odada 60 saniye vardır (oda oyunlarında kurucu odayı süreli ya da süresiz kurar; süresiz odada saat yoktur). Odayı erken bitirene her artan saniye için ₺5 bonus yazılır
   (10 sn erken = ₺50). Süre dolduğunda oda bitmemişse her saniye bütçeden ₺5 düşer (bütçe sıfırın altına inmez). Süre yalnızca oda/market içinde işler; haritada ve öğrenme kartı açıkken durur.
   Bütçe artık hiçbir seçeneğe yetmiyorsa gerekli satın alma adımı "Bütçem yetmiyor, bu adımı geç" ile atlanır (puan getirmez).
   Serbest denemede süre yoktur.
-- **Odalar:** "ODA OLUŞTUR" ile kendi koyduğun oda adıyla oda açarsın (örn. "Muhasebe 3"), "ODAYA GİR" ile aynı oda adını yazan katılır; büyük/küçük harf ve Türkçe karakter farkı önemsizdir. Açık bir odanın adı başkası tarafından alınamaz. Kurucu "OYUNU BAŞLAT" der, herkes aynı anda
-  (5 sn geri sayımla) süreli oyuna başlar; üstte canlı sıralama görünür, final ekranı odanın sıralamasını gösterir.
-  Kurucu odadan ayrılırsa ya da 60 sn içinde başlatmazsa (ya da sekmeyi kapatırsa) kuruculuk, katılış sırasına göre bir sonraki oyuncuya geçer;
+- **Odalar:** "ODA OLUŞTUR" ile kendi koyduğun oda adıyla oda açarsın (örn. "Muhasebe 3"), "ODAYA GİR" ile aynı oda adını yazan katılır; büyük/küçük harf ve Türkçe karakter farkı önemsizdir. Açık bir odanın adı başkası tarafından alınamaz. Oda **süreli** ya da **süresiz** kurulur (kurucu seçer, lobide görünür). Kurucu "OYUNU BAŞLAT" der, herkes aynı anda
+  (5 sn geri sayımla) oyuna başlar; üstte canlı sıralama görünür, final ekranı odanın sıralamasını gösterir.
+  Kurucunun oyunu başlatmak için **120 saniyesi** vardır; "+60 SN SÜRE EKLE" ile süreyi uzatabilir (en çok 10 dakika kalacak kadar). Kurucu odadan ayrılırsa ya da süre içinde başlatmazsa (ya da sekmeyi kapatırsa) kuruculuk, katılış sırasına göre bir sonraki oyuncuya geçer;
   odadan ayrılan oyuncu sıralamada “ayrıldı” görünür ve bitiş bekleyen oyuncu sayılmaz.
 - Oda sonu: oda bitince "BÖLÜMÜ BİTİR" haritaya döner, onay sormaz. Dönem sonu yalnız haritadadır; tamamlanmamış temel adım varsa hangi alanlar olduğunu yazan bir onay çıkar. İsteğe bağlı fırsatlar (leğen, LED şerit, zamanlayıcı, çatı) dönemi bitirmeye engel olmaz.
 - Dikey telefonlarda oda ve market ürünleri alt kısımda büyük kartlar olarak gösterilir; yatay/masaüstünde resmin üzerindeki etiketler kullanılır.
@@ -34,20 +37,22 @@ Alternatif: `node serve.mjs`. `dist/` depoda tutulmaz; ilk çalıştırmada BASL
   **Oyunu bitir ve kaydet** ile liderlik tablosuna gönderilir; final ekranı gönderim durumunu gösterir (bekliyorsa **Tekrar gönder**).
 - Isınırken akan su: Leğen ya da Kova (isteğe bağlı, puansız). Kova görseli vektörle çizilmiş basit bir ikondur.
 - Yanlış çözüm sorunu çözmez: musluk damlamaya, ışık/duş boşa akmaya devam eder.
-- Doluluk ve yıkama programı, sifon, diş fırçalama, hijyen ve sulama saati kısa davranış seçimleridir.
+- Doluluk, sifon, diş fırçalama, hijyen ve sulama saati kısa davranış seçimleridir.
 - Leğen, sulama zamanlayıcısı ve çatı yatırımı isteğe bağlıdır; puan avantajı sağlamaz.
 - HUD: DÖNEM, KALAN PARA, SKOR. Öğrenme kartları otomatik kapanmaz.
 - Finalde kooperatif ve iki katılımcı, toplam skor ve üç gerçek hayat adımı korunur.
 
 ## Skor ve para
 
-Yeni oyunlar `decisionVersion: 1` kullanır. Toplam en çok **1.800 karar puanı** alınır.
+Yeni oyunlar `decisionVersion: 1` kullanır. Toplam en çok **1.700 karar puanı** alınır (yıkama programı kaldırılmadan önce 1.800'dü; liderlik tablosu yine aynı sürümü karşılaştırır, ama eski 1.800 üzerinden alınmış sonuçlarla birebir kıyaslanamaz).
 Aynı kararlar aynı puanı üretir; para, animasyon süresi veya rastgelelik puana eklenmez.
 İki seçenek eşit gerekçeyle doğruysa eşit puan verilir. Her fırsat yalnız bir kez puanlanır.
 
-Başlangıç aylık gideri ₺10.000, bütçe ₺2.500. Fiyatlar ve fatura etkileri geçici simülasyon değerleridir;
+Başlangıç aylık gideri ₺10.000, bütçe ₺10.000. Fiyatlar ve fatura etkileri geçici simülasyon değerleridir;
 piyasa fiyatı veya gerçek tasarruf vaadi değildir. Satın alma bütçeyi, kurulum örnek gideri değiştirir.
-Dönem ödülü mevcut kuralla korunur: yeni gider azalmasının %50'si, en çok ₺500.
+**Tasarruf parası:** giderini düşüren bir ürün kurulduğu anda, ne kadar tasarruf ettiriyorsa (`billImpact`) bütçeye o kadar para eklenir
+(`SAVING_PAYOUT_RATE = 1`, `src/economy.ts`). Gideri düşürmeyen ya da artıran seçimler para getirmez. Dönem sonu ekranı bu dönem kazanılan toplamı gösterir;
+yeni oyunlarda dönem sonunda ayrıca ödül verilmez. Eski kayıtlar eski kuralı (yeni gider azalmasının %25'i, en çok ₺500) korur.
 
 ## Kayıtlar ve kurumlar
 

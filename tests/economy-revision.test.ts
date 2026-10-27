@@ -15,6 +15,7 @@ import {
 } from "../src/model";
 import { recordChoice } from "../src/decisions";
 import { marketPrice } from "../src/data/market-prices";
+import { INITIAL_BUDGET } from "../src/economy";
 const fresh = (): State => ({
   ...start(
     { organization: "Test", first: "Bir", second: "İki", mode: "practice" },
@@ -26,18 +27,32 @@ const fresh = (): State => ({
   sorting: {},
   tutorial: false,
 });
-test("800 saves 200; 3000 saves capped 500; unchanged period yields zero", () => {
-  for (const [saving, reward] of [
-    [800, 200],
-    [3000, 500],
-    [0, 0],
-  ]) {
+test("the period only reports what items paid; it adds no extra reward", () => {
+  // A bill that dropped without any installed item pays nothing.
+  for (const saving of [800, 3000, 0]) {
     const s = endRound({ ...fresh(), bill: 10000 - saving });
-    assert.equal(s.history[0].reward, reward);
-    assert.equal(s.budget, 2500 + reward);
+    assert.equal(s.history[0].reward, 0);
+    assert.equal(s.budget, INITIAL_BUDGET);
     assert.throws(() => endRound(s));
     assert.equal(endRound(continueRound(s)).history[1].reward, 0);
   }
+  // Items pay their saving the moment they are installed; the period just adds it up.
+  const repaired = install(
+    purchase(fresh(), "rev-tap-repair"),
+    "rev-tap-repair",
+    "kitchen",
+    "rev-tap",
+  );
+  const price = marketPrice("rev-tap-repair").priceTL!;
+  assert.equal(repaired.budget, INITIAL_BUDGET - price + 180);
+  assert.equal(repaired.moves[0].reward, 180);
+  const done = endRound(repaired);
+  assert.equal(done.history[0].reward, 180);
+  assert.equal(
+    done.budget,
+    repaired.budget,
+    "paid once, not again at period end",
+  );
 });
 test("round four sales are fixed, persisted and acknowledged without double payment", () => {
   for (const remaining of [900, 3400]) {

@@ -3,7 +3,12 @@ import assert from "node:assert/strict";
 import { start, validDatabase, emptyDatabase, type State } from "../src/model";
 import { reconcile, settle, isTimed, clockView } from "../src/clock";
 import { skipUnaffordable, opportunities } from "../src/decisions";
-import { EARLY_BONUS, OVERTIME_COST, TIME_LIMIT_S } from "../src/economy";
+import {
+  EARLY_BONUS,
+  INITIAL_BUDGET,
+  OVERTIME_COST,
+  TIME_LIMIT_S,
+} from "../src/economy";
 
 const L = TIME_LIMIT_S;
 const sec = (n: number) => n * 1000;
@@ -48,23 +53,27 @@ test("the whole limit is free, then every second costs money", () => {
   assert.equal(s.clockRunning?.room, "kitchen");
   // A single settle never credits more than a minute, so check in every 10 s.
   for (let t = 10; t <= L; t += 10) s = settle(s, T0 + sec(t));
-  assert.equal(s.budget, 2500, "exactly the limit: nothing charged");
+  assert.equal(s.budget, INITIAL_BUDGET, "exactly the limit: nothing charged");
   s = settle(s, T0 + sec(L + 5));
-  assert.equal(s.budget, 2500 - 5 * OVERTIME_COST);
+  assert.equal(s.budget, INITIAL_BUDGET - 5 * OVERTIME_COST);
   assert.equal(
     settle(s, T0 + sec(L + 5)).budget,
     s.budget,
     "never charged twice",
   );
   s = settle(s, T0 + sec(L + 6));
-  assert.equal(s.budget, 2500 - 6 * OVERTIME_COST);
+  assert.equal(s.budget, INITIAL_BUDGET - 6 * OVERTIME_COST);
   assert.equal(s.timePenalty, 6 * OVERTIME_COST);
 });
 
 test("finishing a room early earns 5 TL for every second left", () => {
   let s = reconcile(game(), T0, "kitchen");
   s = reconcile(kitchenDone(s), T0 + sec(L - 10), "kitchen"); // 10 s early
-  assert.equal(s.budget, 2500 + 10 * EARLY_BONUS, "10 s early = 50 TL");
+  assert.equal(
+    s.budget,
+    INITIAL_BUDGET + 10 * EARLY_BONUS,
+    "10 s early = 50 TL",
+  );
   assert.equal(s.timeBonus, 50);
   assert.equal(s.clockRunning ?? null, null);
   // Checking again, or coming back, never pays twice.
@@ -78,7 +87,7 @@ test("no bonus after the limit; the fastest possible room pays the whole limit",
   for (let t = 10; t <= L + 10; t += 10) late = settle(late, T0 + sec(t));
   late = reconcile(kitchenDone(late), T0 + sec(L + 10), "kitchen");
   assert.equal(late.timeBonus ?? 0, 0);
-  assert(late.budget < 2500, "overtime was charged");
+  assert(late.budget < INITIAL_BUDGET, "overtime was charged");
   const fast = reconcile(
     kitchenDone(reconcile(game(), T0, "kitchen")),
     T0,
@@ -90,7 +99,7 @@ test("no bonus after the limit; the fastest possible room pays the whole limit",
 test("practice games get no bonus", () => {
   const practice = reconcile(kitchenDone(game("practice")), T0, "kitchen");
   assert.equal(practice.timeBonus ?? 0, 0);
-  assert.equal(practice.budget, 2500);
+  assert.equal(practice.budget, INITIAL_BUDGET);
 });
 
 test("the clock is per room and period, and leaving a room pauses it", () => {
@@ -98,11 +107,11 @@ test("the clock is per room and period, and leaving a room pauses it", () => {
   s = reconcile(s, T0 + sec(20), null); // went to the map
   assert.equal(s.clockRunning ?? null, null);
   s = reconcile(s, T0 + sec(50), "kitchen"); // time on the map is free
-  assert.equal(s.budget, 2500);
+  assert.equal(s.budget, INITIAL_BUDGET);
   s = reconcile(s, T0 + sec(50 + L - 20), "kitchen"); // 20 + (L-20) s: the limit
-  assert.equal(s.budget, 2500);
+  assert.equal(s.budget, INITIAL_BUDGET);
   s = reconcile(s, T0 + sec(50 + L - 18), "kitchen");
-  assert.equal(s.budget, 2500 - 2 * OVERTIME_COST);
+  assert.equal(s.budget, INITIAL_BUDGET - 2 * OVERTIME_COST);
   // Another room starts with a fresh limit.
   s = reconcile(s, T0 + sec(50 + L - 18), "bathroom");
   assert.equal(s.clockRunning?.room, "bathroom");
@@ -120,7 +129,7 @@ test("money never goes below zero", () => {
 
 test("a long gap (sleeping tab) is capped at a minute", () => {
   const s = settle(reconcile(game(), T0, "kitchen"), T0 + 3_600_000);
-  assert.equal(s.budget, 2500, "a minute is still within the limit");
+  assert.equal(s.budget, INITIAL_BUDGET, "a minute is still within the limit");
 });
 
 test("the clock stops once the room has no required step left", () => {
@@ -152,7 +161,7 @@ test("a required purchase can be skipped only when nothing is affordable", () =>
   assert.equal(next.decisions!.at(-1)!.choiceId, "skip-budget");
   assert(validDatabase({ ...emptyDatabase(), active: next }));
   assert.throws(
-    () => skipUnaffordable({ ...game(), budget: 2500 }, "tap"),
+    () => skipUnaffordable({ ...game(), budget: INITIAL_BUDGET }, "tap"),
     /yetiyor/,
   );
   assert.throws(() => skipUnaffordable(poor, "flush"), /atlanamaz/);

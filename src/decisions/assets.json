@@ -111,18 +111,6 @@
     "asset": "",
     "installationSlot": "laundry-load"
   },
-  "rev-laundry-program-eco": {
-    "asset": "",
-    "installationSlot": "laundry-program"
-  },
-  "rev-laundry-program-normal": {
-    "asset": "",
-    "installationSlot": "laundry-program"
-  },
-  "rev-laundry-program-hot": {
-    "asset": "",
-    "installationSlot": "laundry-program"
-  },
   "rev-irrigation-hose": {
     "asset": "sprites/generated/irrigation-hose",
     "installationSlot": "garden-hose"
@@ -242,14 +230,6 @@
   "rev-laundry-load-over": {
     "asset": "",
     "installationSlot": "laundry-load"
-  },
-  "rev-laundry-program-cold": {
-    "asset": "",
-    "installationSlot": "laundry-program"
-  },
-  "rev-laundry-program-boil": {
-    "asset": "",
-    "installationSlot": "laundry-program"
   },
   "rev-irrigation-time-night": {
     "asset": "",

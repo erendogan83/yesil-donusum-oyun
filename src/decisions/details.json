@@ -1,0 +1,350 @@
+{
+  "rev-tap-aerator": {
+    "pros": "Ucuzdur, takması kolaydır; akışı dağıtarak sıçramayı azaltır.",
+    "cons": "İçerideki aşınmış contayı onarmaz; musluk damlamaya devam eder."
+  },
+  "rev-tap-repair": {
+    "pros": "Sorunun kaynağı olan contayı yeniler; kaçak tamamen durur ve fiyatı makuldür.",
+    "cons": "Küçük bir bakım bilgisi ister; el aletleri fiyata dahil değildir."
+  },
+  "rev-tap-filter": {
+    "pros": "Suyu süzer; tortu ve kalıntıyı tutar.",
+    "cons": "Damlamanın nedeni olan arızalı contayı onarmaz; kaçak sürer."
+  },
+  "rev-tap-faucet": {
+    "pros": "Bataryayı komple yeniler; kaçak durur ve musluk yeni görünür.",
+    "cons": "Sorunu çözmek için gereğinden pahalıdır; tamir seti çok daha ucuza aynı sonucu verirdi."
+  },
+  "rev-tap-tape": {
+    "pros": "Çok ucuzdur; diş bağlantısındaki sızıntıları keser.",
+    "cons": "Sızıntının nedeni içerideki conta; bant onu düzeltmez."
+  },
+  "rev-shower-compact": {
+    "pros": "İçindeki akış sınırlayıcı sayesinde aynı duş keyfinde daha az su harcar.",
+    "cons": "Başlığın fiyatı yüksektir; yağmur gibi geniş bir akış hissi vermez."
+  },
+  "rev-shower-classic": {
+    "pros": "Ucuzdur, standart hortuma uyar, her yerde bulunur.",
+    "cons": "Akış sınırlayıcısı yoktur; suyu kompakt başlık kadar azaltmaz."
+  },
+  "rev-shower-rain": {
+    "pros": "Geniş yüzeyden yumuşak, rahatlatıcı bir su verir.",
+    "cons": "Aynı sürede daha çok su harcar ve fiyatı yüksektir; faturayı artırır."
+  },
+  "rev-shower-aerated": {
+    "pros": "Suyu havayla karıştırır; aynı rahatlıkta daha az su harcar.",
+    "cons": "Düşük basınçlı tesisatta akış zayıf hissedilebilir; orta fiyatlıdır."
+  },
+  "rev-shower-limiter": {
+    "pros": "Çok ucuzdur; mevcut başlığın ucuna takılıp akışı azaltır.",
+    "cons": "Başlık aynı kalır; tasarruf kompakt başlık kadar yüksek olmaz."
+  },
+  "rev-basin-place": {
+    "pros": "Ucuzdur; alçak ve geniştir, duşun altına kolay yerleşir.",
+    "cons": "Kovadan daha az su alır; taşırken dökülebilir."
+  },
+  "rev-basin-bucket": {
+    "pros": "Daha çok su alır; sapı sayesinde taşıması kolaydır.",
+    "cons": "Derin olduğu için yer kaplar; dolunca ağırlaşır."
+  },
+  "rev-basin-barrel": {
+    "pros": "20 litre alır; kapaklı olduğu için su temiz kalır.",
+    "cons": "Büyük ve ağırdır; küçük banyoda yer kaplar, dolu hâlde taşımak zordur."
+  },
+  "rev-basin-tray": {
+    "pros": "Alçak ve geniştir; zemine kolay yerleşir.",
+    "cons": "Çok az su alır; taşma riski yüksektir."
+  },
+  "rev-flush-half": {
+    "pros": "Küçük düğmeyle az su kullanır; işi görüyorsa yeterlidir.",
+    "cons": "Yoğun kullanımda yetmeyebilir; o zaman ikinci kez çekmek gerekir."
+  },
+  "rev-flush-full": {
+    "pros": "Tüm depoyu boşaltarak güçlü bir yıkama yapar.",
+    "cons": "Yarım sifon yeterliyken gereğinden çok su harcar."
+  },
+  "rev-flush-hold": {
+    "pros": "Akışı elinle kontrol edebilirsin.",
+    "cons": "Düğme basılı kaldıkça su akar; kolayca israfa dönüşür."
+  },
+  "rev-flush-twice": {
+    "pros": "Temizlik konusunda ekstra güvence verir.",
+    "cons": "Tek sifon yeterliyken ikinci çekiş suyu boşuna harcar."
+  },
+  "rev-flush-bucket": {
+    "pros": "Duşta biriken su klozette ikinci bir iş görür; şebeke suyu harcanmaz.",
+    "cons": "Her evde mümkün olmaz; kovayı biriktirmek ve taşımak zahmetlidir."
+  },
+  "rev-toothbrush-open": {
+    "pros": "Alışkanlıktır; ek bir şey yapmayı gerektirmez.",
+    "cons": "Fırçalama boyunca akan suyun çoğu kullanılmadan gidere gider."
+  },
+  "rev-toothbrush-closed": {
+    "pros": "Su yalnızca durularken akar; ek maliyeti yoktur.",
+    "cons": "Musluğu her seferinde açıp kapatma alışkanlığı gerekir."
+  },
+  "rev-toothbrush-brief": {
+    "pros": "Musluk yalnızca durulamak için kısa süre açılır; çok az su harcanır.",
+    "cons": "Açık kalma süresini kısa tutmak dikkat ister."
+  },
+  "rev-toothbrush-cup": {
+    "pros": "Durulamak için yalnızca ihtiyacın kadar su alırsın.",
+    "cons": "Bardağı doldurmak ve yıkamak küçük bir ek zahmettir."
+  },
+  "rev-toothbrush-shower": {
+    "pros": "Zaman kazandırır; iki işi birlikte yaparsın.",
+    "cons": "Fırçalarken akan duş suyunun çoğu kullanılmadan gider."
+  },
+  "rev-hygiene-paper": {
+    "pros": "Temiz kâğıt ve karton için doğru kutudur.",
+    "cons": "Kirli peçete ve ıslak mendil buraya konursa temiz kâğıdın geri dönüşümünü bozar."
+  },
+  "rev-hygiene-other": {
+    "pros": "Kirli peçete ve ıslak mendil için doğru yerdir; geri dönüşümü kirletmez.",
+    "cons": "Buradaki atık geri dönüşemez; yalnızca gerçekten kirli hijyenik atık için kullanılmalı."
+  },
+  "rev-hygiene-organic": {
+    "pros": "Yemek ve bitki artıkları için uygundur.",
+    "cons": "Bu kap yalnız yemek ve bitki artıkları içindir; kirli peçete buraya ait değildir."
+  },
+  "rev-hygiene-plastic": {
+    "pros": "Temiz plastik ambalajlar için uygundur.",
+    "cons": "Kirli peçete plastik kutuyu kirletir ve geri dönüşüm değerini düşürür."
+  },
+  "rev-hygiene-toilet": {
+    "pros": "Hızlıdır; atık hemen gözden kaybolur.",
+    "cons": "Peçete ve ıslak mendil tesisatı tıkayabilir; çöpe atılmalıdır."
+  },
+  "rev-light-home-incandescent": {
+    "pros": "Hiç para harcamazsın; ampul zaten takılı ve çalışıyor.",
+    "cons": "Enerjinin büyük bölümünü ısıya çevirir; elektrik tüketimi yüksek kalır."
+  },
+  "rev-light-home-halogen": {
+    "pros": "Anında tam parlaklıkta yanar; ışığı sıcaktır.",
+    "cons": "Klasik ampulden az ama LED'den çok elektrik harcar; ömrü kısadır."
+  },
+  "rev-light-home-led": {
+    "pros": "Aynı ışığı çok daha az elektrikle verir ve uzun yıllar dayanır.",
+    "cons": "İlk alım fiyatı bazı eski tip ampullerden yüksek olabilir."
+  },
+  "rev-light-home-cfl": {
+    "pros": "Klasik ampulden belirgin biçimde az elektrik harcar.",
+    "cons": "LED kadar tasarruflu değildir; tam parlaklığa geç ulaşır, içindeki madde nedeniyle ayrı atılmalıdır."
+  },
+  "rev-light-home-smart": {
+    "pros": "Çok az enerji harcar; uygulamayla açıp kapatabilirsin.",
+    "cons": "Ek özellikler için daha fazla ödersin; kontrol için telefon ve bağlantı gerekir."
+  },
+  "rev-light-workshop-incandescent": {
+    "pros": "Hiç para harcamazsın; ampul zaten takılı ve çalışıyor.",
+    "cons": "Enerjinin büyük bölümünü ısıya çevirir; elektrik tüketimi yüksek kalır."
+  },
+  "rev-light-workshop-halogen": {
+    "pros": "Anında tam parlaklıkta yanar; ışığı sıcaktır.",
+    "cons": "Klasik ampulden az ama LED'den çok elektrik harcar; ömrü kısadır."
+  },
+  "rev-light-workshop-led": {
+    "pros": "Aynı ışığı çok daha az elektrikle verir ve uzun yıllar dayanır.",
+    "cons": "İlk alım fiyatı bazı eski tip ampullerden yüksek olabilir."
+  },
+  "rev-light-workshop-cfl": {
+    "pros": "Klasik ampulden belirgin biçimde az elektrik harcar.",
+    "cons": "LED kadar tasarruflu değildir; tam parlaklığa geç ulaşır, içindeki madde nedeniyle ayrı atılmalıdır."
+  },
+  "rev-light-workshop-smart": {
+    "pros": "Çok az enerji harcar; uygulamayla açıp kapatabilirsin.",
+    "cons": "Ek özellikler için daha fazla ödersin; kontrol için telefon ve bağlantı gerekir."
+  },
+  "rev-office-power-strip": {
+    "pros": "Ucuzdur; anahtarı kapatınca bağlı tüm cihazların bekleme tüketimi kesilir.",
+    "cons": "Her akşam anahtarı kapatmayı hatırlamak gerekir."
+  },
+  "rev-office-power-smart": {
+    "pros": "Belirlenen saatte elektriği kendisi keser; unutma riski kalmaz.",
+    "cons": "Anahtarlı prizden pahalıdır; saati mesaiye göre ayarlamak gerekir."
+  },
+  "rev-office-power-meter": {
+    "pros": "Cihazın ne kadar elektrik çektiğini gösterir; farkındalık kazandırır.",
+    "cons": "Ölçmek tek başına tüketimi azaltmaz; cihazları kapatmak yine gerekir."
+  },
+  "rev-office-power-timer": {
+    "pros": "Belirlediğin saatte elektriği keser; basit ve uygun fiyatlıdır.",
+    "cons": "Mesai saati değişirse ayarı elle güncellemen gerekir."
+  },
+  "rev-office-power-solar": {
+    "pros": "Küçük cihazları güneşle şarj eder.",
+    "cons": "Yalnızca küçük cihazları şarj eder; masadaki asıl bekleme tüketimi sürer."
+  },
+  "rev-laundry-load-quarter": {
+    "pros": "Çamaşırlar rahat yıkanır; sıkışma olmaz.",
+    "cons": "Makine az çamaşır için su ve elektrik harcar; aynı çamaşır için daha çok yıkama gerekir."
+  },
+  "rev-laundry-load-half": {
+    "pros": "Çamaşırlar rahat yıkanır; biraz su ve enerji tasarrufu sağlar.",
+    "cons": "Biraz daha biriktirmek yıkama sayısını azaltabilirdi."
+  },
+  "rev-laundry-load-full": {
+    "pros": "Önerilen kapasitededir; aynı çamaşır için en az yıkama gerekir.",
+    "cons": "Çamaşırı biriktirmek için beklemek gerekir; sıkıştırmamaya dikkat edilmeli."
+  },
+  "rev-laundry-load-twothirds": {
+    "pros": "Neredeyse tam yük; yıkama verimli olur.",
+    "cons": "Biraz daha biriktirmek mümkündü."
+  },
+  "rev-laundry-load-over": {
+    "pros": "Tek seferde çok çamaşır biter.",
+    "cons": "Çamaşırlar sıkışır ve iyi yıkanmaz; tekrar yıkamak gerekebilir, makine yıpranır."
+  },
+  "rev-irrigation-hose": {
+    "pros": "Ucuzdur; suyu köke verip geçişlerde kapatabilirsin.",
+    "cons": "Sürekli elle yönlendirmek gerekir; kapatmayı unutursan su boşa akar."
+  },
+  "rev-irrigation-sprinkler": {
+    "pros": "Geniş alanı hızla sular; kullanımı kolaydır.",
+    "cons": "Suyu sıra aralarına da dağıtır; bir kısmı boşa gider."
+  },
+  "rev-irrigation-drip": {
+    "pros": "Suyu doğrudan bitkinin dibine verir; israf çok azdır.",
+    "cons": "Kurulumu emek ister ve ilk maliyeti vardır; borular tıkanabilir."
+  },
+  "rev-irrigation-can": {
+    "pros": "Kökün dibine kontrollü su verirsin; ucuzdur.",
+    "cons": "Zaman ve emek ister; geniş alanda yorucudur."
+  },
+  "rev-irrigation-rain": {
+    "pros": "Şebeke suyu yerine yağmur suyu kullanır; uzun vadede su giderini düşürür.",
+    "cons": "Yağışa bağlıdır; fiyatı yüksektir ve yer kaplar."
+  },
+  "rev-irrigation-time-morning": {
+    "pros": "Güneş yükselmeden sulamak buharlaşmayı azaltır; su köke ulaşır.",
+    "cons": "Erkenden kalkmak gerekir."
+  },
+  "rev-irrigation-time-noon": {
+    "pros": "Akılda tutması kolay bir saattir.",
+    "cons": "Sıcakta su çabuk buharlaşır; bitkiye ulaşmadan boşa gider."
+  },
+  "rev-irrigation-time-evening": {
+    "pros": "Güneşin etkisi azalınca sulamak buharlaşmayı düşürür.",
+    "cons": "Yapraklar ıslak kalırsa mantar riski doğabilir; geç kalınabilir."
+  },
+  "rev-irrigation-time-night": {
+    "pros": "Buharlaşma en az olur.",
+    "cons": "Toprak uzun süre ıslak kalır; küf ve mantar riski artar."
+  },
+  "rev-irrigation-time-rain": {
+    "pros": "Zamanlama kolaydır; ayrıca plan yapmak gerekmez.",
+    "cons": "Yağmur zaten suluyor; verdiğin su boşuna harcanır."
+  },
+  "rev-irrigation-timer-timer": {
+    "pros": "Süre bitince suyu kapatır; açık unutma riskini azaltır.",
+    "cons": "Doğru süreyi seçmek yine sana kalır; toprağın nemini ölçmez."
+  },
+  "rev-irrigation-timer-moisture": {
+    "pros": "Toprak kuruyunca sulamayı başlatır; yalnızca gerektiğinde su verir.",
+    "cons": "Ayar ve bakım ister; sensör kirlenirse yanlış ölçebilir."
+  },
+  "rev-irrigation-timer-rain": {
+    "pros": "Yağmur yağınca sulamayı durdurur; gereksiz sulamayı önler.",
+    "cons": "Toprağın gerçekte ne kadar kuru olduğunu ölçmez."
+  },
+  "rev-irrigation-timer-mech": {
+    "pros": "Basit ve ucuzdur; pil ya da bağlantı gerektirmez.",
+    "cons": "Hava durumuna uyum sağlamaz; saati kurmayı unutmamak gerekir."
+  },
+  "rev-pack-lentil-plastic": {
+    "pros": "Hafif ve ucuzdur; her yerde bulunur.",
+    "cons": "Tekrar dolum sistemi yoktur; her alışverişte yeni paket çöpe gider."
+  },
+  "rev-pack-lentil-paper": {
+    "pros": "Kâğıt olduğu için geri dönüştürülebilir ve hafiftir.",
+    "cons": "Yine tek kullanımlıktır; her alışverişte yeni paket gerekir."
+  },
+  "rev-pack-lentil-return": {
+    "pros": "Kavanoz iade edilip yeniden doldurulur; her alışverişte yeni ambalaj gerekmez.",
+    "cons": "Cam ağırdır ve kırılabilir; kavanozu geri getirmek düzen ister."
+  },
+  "rev-pack-lentil-cloth": {
+    "pros": "Yıkanıp tekrar tekrar kullanılabilir.",
+    "cons": "Yıkama ve kurutma gerekir; nemden ve kokudan koruması sınırlıdır."
+  },
+  "rev-pack-apple-plastic": {
+    "pros": "Hafif ve ucuzdur.",
+    "cons": "Bir kez kullanılır; her alışverişte yeni torba gerekir."
+  },
+  "rev-pack-apple-paper": {
+    "pros": "Geri dönüştürülebilir ve hafiftir.",
+    "cons": "Yine tek kullanımlıktır; yeni torba ihtiyacı sürer."
+  },
+  "rev-pack-apple-mesh": {
+    "pros": "Her alışverişte tekrar kullanılır; yeni torba ihtiyacını azaltır.",
+    "cons": "Yanında getirmeyi unutursan işe yaramaz."
+  },
+  "rev-pack-apple-basket": {
+    "pros": "Evden getirdiğin sepet tekrar tekrar kullanılır; tek kullanımlık ambalaj gerekmez.",
+    "cons": "Hacimlidir; taşıması ve saklaması daha zordur."
+  },
+  "rev-pack-towel-plastic": {
+    "pros": "Ürünü toza ve neme karşı korur.",
+    "cons": "Aynı ürün için iki ambalaj kullanılır; gereksiz atık oluşur."
+  },
+  "rev-pack-towel-box": {
+    "pros": "Sert yapısıyla ürünü çok iyi korur.",
+    "cons": "Kargo yapılmayan teslimde gereğinden fazla malzemedir; çanta yeterliydi."
+  },
+  "rev-pack-towel-kraft": {
+    "pros": "Tek ambalajdır; ek poşet gerekmez ve geri dönüştürülebilir.",
+    "cons": "Kâğıt ıslanırsa yırtılabilir."
+  },
+  "rev-pack-towel-cloth": {
+    "pros": "Müşteri tekrar kullanabilir; atık bırakmaz.",
+    "cons": "İlk alımda kraft çantadan pahalıdır."
+  },
+  "rev-pack-scarf-plastic": {
+    "pros": "Ürünü toza ve neme karşı korur.",
+    "cons": "Aynı ürün için iki ambalaj kullanılır; gereksiz atık oluşur."
+  },
+  "rev-pack-scarf-box": {
+    "pros": "Sert yapısıyla ürünü çok iyi korur.",
+    "cons": "Kargo yapılmayan teslimde gereğinden fazla malzemedir; çanta yeterliydi."
+  },
+  "rev-pack-scarf-kraft": {
+    "pros": "Tek ambalajdır; ek poşet gerekmez ve geri dönüştürülebilir.",
+    "cons": "Kâğıt ıslanırsa yırtılabilir."
+  },
+  "rev-pack-scarf-envelope": {
+    "pros": "Tek malzemeli kâğıt zarf geri dönüştürülebilir ve hafiftir.",
+    "cons": "Daha az koruma sağlar; hacimli ürünlerde uygun olmayabilir."
+  },
+  "rev-roof-bonus-solar": {
+    "pros": "Kendi elektriğini üretirsin; uzun vadede fatura düşebilir.",
+    "cons": "Bu fiyat yalnız panel içindir; inverter, montaj ve işçilik ayrıca gerekir, çatı uygun olmalıdır."
+  },
+  "rev-roof-bonus-balcony": {
+    "pros": "Hazırdır, kurulumu kolaydır ve fiyatı daha uygundur.",
+    "cons": "Az enerji üretir; fatura etkisi sınırlı kalır."
+  },
+  "rev-roof-bonus-heater": {
+    "pros": "Sıcak su için elektrik ya da doğalgaz ihtiyacını azaltır.",
+    "cons": "İlk yatırımı yüksektir; güneşsiz günlerde yedek ısıtma gerekir."
+  },
+  "rev-roof-bonus-wind": {
+    "pros": "Rüzgârlı yerlerde elektrik üretebilir.",
+    "cons": "Rüzgâr azsa üretim düşük kalır; gürültü ve izin sorunu çıkabilir."
+  },
+  "rev-led-strip": {
+    "pros": "Rafı aydınlatır ve dekoratif görünür; düşük güç çeker.",
+    "cons": "Ana ampulün yerini tutmaz; kullandıkça ek elektrik harcar."
+  },
+  "rev-led-strip-battery": {
+    "pros": "Kablosuzdur; kurulumu çok kolaydır.",
+    "cons": "Pilleri zamanla değiştirmek gerekir; atık pil oluşur."
+  },
+  "rev-led-strip-desk": {
+    "pros": "Işığı tam ihtiyacın olan yere verir; kolu esnektir.",
+    "cons": "Masada yer kaplar ve prize ihtiyaç duyar."
+  },
+  "rev-led-strip-motion": {
+    "pros": "Yalnızca biri geçerken yanar; boşuna yanık kalmaz.",
+    "cons": "Sürekli aydınlatma vermez; sensör gereksiz yere tetiklenebilir."
+  }
+}

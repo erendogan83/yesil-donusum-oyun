@@ -37,7 +37,7 @@ const put = (s: State, id: string) => {
 };
 test("TL constants, signed display, savings and normalized score", () => {
   assert.equal(INITIAL_BILL, 10000);
-  assert.equal(INITIAL_BUDGET, 2500);
+  assert.equal(INITIAL_BUDGET, 10000);
   assert.equal(ROUND_REWARD_CAP, 500);
   assert.equal(fmtMoney(10000), "₺10.000");
   assert.equal(fmtMoney(2500), "₺2.500");
@@ -46,10 +46,13 @@ test("TL constants, signed display, savings and normalized score", () => {
   assert.equal(fmtMoney(380.2), "₺380");
   const s = put(fresh(), "tap-a");
   assert.equal(s.bill, 9820);
-  assert.equal(s.budget, 2350);
+  assert.equal(s.budget, INITIAL_BUDGET - 150);
   assert.equal(savingPercent(s), 1.8);
-  assert.equal(score(s), 830);
-  assert.equal(score(continueRound(endRound(s))), 839);
+  assert.equal(score(s), 360 + ((INITIAL_BUDGET - 150) / 10) * 2);
+  assert.equal(
+    score(continueRound(endRound(s))),
+    360 + ((INITIAL_BUDGET - 150 + 45) / 10) * 2,
+  );
 });
 test("all exclusive choices replace only the active contribution, never refund either purchase", () => {
   for (const [oldId, newId] of [

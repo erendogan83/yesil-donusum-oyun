@@ -23,6 +23,8 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
       ? read.body.room.trim().slice(0, 30)
       : "";
   const code = roomSlug(title);
+  // Rooms are timed unless the creator says otherwise.
+  const timed = read.body.timed === false ? 0 : 1;
   if (!playerId || !name) return fail(400, "Oyuncu adını yazın.");
   if (code.length < 2)
     return fail(400, "Oda adı en az 2 harf ya da rakam içermeli.");
@@ -45,9 +47,9 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
   }
   const now = Date.now();
   await e.DB.prepare(
-    "INSERT INTO rooms (code, title, host_id, status, created_at, host_since) VALUES (?, ?, ?, 'lobby', ?, ?)",
+    "INSERT INTO rooms (code, title, host_id, status, created_at, host_since, timed) VALUES (?, ?, ?, 'lobby', ?, ?, ?)",
   )
-    .bind(code, title, playerId, now, now)
+    .bind(code, title, playerId, now, now, timed)
     .run();
   await e.DB.prepare(
     "INSERT INTO room_players (room_code, player_id, name, joined_at, last_seen) VALUES (?, ?, ?, ?, ?)",

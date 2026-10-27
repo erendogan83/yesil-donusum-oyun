@@ -4,6 +4,8 @@ import {
   decisionLesson,
   validDecisions,
   assertChoice,
+  dropRetired,
+  opportunities,
   type Decision,
   type SortingProgress,
 } from "./decisions";
@@ -14,6 +16,7 @@ import {
   ROUND_REWARD_RATE,
   ROUND_REWARD_CAP,
   FINAL_SALES_INCOME,
+  SAVING_PAYOUT_RATE,
 } from "./economy";
 import {
   products,
@@ -43,8 +46,12 @@ export interface Team {
   room?: string;
   /** Identifies this player inside a room. */
   playerId?: string;
+  /** Room games only: false when the room was created without a clock. */
+  timed?: boolean;
 }
 export interface Move {
+  /** Money paid to the player when this item was installed (its monthly saving). */
+  reward?: number;
   replacedBy?: string;
   reversalImpact?: number;
   id: string;
@@ -66,6 +73,8 @@ export interface State {
   salesIncomeGranted?: boolean;
   salesIncomeAcknowledged?: boolean;
   purchaseCosts?: Record<string, number>;
+  /** Money spent on items the player later took out again. It is never refunded. */
+  removedSpend?: number;
   decisionVersion?: 1;
   decisions?: Decision[];
   sorting?: Record<string, SortingProgress>;
@@ -263,9 +272,15 @@ export function install(
   const withoutOld = Math.max(0, s.bill - oldImpact);
   const bill = Math.max(0, withoutOld + requested);
   const impact = bill - withoutOld;
+  // New games pay the saving right away; taking the item out again takes it back.
+  const reward =
+    s.decisionVersion === 1 && impact < 0
+      ? Math.round(-impact * SAVING_PAYOUT_RATE)
+      : 0;
   return applyCombos({
     ...s,
     bill,
+    budget: s.budget + reward,
     inventory: s.inventory.filter((x) => x !== id),
     installed: [...s.installed, id],
     activeInstallations: [
@@ -284,6 +299,7 @@ export function install(
         cost: s.purchaseCosts?.[id] ?? p.price,
         room,
         round: s.round,
+        ...(reward ? { reward } : {}),
         ...(previous ? { reversalImpact: withoutOld - s.bill } : {}),
       },
     ],
@@ -313,18 +329,53 @@ export function freeMove(s: State, id: string): State {
     ],
   });
 }
+/**
+ * Takes back a choice made in the current period so the player can choose again.
+ * An installed item is removed: its price is not refunded, but the saving it brought
+ * (and the money paid for it) is taken back. Behaviour choices cost nothing to change.
+ */
+export function changeChoice(s: State, opportunityId: string): State {
+  playable(s);
+  if (s.decisionVersion !== 1)
+    throw Error("Bu kayıttaki seçimler değiştirilemez.");
+  const o = opportunities.find((o) => o.id === opportunityId);
+  const d = s.decisions?.find((d) => d.opportunityId === opportunityId);
+  if (!o || !d) throw Error("Değiştirilecek bir seçim yok.");
+  if (o.kind === "sorting") throw Error("Ayırma adımı yeniden seçilemez.");
+  if (d.round !== s.round)
+    throw Error("Önceki dönemin seçimi artık değiştirilemez.");
+  const decisions = (s.decisions ?? []).filter((x) => x !== d);
+  const lessons = (s.lessons ?? []).filter((l) => l.id !== d.choiceId);
+  const move = s.moves.find((m) => m.id === d.choiceId);
+  if (!move || !s.installed.includes(d.choiceId))
+    return { ...s, decisions, lessons };
+  return {
+    ...s,
+    decisions,
+    lessons,
+    bill: Math.max(0, s.bill - move.impact),
+    budget: Math.max(0, s.budget - (move.reward ?? 0)),
+    removedSpend: (s.removedSpend ?? 0) + move.cost,
+    installed: s.installed.filter((x) => x !== d.choiceId),
+    activeInstallations: s.activeInstallations.filter((x) => x !== d.choiceId),
+    moves: s.moves.filter((m) => m !== move),
+  };
+}
 export function endRound(s: State): State {
   playable(s);
   const before = s.history.at(-1)?.after ?? INITIAL_BILL;
   const saving = Math.max(0, before - s.bill);
-  const reward = Math.min(
-    Math.floor(saving * ROUND_REWARD_RATE),
-    ROUND_REWARD_CAP,
-  );
+  // New games were already paid item by item; the period only reports the total.
+  const paid = s.decisionVersion === 1;
+  const reward = paid
+    ? s.moves
+        .filter((m) => m.round === s.round)
+        .reduce((n, m) => n + (m.reward ?? 0), 0)
+    : Math.min(Math.floor(saving * ROUND_REWARD_RATE), ROUND_REWARD_CAP);
   return {
     ...s,
     phase: "summary",
-    budget: s.budget + reward,
+    budget: paid ? s.budget : s.budget + reward,
     history: [
       ...s.history,
       { round: s.round, before, after: s.bill, saving, reward },
@@ -485,6 +536,11 @@ export function validDatabase(value: unknown): value is Database {
   if (s.salesIncomeGranted && s.round !== 4) return false;
   if (s.salesIncomeAcknowledged && !s.salesIncomeGranted) return false;
   if (
+    s.removedSpend !== undefined &&
+    (!Number.isFinite(s.removedSpend) || s.removedSpend < 0)
+  )
+    return false;
+  if (
     s.purchaseCosts !== undefined &&
     (!s.purchaseCosts ||
       Array.isArray(s.purchaseCosts) ||
@@ -564,6 +620,8 @@ export function validDatabase(value: unknown): value is Database {
           "roof",
         ].includes(m.room) ||
         ![m.impact, m.cost].every(Number.isFinite) ||
+        (m.reward !== undefined &&
+          (!Number.isFinite(m.reward) || m.reward < 0)) ||
         !Number.isInteger(m.round) ||
         m.round < 1 ||
         m.round > s.round,
@@ -839,6 +897,7 @@ export function migrateDatabase(value: unknown): Database {
     db.version = 2;
   }
   if (!s) return db;
+  Object.assign(s, dropRetired(s));
   s.purchaseCosts ??= {};
   for (const id of s.inventory)
     s.purchaseCosts[id] ??=

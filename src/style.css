@@ -3833,3 +3833,152 @@ dialog .actions {
 .host-timer b {
   color: var(--gold);
 }
+
+/* Artısı / Eksisi: what an item does well and badly. Colours work on light and dark panels. */
+.pros-cons {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  margin: 10px 0;
+  text-align: left;
+}
+.pc {
+  display: block;
+  border-left: 4px solid;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.pc i {
+  display: block;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.pc.pro {
+  border-color: #4f9a62;
+  background: #4f9a6226;
+}
+.pc.pro i::before {
+  content: "+ ";
+}
+.pc.con {
+  border-color: #c9694a;
+  background: #c9694a26;
+}
+.pc.con i::before {
+  content: "− ";
+}
+.decision-option .pros-cons {
+  margin: 4px 0 0;
+}
+.decision-option .pc {
+  font-size: 13px;
+}
+.payout b {
+  color: var(--gold);
+}
+#learning-dialog .pros-cons {
+  margin: 12px 0;
+}
+
+/* Seçimi değiştir */
+.revise-button {
+  pointer-events: auto !important;
+  margin-top: 12px;
+  min-height: 40px;
+  font-size: 13px;
+}
+.revise-list {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0;
+  display: grid;
+  gap: 8px;
+}
+.revise-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  background: #2b3a25f2;
+  border: 1px solid #a5b07b66;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.revise-list small {
+  display: block;
+  color: #ddd4bc;
+  margin-top: 3px;
+}
+
+/* Nasıl oynanır */
+.register-panel.howto {
+  width: min(860px, 94%);
+  text-align: left;
+}
+dialog.howto-dialog {
+  width: min(820px, calc(100vw - 32px));
+  text-align: left;
+}
+.guide-block {
+  margin: 18px 0;
+}
+.guide-block h3 {
+  margin: 0 0 6px;
+  color: var(--gold);
+  font-size: 20px;
+}
+.guide-block p,
+.guide-block li {
+  font-size: 15px;
+  line-height: 1.55;
+}
+.guide-block ul,
+.guide-block ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+.guide-block li + li {
+  margin-top: 6px;
+}
+.guide-block .tips li b {
+  color: var(--gold);
+}
+.howto .actions {
+  margin-top: 18px;
+}
+
+/* Oda: süreli / süresiz ve süre ekleme */
+.room-kind {
+  margin: 0 0 4px;
+  color: var(--gold);
+  font-size: 14px;
+}
+.lobby .ghost {
+  margin: 6px 4px;
+}
+.period-tip p {
+  font-size: 17px;
+}
+.final-economy {
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  .mode-choice {
+    flex-direction: column;
+  }
+  .revise-list li {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

@@ -65,7 +65,7 @@ function ack(s: State): State {
   };
 }
 test("all core decisions offer at least three choices or sorting destinations; no missing assets, placement, copy or score reason", () => {
-  assert.equal(opportunities.filter((o) => o.core).length, 18);
+  assert.equal(opportunities.filter((o) => o.core).length, 17);
   for (const o of opportunities) {
     assert(
       !o.core ||
@@ -118,13 +118,13 @@ test("every offered choice applies once with deterministic points, valid persist
     }
     s = valid(continueRound(endRound(s)));
   }
-  assert.equal(score(s), 1800);
+  assert.equal(score(s), 1700);
   assert.equal(s.phase, "finished");
-  assert.equal(s.decisions!.length, 22);
+  assert.equal(s.decisions!.length, 21);
   const orgs = Array.from({ length: 26 }, (_, i) => `Kurum ${i}`);
   s = { ...s, team: { ...s.team, organization: orgs[0], mode: "official" } };
   const db = finish({ ...emptyDatabase(), active: s });
-  assert.equal(db.results[0].score, 1800);
+  assert.equal(db.results[0].score, 1700);
   assert.equal(db.results[0].rulesVersion, 1);
   assert.equal(finish(db).results.length, 1);
 });
@@ -238,7 +238,6 @@ test("every decision offers four or more options, none worth more than the best 
     "toothbrush",
     "hygiene",
     "laundry-load",
-    "laundry-program",
     "irrigation-time",
   ])
     assert.equal(opportunities.find((o) => o.id === id)!.choices.length, 5, id);

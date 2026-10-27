@@ -21,6 +21,8 @@ export interface RoomState {
   /** When the current host got the role (server ms) and how long they have to start. */
   hostSince: number;
   hostStartMs: number;
+  /** False when the creator chose a room without a clock. */
+  timed: boolean;
   /** Server time (ms) when play begins; null while in the lobby. */
   startedAt: number | null;
   /** Server time when this answer was produced, to correct for clock differences. */
@@ -111,8 +113,10 @@ export const roomSlug = (name: string) =>
     .replace(/[^A-Z0-9]/g, "")
     .slice(0, 24);
 
-export const createRoom = async (room: string, name: string) =>
-  fromResponse(await post("./api/rooms", { playerId: playerId(), name, room }));
+export const createRoom = async (room: string, name: string, timed = true) =>
+  fromResponse(
+    await post("./api/rooms", { playerId: playerId(), name, room, timed }),
+  );
 export const joinRoom = async (room: string, name: string) =>
   fromResponse(
     await post(`./api/rooms/${roomSlug(room)}/join`, {
@@ -127,6 +131,11 @@ export const leaveRoomApi = async (code: string) =>
 export const startRoom = async (code: string) =>
   fromResponse(
     await post(`./api/rooms/${code}/start`, { playerId: playerId() }),
+  );
+/** Host only: gives the host more time to start the game. */
+export const extendRoom = async (code: string) =>
+  fromResponse(
+    await post(`./api/rooms/${code}/extend`, { playerId: playerId() }),
   );
 export const reportScore = async (
   code: string,

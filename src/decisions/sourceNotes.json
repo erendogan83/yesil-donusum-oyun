@@ -53,12 +53,6 @@
       "https://energysavingtrust.org.uk/how-save-energy-when-using-your-washing-machine/"
     ]
   },
-  "laundry-program": {
-    "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
-    "sources": [
-      "https://energysavingtrust.org.uk/how-save-energy-when-using-your-washing-machine/"
-    ]
-  },
   "irrigation": {
     "note": "Senaryo ve puanlar eğitim oyunu için belirlenmiştir. Fiyatlar geçici örneklerdir; fatura etkisi gerçek tasarruf vaadi değildir.",
     "sources": ["https://www.epa.gov/watersense/microirrigation"]
